@@ -1,5 +1,5 @@
 
-1. Create a database 'shop_ssr_db'
+1. Create database 'shop_ssr_db'
 
 2. Set up .env:
 
