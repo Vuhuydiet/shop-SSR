@@ -1,7 +1,8 @@
 const express = require('express');
-const { default: prisma } = require('../../models');
 const router = express.Router();
+const userController = require('./user.controller');
 
-
+router.get('/register', userController.getRegisterPage);
+router.post('/register', userController.postRegister);
 
 module.exports = router;
