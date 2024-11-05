@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+const crypto = require('crypto');
 
 function getHashedPassword(password, salt) {
   const saltLength = 16;
@@ -19,4 +19,4 @@ function invalidatePassword(inputPassword, storedHash) {
   return hashed === storedHash;
 }
 
-export { getHashedPassword, invalidatePassword };
+module.exports = { getHashedPassword, invalidatePassword };

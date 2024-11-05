@@ -7,7 +7,7 @@ module.exports = {
     const categories = await productService.getAllCategories();
     const brands = await productService.getAllBranches();
     const products = await productService.listAllProducts();
-    res.render('productList', { categories, brands, products });
+    res.render('pages/productList', { categories, brands, products });
   },
 
 
