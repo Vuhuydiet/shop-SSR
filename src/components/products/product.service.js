@@ -17,12 +17,14 @@ module.exports = {
 
   getProductById: async (productId) => {
     try {
-      const product = await prisma.product.findUnique({
-        where: { id: parseInt(productId) },
+      return await prisma.product.findUnique({
+        where: { id: productId },
       });
-      return product;
     } catch (error) {
+      console.log('productId: %d',productId);
       throw new Error("Could not fetch product");
     }
-  }
+  },
+
+  
 }

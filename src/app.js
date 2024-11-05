@@ -26,7 +26,6 @@ app.set('layout', 'components/layout');
 
 // routes
 app.use('/', router);
-
 // error handler
 app.use('*', (_req, _res, next) => {
   const err = new Error('Resource not found');
