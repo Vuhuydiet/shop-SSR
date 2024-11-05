@@ -1,11 +1,12 @@
 model Product {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String
-  price       Float
-  stock       Int
-  image       String?
-  category    String
-  stars       Float
-  numReviews  Int
+  id           Int     @id @default(autoincrement())
+  name         String
+  description  String
+  initialPrice Float
+  price        Float
+  stock        Int
+  image        String?
+  category     String
+  stars        Float
+  numReviews   Int
 }
