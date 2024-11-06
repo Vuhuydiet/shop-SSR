@@ -1,6 +1,8 @@
 # prisma
 migrations
 
+.vscode
+
 # Logs
 logs
 *.log
