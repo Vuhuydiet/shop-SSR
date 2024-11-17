@@ -1,13 +1,15 @@
 model Product {
-  id           Int     @id @default(autoincrement())
-  name         String
-  description  String
-  initialPrice Float
-  price        Float
-  stock        Int
-  image        String?
-  category     String
-  brand        String
-  stars        Float
-  numReviews   Int
+    productId          Int      @id @default(autoincrement())
+    productName        String
+    sellerId           Int
+    currentPrice       Int
+    originalPrice      Int
+    quantity           Int      @default(0)
+    publishedAt        DateTime @default(now())
+    brand              String?
+    productDescription String?
+    numSoldProduct     Int      @default(0)
+    productImageUrl       String?
+
+    categories ProductCategory[]
 }

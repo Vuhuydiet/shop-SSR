@@ -49,7 +49,7 @@
             <label
               for="<%= `cat-${idx}` %>"
               class="text-gray-600 ml-3 cusror-pointer"
-              ><%= category %></label
+              ><%= category.categoryName %></label
             >
           </div>
           <% }) %>
@@ -119,31 +119,31 @@
       <% locals.products.forEach(product => { %>
       <div class="bg-white shadow rounded overflow-hidden group">
         <div class="relative">
-          <img src="<%= product.image %>" alt="product 1" class="w-full" />
+          <img src="<%= product.productImageUrl %>" alt="product 1" class="w-full" />
           <div
             class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
           ></div>
         </div>
         <div class="pt-4 pb-3 px-4">
-          <a href="/products/<%= product.id %>">
+          <a href="/products/<%= product.productId %>">
             <h4
               class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition"
             >
-              <%= product.name %>
+              <%= product.productName %>
             </h4>
           </a>
           <div class="flex items-baseline mb-1 space-x-2">
             <p class="text-xl text-primary font-semibold">
-              $<%= product.price %>
+              $<%= product.currentPrice %>
             </p>
             <p class="text-sm text-gray-400 line-through">
-              $<%= product.initialPrice %>
+              $<%= product.originalPrice %>
             </p>
           </div>
           <div class="flex items-center">
             <div class="flex gap-1 text-sm text-yellow-400">
               <span><i class="fa-solid fa-star"></i></span>
-              <span><%= product.stars %></span>
+              <span><%= 4.5 %></span>
             </div>
           </div>
         </div>

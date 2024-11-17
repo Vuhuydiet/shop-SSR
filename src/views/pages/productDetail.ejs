@@ -19,19 +19,19 @@
     <!-- product-detail -->
     <div class="container grid grid-cols-2 gap-6">
         <div>
-            <img src="/<%= products.image %>" alt="product" class="w-full">
+            <img src="/<%= products.productImageUrl %>" alt="product" class="w-full">
             <div class="grid grid-cols-5 gap-4 mt-4">
-                <img src="/<%= products.image %>" alt="product2"
+                <img src="/<%= products.productImageUrl %>" alt="product2"
                     class="w-full cursor-pointer border border-primary">
-                <img src="/<%= products.image %>" alt="product2" class="w-full cursor-pointer border">
-                <img src="/<%= products.image %>" alt="product2" class="w-full cursor-pointer border">
-                <img src="/<%= products.image %>" alt="product2" class="w-full cursor-pointer border">
-                <img src="/<%= products.image %>" alt="product2" class="w-full cursor-pointer border">
+                <img src="/<%= products.productImageUrl %>" alt="product2" class="w-full cursor-pointer border">
+                <img src="/<%= products.productImageUrl %>" alt="product2" class="w-full cursor-pointer border">
+                <img src="/<%= products.productImageUrl %>" alt="product2" class="w-full cursor-pointer border">
+                <img src="/<%= products.productImageUrl %>" alt="product2" class="w-full cursor-pointer border">
             </div>
         </div>
 
         <div>
-            <h2 class="text-3xl font-medium uppercase mb-2"><%=products.name%></h2>
+            <h2 class="text-3xl font-medium uppercase mb-2"><%=products.productName%></h2>
             <div class="flex items-center mb-4">
                 <div class="flex gap-1 text-sm text-yellow-400">
                     <span><i class="fa-solid fa-star"></i></span>
@@ -40,7 +40,7 @@
                     <span><i class="fa-solid fa-star"></i></span>
                     <span><i class="fa-solid fa-star"></i></span>
                 </div>
-                <div class="text-xs text-gray-500 ml-3">(<%=products.numReviews%>)</div>
+                <div class="text-xs text-gray-500 ml-3">(<%=100%>)</div>
             </div>
             <div class="space-y-2">
                 <p class="text-gray-800 font-semibold space-x-2">
@@ -53,7 +53,7 @@
                 </p>
                 <p class="space-x-2">
                     <span class="text-gray-800 font-semibold">Category: </span>
-                    <span class="text-gray-600"><%products.category%></span>
+                    <span class="text-gray-600"><%products.categories[0].categoryName%></span>
                 </p>
                 <p class="space-x-2">
                     <span class="text-gray-800 font-semibold">SKU: </span>
@@ -61,11 +61,11 @@
                 </p>
             </div>
             <div class="flex items-baseline mb-1 space-x-2 font-roboto mt-4">
-                <p class="text-xl text-primary font-semibold">$<%= products.price %></p>
-                <p class="text-base text-gray-400 line-through">$<%= products.initialPrice %></p>
+                <p class="text-xl text-primary font-semibold">$<%= products.currentPrice %></p>
+                <p class="text-base text-gray-400 line-through">$<%= products.originalPrice %></p>
             </div>
 
-            <p class="mt-4 text-gray-600"><%=products.description%></p>
+            <p class="mt-4 text-gray-600"><%=products.productDescription%></p>
 
             <div class="mt-4">
                 <h3 class="text-sm text-gray-800 uppercase mb-1">Quantity</h3>
@@ -110,7 +110,7 @@
         <h3 class="border-b border-gray-200 mt-12 font-roboto text-gray-800 pb-3 text-2xl">Product details</h3>
         <div class="w-3/5 pt-6">
             <div class="text-gray-600">
-                <p><%=products.description%></p>
+                <p><%=products.productDescription%></p>
             </div>
 
             
