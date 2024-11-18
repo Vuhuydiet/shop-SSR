@@ -8,6 +8,8 @@ require('express-async-errors');
 
 // import middlewares and routes
 const router = require('./components');
+const errorHandler = require('./libraries/errorHandler/errorHandler');
+const notFoundHandler = require('./libraries/errorHandler/notFoundHandler');
 
 // middlewares
 app.use(cors());
@@ -26,17 +28,10 @@ app.set('layout', 'components/layout');
 
 // routes
 app.use('/', router);
-// error handler
-app.use('*', (_req, _res, next) => {
-  const err = new Error('Resource not found');
-  err.status = 404;
-  next(err);
-});
 
-app.use((err, _req, res, _next) => {
-  console.error(err);
-  res.status(500).json(err);
-});
+// error handler
+app.use('*', notFoundHandler);
+app.use(errorHandler);
 
 // start server
 const PORT = process.env.PORT || 3000;

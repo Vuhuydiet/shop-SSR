@@ -1,6 +1,5 @@
 const prisma = require("./index");
 
-// import { getHashedPassword } from '../utils/cryptoUtils.js';
 
 async function main() {
   console.log("Start seeding ...");
