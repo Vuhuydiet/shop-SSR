@@ -1,49 +1,62 @@
+const registerForm = document.getElementById("registerForm");
+const errorDiv = document.getElementById("errorMessage");
+const successDiv = document.getElementById("successMessage");
 
-const submitButton = document.querySelector('form button');
-
-submitButton.addEventListener('click', async (event) => {
+registerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const username = document.querySelector('input[name="username"]').value;
-  const password = document.querySelector('input[name="password"]').value;
-  const confirmPassword = document.querySelector('input[name="confirm"]').value;
-  const agree = document.querySelector('#agreement').checked;
-  const error = document.querySelector('.error');
-  const success = document.querySelector('.success');
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirm").value;
+  const agree = document.getElementById("agreement").checked;
+
+  errorDiv.textContent = "";
+  successDiv.textContent = "";
+  errorDiv.classList.add("hidden");
+  successDiv.classList.add("hidden");
 
   if (!username || !password || !confirmPassword) {
-    error.textContent = 'Please fill in all fields';
-    error.style.color = 'red';
+    errorDiv.textContent = "Please fill in all fields";
+    errorDiv.classList.remove("hidden");
+    console.log(1);
     return;
   }
 
   if (password !== confirmPassword) {
-    error.textContent = 'Passwords do not match';
-    error.style.color = 'red';
+    errorDiv.textContent = "Passwords do not match";
+    errorDiv.classList.remove("hidden");
     return;
   }
 
   if (!agree) {
-    error.textContent = 'Please agree to the terms and conditions';
-    error.style.color = 'red';
+    errorDiv.textContent = "Please agree to the terms and conditions";
+    errorDiv.classList.remove("hidden");
     return;
   }
 
-  const response = await fetch('/users/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ username, password }),
-  });
+  try {
+    const response = await fetch("/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+    console.log(response);
 
-  if (!response.ok) {
-    success.textContent = '';
-    error.textContent = 'Username already exists';
-    error.style.color = 'red';
-    return;
+    const data = await response.json();
+    if (data.ok) {
+      successDiv.textContent = data.message;
+      successDiv.classList.remove("hidden");
+
+      setTimeout(() => {
+        window.location.href = "/users/login";
+      }, 2000);
+    } else {
+      errorDiv.textContent = data.message;
+      errorDiv.classList.remove("hidden");
+    }
+  } catch (error) {
+    errorDiv.textContent = "An error occurred. Please try again.";
+    errorDiv.classList.remove("hidden");
   }
-  error.textContent = '';
-  success.textContent = 'User registered successfully';
-  success.style.color = 'green';
-
 });
