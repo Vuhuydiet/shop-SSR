@@ -1,8 +1,10 @@
-import ProductService from "./product.service";
+const ProductService = require("./product.service");
 
-export default async (req, res, next) => {
-  const categories = await ProductService.getAllCategories();
-  res.locals.categories = categories;
+module.exports = {
+  getCategory: async (req, res, next) => {
+    const categories = await ProductService.getAllCategories();
+    res.locals.categories = categories;
 
-  next();
+    next();
+  },
 };

@@ -1,29 +1,26 @@
 const productService = require("./product.service")
-
+const { matchedData } = require('express-validator');
+const ProductService = require('./product.service');
 
 module.exports = {
 
-  listAllProducts: async (req, res) => {
-    const categories = await productService.getAllCategories();
-    const brands = await productService.getAllBranches();
-    const products = await productService.listAllProducts();
-    res.render('pages/productList', { categories, brands, products });
+  getAllProducts: async (req, res) => {
+    const query = matchedData(req);
+  
+    const brands = await ProductService.getAllBrands();
+    const { count, products } = await ProductService.getAllProducts(query);
+
+    res.render('pages/products', { products, count, brands });
   },
 
   getProductById : async (req, res) => {
-    try {
-      const productId = parseInt(req.params.id); 
-      const product = await productService.getProductById(productId);
-      const products = await productService.listAllProducts();
-      const categories = await productService.getAllCategories();
-      if (!product) {
-        return res.status(404).json({ message: "Product not found" });
-      }
-      //res.status(200).json(product);
-      res.render('pages/productDetail', { categories: categories, products: product, relative: products });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    const { productId } = matchedData(req);
+
+    const product = await ProductService.getProductById(productId);
+
+    const products = await ProductService.getAllProducts();
+
+    res.render('pages/productDetail', { products: product, relative: products });
   },
 
 }

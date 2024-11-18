@@ -8,7 +8,9 @@ const app = express();
 require("express-async-errors");
 
 // import middlewares and routes
-const router = require("./components");
+const router = require('./components');
+const errorHandler = require('./libraries/errorHandler/errorHandler');
+const notFoundHandler = require('./libraries/errorHandler/notFoundHandler');
 
 // middlewares
 app.use(cors());
@@ -52,10 +54,9 @@ app.use("*", (_req, _res, next) => {
   next(err);
 });
 
-app.use((err, _req, res, _next) => {
-  console.error(err);
-  res.status(500).json(err);
-});
+// error handler
+app.use('*', notFoundHandler);
+app.use(errorHandler);
 
 // start server
 const PORT = process.env.PORT || 3000;
