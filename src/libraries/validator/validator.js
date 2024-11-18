@@ -1,5 +1,5 @@
-const { validationResult } = require('express-validator');
-const { BadRequestError } = require('../../core/ErrorResponse');
+const { validationResult } = require("express-validator");
+const { BadRequestError } = require("../../core/ErrorResponse");
 
 // can be reused by many routes
 const validate = (validations) => {
@@ -8,7 +8,7 @@ const validate = (validations) => {
     for (const validation of validations) {
       const result = await validation.run(req);
       if (!result.isEmpty()) {
-        throw new BadRequestError('Validation failed', result.array());
+        throw new BadRequestError("Validation failed", result.array());
       }
     }
 
@@ -19,7 +19,7 @@ const validate = (validations) => {
 const handleValidationErrors = (req, _res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new BadRequestError('Validation failed', errors.array());
+    throw new BadRequestError("Validation failed", errors.array());
   }
   next();
 };

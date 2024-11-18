@@ -2,9 +2,7 @@
   <div class="max-w-lg mx-auto shadow px-6 py-7 rounded overflow-hidden">
     <h2 class="text-2xl uppercase font-medium mb-1">Create an account</h2>
     <p class="text-gray-600 mb-6 text-sm">Register for new cosutumer</p>
-    <div class="error"></div>
-    <div class="success"></div>
-    <form action="/users/register" method="post" autocomplete="off">
+    <form id="registerForm" autocomplete="off">
       <div class="space-y-2">
         <div>
           <label for="username" class="text-gray-600 mb-2 block"
@@ -57,6 +55,10 @@
           </label>
         </div>
       </div>
+
+      <div id="errorMessage" class="text-red-500 text-sm hidden"></div>
+      <div id="successMessage" class="text-green-500 text-sm hidden"></div>
+
       <div class="mt-4">
         <button
           type="submit"
@@ -69,7 +71,7 @@
 
     <p class="mt-4 text-center text-gray-600">
       Already have account?
-      <a href="login.html" class="text-primary">Login now</a>
+      <a href="/users/login" class="text-primary">Login now</a>
     </p>
   </div>
 </div>
