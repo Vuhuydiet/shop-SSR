@@ -37,6 +37,11 @@ app.use(
     },
   })
 );
+// Set user variable in response locals
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null;
+  next();
+});
 
 // routes
 app.use("/", router);
