@@ -40,7 +40,7 @@ const queryValidator = () => {
     query('minQuantity')   .optional() .isNumeric().toInt(),
     query('maxQuantity')   .optional() .isNumeric().toInt(),
     query('sortBy')        .optional() .isString(),
-    query('order')         .optional() .isString(),
+    query('order')         .optional() .isString() .isIn(['asc', 'desc']),
     query('offset')        .optional() .isNumeric().toInt(),
     query('limit')         .optional() .isNumeric().toInt(),
   ];
