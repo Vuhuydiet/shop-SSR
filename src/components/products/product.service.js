@@ -1,7 +1,6 @@
-import { NotFoundError } from '../../core/ErrorResponse'
-import prisma from "../../models"
-import ImageService from '../image/image.service';
-import ShopService from '../shop/shop.service';
+const { NotFoundError } = require('../../core/ErrorResponse');
+const prisma = require("../../models");
+const ShopService = ('../shop/shop.service');
 
 
 /*
@@ -216,4 +215,4 @@ class ProductService {
   }
 }
 
-export default ProductService;
+module.exports = ProductService;

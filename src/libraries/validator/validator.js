@@ -1,6 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { ContextRunner, validationResult } from 'express-validator';
-import { BadRequestError } from '../../core/ErrorResponse';
+const { validationResult } = require('express-validator');
+const { BadRequestError } = require('../../core/ErrorResponse');
 
 // can be reused by many routes
 const validate = (validations) => {
@@ -25,4 +24,4 @@ const handleValidationErrors = (req, _res, next) => {
   next();
 };
 
-export { validate, handleValidationErrors };
+module.exports = { validate, handleValidationErrors };

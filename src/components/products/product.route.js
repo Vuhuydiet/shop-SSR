@@ -3,6 +3,7 @@ const router = express.Router();
 
 const productController = require('./product.controller');
 const { handleValidationErrors } = require('../../libraries/validator/validator');
+const { body, query, param } = require('express-validator');
 
 
 const productIdValidator = () => {
@@ -47,19 +48,13 @@ const queryValidator = () => {
 
 const keywordQueryValidator = () => {
   return [
-    query('keyword').isString(),
+    query('keyword').optional().isString(),
   ];
 }
 
-router.post(
-  '/',
-  productDataValidator(),
-  handleValidationErrors,
-  productController.createProduct
-);
-
 router.get(
   '/',
+  keywordQueryValidator(),
   queryValidator(),
   handleValidationErrors,
   productController.getAllProducts
