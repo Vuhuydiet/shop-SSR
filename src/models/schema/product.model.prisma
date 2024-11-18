@@ -1,7 +1,6 @@
 model Product {
     productId          Int      @id @default(autoincrement())
     productName        String
-    sellerId           Int
     currentPrice       Int
     originalPrice      Int
     quantity           Int      @default(0)
@@ -9,7 +8,9 @@ model Product {
     brand              String?
     productDescription String?
     numSoldProduct     Int      @default(0)
-    productImageUrl       String?
+    productImageUrl    String?
+    stars              Float    @default(1)
+    numReviews         Float
 
     categories ProductCategory[]
 }
