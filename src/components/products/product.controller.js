@@ -14,7 +14,7 @@ module.exports = {
   },
 
   getProductById : async (req, res) => {
-    const productId = parseInt(req.params.id); 
+    const { productId } = matchedData(req);
 
     const product = await ProductService.getProductById(productId);
 

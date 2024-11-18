@@ -45,24 +45,23 @@ type ProductQueryParams = {
 
 function getCondition(queryParams) {
   return {
-    sellerId: queryParams.shopId,
-    categories: queryParams.category ? {
+    categories: queryParams?.category ? {
       some: {
-        categoryId: queryParams.category
+        categoryId: queryParams?.category
       }
     } : undefined,
-    brand: queryParams.brand,
+    brand: queryParams?.brand,
     quantity: {
-      gte: queryParams.minQuantity,
-      lte: queryParams.maxQuantity
+      gte: queryParams?.minQuantity,
+      lte: queryParams?.maxQuantity
     },
     currentPrice: {
-      gte: queryParams.minPrice,
-      lte: queryParams.maxPrice
+      gte: queryParams?.minPrice,
+      lte: queryParams?.maxPrice
     },
     publishedAt: {
-      gte: queryParams.postedAfter,
-      lte: queryParams.postedBefore,
+      gte: queryParams?.postedAfter,
+      lte: queryParams?.postedBefore,
     },
   };
 }
@@ -164,12 +163,12 @@ class ProductService {
       }),
 
       prisma.product.findMany({
-        skip: queryParams.offset,
-        take: queryParams.limit,
+        skip: queryParams?.offset,
+        take: queryParams?.limit,
 
         where: getCondition(queryParams),
-        orderBy: queryParams.sortBy ? {
-          [queryParams.sortBy]: queryParams.order
+        orderBy: queryParams?.sortBy ? {
+          [queryParams?.sortBy]: queryParams?.order
         } : undefined,
 
         include: {
