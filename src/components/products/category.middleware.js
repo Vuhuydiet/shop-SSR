@@ -1,3 +1,4 @@
+const { handle } = require("express/lib/router");
 const ProductService = require("./product.service")
 
 module.exports = {
@@ -6,4 +7,5 @@ module.exports = {
     res.locals.categories = categories;
     next();
   }
+
 }
