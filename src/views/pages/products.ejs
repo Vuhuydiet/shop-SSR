@@ -24,7 +24,7 @@
     </button>
   </div>
   <!-- ./sidebar -->
-  <div class="col-span-1 bg-white px-4 pb-6 shadow rounded overflow-hiddenb hidden md:block">
+  <div class="col-span-1 bg-white px-4 pb-6 shadow rounded overflow-hidden hidden md:block">
     <div class="divide-y divide-gray-200 space-y-5">
       <div>
         <h3 class="text-xl text-gray-800 mb-3 uppercase font-medium">
@@ -102,10 +102,12 @@
       <% locals.products.forEach(product=> { %>
         <div class="bg-white shadow rounded overflow-hidden group">
           <div class="relative">
-            <img src="<%= product.productImageUrl %>" alt="product 1" class="w-full" />
+            <a href="/products/<%= product.productId %>">
+            <img src="<%= product.productImageUrl %>" alt="<%= product.productName %>" class="w-full" />
             <div
-              class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-            </div>
+            class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+          </div>
+        </a>
           </div>
           <div class="pt-4 pb-3 px-4">
             <a href="/products/<%= product.productId %>">
@@ -134,8 +136,8 @@
         <% }) %>
     </div>
   </div>
-
-  <!-- ./products -->
 </form>
+  <!-- ./products -->
 
+  
 <!-- ./shop wrapper -->
