@@ -157,16 +157,16 @@ class ProductService {
   }
 
   static async getAllProducts(queryParams) {
+    const condition = getCondition(queryParams);
     const [count, products] = await Promise.all([
       prisma.product.count({
-        where: getCondition(queryParams)
+        where: condition
       }),
-
       prisma.product.findMany({
         skip: queryParams?.offset,
         take: queryParams?.limit,
 
-        where: getCondition(queryParams),
+        where: condition,
         orderBy: queryParams?.sortBy ? {
           [queryParams?.sortBy]: queryParams?.order
         } : undefined,
@@ -176,7 +176,6 @@ class ProductService {
         }
       })
     ]);
-    
     return { count, products };
   }
 
