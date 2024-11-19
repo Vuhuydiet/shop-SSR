@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // static files
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static('public'));
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
