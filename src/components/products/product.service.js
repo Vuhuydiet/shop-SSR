@@ -164,12 +164,12 @@ class ProductService {
         : undefined,
       brand: queryParams.brands ? { in: queryParams.brands } : undefined,
       currentPrice: {
-        gte: queryParams.minPrice ? Number(queryParams.minPrice) : undefined,
-        lte: queryParams.maxPrice ? Number(queryParams.maxPrice) : undefined,
+        ...(queryParams.minPrice ? {gte: Number(queryParams.minPrice)} : {}),
+        ...(queryParams.maxPrice ? {lte: Number(queryParams.maxPrice)} : {}),
       },
     };
 
-    console.log('Filter condition:', condition);
+    //console.log('Filter condition:', condition);
 
     const [count, products] = await Promise.all([
       prisma.product.count({
