@@ -175,7 +175,6 @@ class ProductService {
       prisma.product.count({
         where: condition
       }),
-
       prisma.product.findMany({
         where: condition,
         skip: queryParams?.offset || 0,
@@ -189,7 +188,6 @@ class ProductService {
         }
       })
     ]);
-    
     return { count, products };
   }
 
