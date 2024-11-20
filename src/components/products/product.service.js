@@ -56,8 +56,8 @@ function getCondition(queryParams) {
       lte: queryParams?.maxQuantity
     },
     currentPrice: {
-      gte: queryParams?.minPrice,
-      lte: queryParams?.maxPrice
+      gte: queryParams?.minPrice || undefined,
+      lte: queryParams?.maxPrice || undefined,
     },
     publishedAt: {
       gte: queryParams?.postedAfter,
@@ -156,19 +156,31 @@ class ProductService {
     return product;
   }
 
-  static async getAllProducts(queryParams) {
-    const condition = getCondition(queryParams);
+  static async getAllProducts(queryParams = {}) {
+
+    const condition = {
+      categories: queryParams.categories
+        ? { some: { categoryId: { in: queryParams.categories.map(Number) } } }
+        : undefined,
+      brand: queryParams.brands ? { in: queryParams.brands } : undefined,
+      currentPrice: {
+        ...(queryParams.minPrice ? {gte: Number(queryParams.minPrice)} : {}),
+        ...(queryParams.maxPrice ? {lte: Number(queryParams.maxPrice)} : {}),
+      },
+    };
+
+    //console.log('Filter condition:', condition);
+
     const [count, products] = await Promise.all([
       prisma.product.count({
         where: condition
       }),
       prisma.product.findMany({
-        skip: queryParams?.offset,
-        take: queryParams?.limit,
-
         where: condition,
+        skip: queryParams?.offset || 0,
+        take: queryParams?.limit || 10,
         orderBy: queryParams?.sortBy ? {
-          [queryParams?.sortBy]: queryParams?.order
+          [queryParams?.sortBy]: queryParams?.order || 'asc'
         } : undefined,
 
         include: {

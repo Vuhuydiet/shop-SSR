@@ -16,6 +16,7 @@
 DATABASE_URL="postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DB_NAME>?schema=public"
 ```
 
+
 3. Install dependencies and run migrations:
 
 ```zsh
