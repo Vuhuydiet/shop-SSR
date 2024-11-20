@@ -14,6 +14,8 @@ const productIdValidator = () => {
 const queryValidator = () => {
   return [
     // query('category')      .optional() .isNumeric().toInt(),
+    query("page").optional().isNumeric().toInt(),
+    query("limit").optional().isNumeric().toInt(),
     query("categories")
       .optional()
       .custom((value) => {
@@ -44,6 +46,8 @@ const queryValidator = () => {
     query("postedBefore").optional().isISO8601().toDate(),
     query("minPrice").optional().isNumeric().toFloat(),
     query("maxPrice").optional().isNumeric().toFloat(),
+    query("minStar").optional().isNumeric().toFloat(),
+    query("maxStar").optional().isNumeric().toFloat(),
     query("minQuantity").optional().isNumeric().toInt(),
     query("maxQuantity").optional().isNumeric().toInt(),
     query("sortBy")

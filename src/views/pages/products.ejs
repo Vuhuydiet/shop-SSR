@@ -34,13 +34,9 @@
         <div class="space-y-2">
           <% locals.categories.forEach((category, idx)=> { %>
             <div class="flex items-center">
-              <input 
-                type="checkbox" 
-                name="categories" 
-                value="<%= category.categoryId %>" 
-                id="<%= `cat-${idx}` %>"
+              <input type="checkbox" name="categories" value="<%= category.categoryId %>" id="<%= `cat-${idx}` %>"
                 <%=locals.query && locals.query.categories?.includes(category.categoryId) ? 'checked' : '' %>
-                class="text-primary focus:ring-0 rounded-sm cursor-pointer" 
+              class="text-primary focus:ring-0 rounded-sm cursor-pointer"
               />
               <label for="<%= `cat-${idx}` %>" class="text-gray-600 ml-3 cursor-pointer">
                 <%= category.categoryName %>
@@ -79,6 +75,28 @@
         </div>
       </div>
 
+      <div class="pt-4">
+        <h3 class="text-xl text-gray-800 mb-3 uppercase font-medium">Star</h3>
+        <div class="mt-4 flex items-center">
+          <!--
+          <label for="minStars">Min Stars:</label>
+          <input type="number" name="minStars" min="0" max="5" step="0.1" />
+
+          <label for="maxStars">Max Stars:</label>
+          <input type="number" name="maxStars" min="0" max="5" step="0.1" />
+        -->
+          <input type="number" name="minStar" id="minStar" min="1" max="5" step="0.1"
+            value="<%= locals.query && locals.query.minStar || undefined %>"
+            class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
+            placeholder="min" />
+          <span class="mx-3 text-gray-500">-</span>
+          <input type="number" name="maxStar" id="maxStar" min="1" max="5" step="0.1"
+            value="<%= locals.query && locals.query.maxStar || undefined %>"
+            class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
+            placeholder="max" />
+        </div>
+      </div>
+
       <div class="mt-6 flex gap-3 border-b justify-items-end border-gray-200 pb-5 pt-5">
         <button type="submit"
           class="bg-primary border border-primary text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-primary transition">
@@ -96,10 +114,13 @@
     <div class="flex items-center mb-4">
       <select name="sortBy" id="sort" form="searchForm"
         class="w-44 text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-primary focus:border-primary">
-        <option value="" <%=locals.query && locals.query.sortBy === '' ? 'selected' : '' %>>Default sorting</option>
-        <option value="currentPrice-asc" <%=locals.query && locals.query.sortBy === 'currentPrice' && locals.query.order === 'asc' ? 'selected' : '' %>>Price low to high</option>
-        <option value="currentPrice-desc" <%=locals.query && locals.query.sortBy === 'currentPrice' && locals.query.order === 'desc' ? 'selected' : '' %>>Price high to low</option>
-        <option value="publishedAt-desc" <%=locals.query && locals.query.sortBy === 'publishedAt' && locals.query.order === 'desc' ? 'selected' : '' %>>Latest product</option>
+        <option value="" <%=locals.query && locals.query.sortBy==='' ? 'selected' : '' %>>Default sorting</option>
+        <option value="currentPrice-asc" <%=locals.query && locals.query.sortBy==='currentPrice' &&
+          locals.query.order==='asc' ? 'selected' : '' %>>Price low to high</option>
+        <option value="currentPrice-desc" <%=locals.query && locals.query.sortBy==='currentPrice' &&
+          locals.query.order==='desc' ? 'selected' : '' %>>Price high to low</option>
+        <option value="publishedAt-desc" <%=locals.query && locals.query.sortBy==='publishedAt' &&
+          locals.query.order==='desc' ? 'selected' : '' %>>Latest product</option>
       </select>
     </div>
 
@@ -108,15 +129,16 @@
         <div class="bg-white shadow rounded overflow-hidden group">
           <div class="relative">
             <a href="/products/<%= product.productId %>">
-            <img src="<%= product.productImageUrl %>" alt="<%= product.productName %>" class="w-full" />
-            <div
-            class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+              <img src="<%= product.productImageUrl %>" alt="<%= product.productName %>" class="w-full" />
+              <div
+                class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+              </div>
+            </a>
           </div>
-        </a>
-          </div>
-          <div class="pt-4 pb-3 px-4">
+          <div class="pt-4 pb-3 px-4 w-full">
             <a href="/products/<%= product.productId %>">
-              <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
+              <h4
+                class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition truncate whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
                 <%= product.productName %>
               </h4>
             </a>
@@ -132,7 +154,7 @@
               <div class="flex gap-1 text-sm text-yellow-400">
                 <span><i class="fa-solid fa-star"></i></span>
                 <span>
-                  <%= 4.5 %>
+                  <%= product.stars %>
                 </span>
               </div>
             </div>
@@ -141,49 +163,91 @@
         <% }) %>
     </div>
   </div>
-</form>
-  <!-- ./products -->
 
-  
+
+</form>
+<!-- Pagination Controls -->
+<div class="flex justify-center items-center space-x-2 mt-6">
+  <% if (currentPage> 1) { %>
+    <a href="?<%= `page=${currentPage - 1}&limit=${query.limit || 9}` %>"
+      class="px-4 py-2 bg-gray-300 text-gray-800 rounded">
+      Previous
+    </a>
+    <% } %>
+
+      <% for (let i=1; i <=totalPages; i++) { %>
+        <a href="?<%= `page=${i}&limit=${query.limit || 9}` %>"
+          class="px-4 py-2 rounded <%= currentPage === i ? 'bg-primary text-white' : 'bg-gray-300 text-gray-800' %>">
+          <%= i %>
+        </a>
+        <% } %>
+
+          <% if (currentPage < totalPages) { %>
+            <a href="?<%= `page=${currentPage + 1}&limit=${query.limit || 9}` %>"
+              class="px-4 py-2 bg-gray-300 text-gray-800 rounded">
+              Next
+            </a>
+            <% } %>
+</div>
+
+<!-- ./products -->
+
+
 <!-- ./shop wrapper -->
 
 
 <script>
   const form = document.getElementById('searchForm');
   form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(form);
-    console.log(formData);
-    const searchParams = new URLSearchParams();
-    if (formData.get('categories')) {
-      formData.getAll('categories').forEach(category => {
-        searchParams.append('categories', category);
-      });
-    }
-    if (formData.get('brands')) {
-      formData.getAll('brands').forEach(brand => {
-        searchParams.append('brands', brand);
-      });
-    }
-    if (formData.get('minPrice')) {
-      searchParams.append('minPrice', formData.get('minPrice'));
-    }
-    if (formData.get('maxPrice')) {
-      searchParams.append('maxPrice', formData.get('maxPrice'));
-    }
-    if (formData.get('sortBy')) {
-      const [sortBy, order] = formData.get('sortBy').split('-');
-      searchParams.append('sortBy', sortBy);
-      searchParams.append('order', order);
-    }
+    const minStars = parseFloat(document.getElementById('minStar').value);
+    const maxStars = parseFloat(document.getElementById('maxStar').value);
 
-    if (formData.get('order')) {
-      searchParams.append('order', formData.get('order'));
+    if (minStars > maxStars) {
+      e.preventDefault();
+      alert('Min Stars is less than or equal to Max Stars.');
     }
+    else {
+      e.preventDefault();
+      const formData = new FormData(form);
+      console.log(formData);
+      const searchParams = new URLSearchParams();
+      if (formData.get('categories')) {
+        formData.getAll('categories').forEach(category => {
+          searchParams.append('categories', category);
+        });
+      }
+      if (formData.get('brands')) {
+        formData.getAll('brands').forEach(brand => {
+          searchParams.append('brands', brand);
+        });
+      }
+      if (formData.get('minPrice')) {
+        searchParams.append('minPrice', formData.get('minPrice'));
+      }
+      if (formData.get('maxPrice')) {
+        searchParams.append('maxPrice', formData.get('maxPrice'));
+      }
+      if (formData.get('minStar')) {
+        searchParams.append('minStar', formData.get('minStar'));
+      }
+      if (formData.get('maxStar')) {
+        searchParams.append('maxStar', formData.get('maxStar'));
+      }
 
-    const search = searchParams.toString();
-    console.log(search)
-    window.location.href = `/products?${search}`;
+      if (formData.get('sortBy')) {
+        const [sortBy, order] = formData.get('sortBy').split('-');
+        searchParams.append('sortBy', sortBy);
+        searchParams.append('order', order);
+      }
+
+      if (formData.get('order')) {
+        searchParams.append('order', formData.get('order'));
+      }
+
+      const search = searchParams.toString();
+      console.log(search)
+      window.location.href = `/products?${search}`;
+    }
   });
 
 </script>

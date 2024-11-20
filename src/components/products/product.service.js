@@ -56,6 +56,10 @@ function getCondition(queryParams) {
       gte: queryParams?.minPrice || undefined,
       lte: queryParams?.maxPrice || undefined,
     },
+    stars: {
+      gte: queryParams?.minStar || undefined,
+      lte: queryParams?.maxStar || undefined,
+    },
     publishedAt: {
       gte: queryParams?.postedAfter,
       lte: queryParams?.postedBefore,
@@ -176,7 +180,7 @@ class ProductService {
       prisma.product.findMany({
         where: condition,
         skip: queryParams?.offset || 0,
-        take: queryParams?.limit || 10,
+        take: queryParams?.limit || 9,
         orderBy: queryParams?.sortBy
           ? {
               [queryParams?.sortBy]: queryParams?.order || "asc",
