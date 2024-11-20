@@ -11,8 +11,10 @@ require("express-async-errors");
 const router = require('./components');
 const errorHandler = require('./libraries/errorHandler/errorHandler');
 const notFoundHandler = require('./libraries/errorHandler/notFoundHandler');
+const morgan = require("morgan");
 
 // middlewares
+app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

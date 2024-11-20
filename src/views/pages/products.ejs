@@ -34,9 +34,14 @@
         <div class="space-y-2">
           <% locals.categories.forEach((category, idx)=> { %>
             <div class="flex items-center">
-              <input type="checkbox" name="categories" value="<%= category.categoryId %>" id="<%= `cat-${idx}` %>"
-                <%=locals.query && locals.query.categories?.includes(String(category.categoryId)) ? 'checked' : '' %>
-              class="text-primary focus:ring-0 rounded-sm cursor-pointer" />
+              <input 
+                type="checkbox" 
+                name="categories" 
+                value="<%= category.categoryId %>" 
+                id="<%= `cat-${idx}` %>"
+                <%=locals.query && locals.query.categories?.includes(category.categoryId) ? 'checked' : '' %>
+                class="text-primary focus:ring-0 rounded-sm cursor-pointer" 
+              />
               <label for="<%= `cat-${idx}` %>" class="text-gray-600 ml-3 cursor-pointer">
                 <%= category.categoryName %>
               </label>
@@ -64,11 +69,11 @@
       <div class="pt-4">
         <h3 class="text-xl text-gray-800 mb-3 uppercase font-medium">Price</h3>
         <div class="mt-4 flex items-center">
-          <input type="text" name="minPrice" id="min" value="<%= locals.query && locals.query.minPrice || '' %>"
+          <input type="text" name="minPrice" id="min" value="<%= locals.query && locals.query.minPrice || undefined %>"
             class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
             placeholder="min" />
           <span class="mx-3 text-gray-500">-</span>
-          <input type="text" name="maxPrice" id="max" value="<%= locals.query && locals.query.maxPrice || '' %>"
+          <input type="text" name="maxPrice" id="max" value="<%= locals.query && locals.query.maxPrice || undefined %>"
             class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
             placeholder="max" />
         </div>
@@ -141,3 +146,37 @@
 
   
 <!-- ./shop wrapper -->
+
+
+<script>
+  const form = document.getElementById('searchForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const searchParams = new URLSearchParams();
+    if (formData.get('categories')) {
+      formData.getAll('categories').forEach(category => {
+        searchParams.append('categories', category);
+      });
+    }
+    if (formData.get('brands')) {
+      formData.getAll('brands').forEach(brand => {
+        searchParams.append('brands', brand);
+      });
+    }
+    if (formData.get('minPrice')) {
+      searchParams.append('minPrice', formData.get('minPrice'));
+    }
+    if (formData.get('maxPrice')) {
+      searchParams.append('maxPrice', formData.get('maxPrice'));
+    }
+    if (formData.get('sortBy')) {
+      searchParams.append('sortBy', formData.get('sortBy'));
+    }
+
+    const search = searchParams.toString();
+    console.log(search)
+    window.location.href = `/products?${search}`;
+  });
+
+</script>
