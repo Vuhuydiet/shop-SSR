@@ -1,5 +1,5 @@
 const prisma = require("../../models");
-const { hash, compare } = require("bcrypt");
+const { hash, compare } = require("bcryptjs");
 const { z } = require("zod");
 const logger = require("../../libraries/logger");
 
