@@ -1,7 +1,6 @@
-const { NotFoundError } = require('../../core/ErrorResponse');
+const { NotFoundError } = require("../../core/ErrorResponse");
 const prisma = require("../../models");
-const ShopService = ('../shop/shop.service');
-
+const ShopService = "../shop/shop.service";
 
 /*
 
@@ -45,15 +44,13 @@ type ProductQueryParams = {
 
 function getCondition(queryParams) {
   return {
-    categories: queryParams?.category ? {
-      some: {
-        categoryId: queryParams?.category
-      }
-    } : undefined,
-    brand: queryParams?.brand,
+    categories: queryParams.categories
+      ? { some: { categoryId: { in: queryParams.categories.map(Number) } } }
+      : undefined,
+    brand: queryParams.brands ? { in: queryParams.brands } : undefined,
     quantity: {
       gte: queryParams?.minQuantity,
-      lte: queryParams?.maxQuantity
+      lte: queryParams?.maxQuantity,
     },
     currentPrice: {
       gte: queryParams?.minPrice || undefined,
@@ -67,30 +64,31 @@ function getCondition(queryParams) {
 }
 
 class ProductService {
-
   static async getAllBrands() {
-    return (await prisma.product.findMany({
-      select: {
-        brand: true
-      },
-      distinct: ['brand']
-    })).map(product => product.brand);
+    return (
+      await prisma.product.findMany({
+        select: {
+          brand: true,
+        },
+        distinct: ["brand"],
+      })
+    ).map((product) => product.brand);
   }
 
   static async createCategory({ name, description }) {
     return await prisma.productCategory.create({
       data: {
         categoryName: name,
-        description: description
-      }
+        description: description,
+      },
     });
   }
 
   static async getCategoryById(categoryId) {
     return await prisma.productCategory.findUnique({
       where: {
-        categoryId: categoryId
-      }
+        categoryId: categoryId,
+      },
     });
   }
 
@@ -101,20 +99,20 @@ class ProductService {
   static async updateCategory(categoryId, { name, description }) {
     return await prisma.productCategory.update({
       where: {
-        categoryId: categoryId
+        categoryId: categoryId,
       },
       data: {
         categoryName: name,
-        description: description
-      }
+        description: description,
+      },
     });
   }
 
   static async deleteCategory(categoryId) {
     await prisma.productCategory.delete({
       where: {
-        categoryId: categoryId
-      }
+        categoryId: categoryId,
+      },
     });
   }
 
@@ -131,12 +129,14 @@ class ProductService {
         brand: productData.brand,
         productImageUrl: productData.productImageUrl,
         categories: {
-          connect: productData.categories?.add?.map(category => ({ categoryId: category }))
+          connect: productData.categories?.add?.map((category) => ({
+            categoryId: category,
+          })),
         },
       },
       include: {
-        categories: true
-      }
+        categories: true,
+      },
     });
   }
 
@@ -147,51 +147,54 @@ class ProductService {
       },
       include: {
         categories: true,
-      }
+      },
     });
 
-    if (!product)
-      throw new NotFoundError('Product not found');
+    if (!product) throw new NotFoundError("Product not found");
 
     return product;
   }
 
   static async getAllProducts(queryParams = {}) {
+    // const condition = {
+    //   categories: queryParams.categories
+    //     ? { some: { categoryId: { in: queryParams.categories.map(Number) } } }
+    //     : undefined,
+    //   brand: queryParams.brands ? { in: queryParams.brands } : undefined,
+    //   currentPrice: {
+    //     ...(queryParams.minPrice ? { gte: Number(queryParams.minPrice) } : {}),
+    //     ...(queryParams.maxPrice ? { lte: Number(queryParams.maxPrice) } : {}),
+    //   },
+    // };
 
-    const condition = {
-      categories: queryParams.categories
-        ? { some: { categoryId: { in: queryParams.categories.map(Number) } } }
-        : undefined,
-      brand: queryParams.brands ? { in: queryParams.brands } : undefined,
-      currentPrice: {
-        ...(queryParams.minPrice ? {gte: Number(queryParams.minPrice)} : {}),
-        ...(queryParams.maxPrice ? {lte: Number(queryParams.maxPrice)} : {}),
-      },
-    };
-
-    //console.log('Filter condition:', condition);
+    const condition = getCondition(queryParams);
 
     const [count, products] = await Promise.all([
       prisma.product.count({
-        where: condition
+        where: condition,
       }),
       prisma.product.findMany({
         where: condition,
         skip: queryParams?.offset || 0,
         take: queryParams?.limit || 10,
-        orderBy: queryParams?.sortBy ? {
-          [queryParams?.sortBy]: queryParams?.order || 'asc'
-        } : undefined,
+        orderBy: queryParams?.sortBy
+          ? {
+              [queryParams?.sortBy]: queryParams?.order || "asc",
+            }
+          : undefined,
 
         include: {
-          categories: true
-        }
-      })
+          categories: true,
+        },
+      }),
     ]);
     return { count, products };
   }
 
-  static async updateProduct(productId, { name, description, quantity, price, brand, categories, imageUrl }) {
+  static async updateProduct(
+    productId,
+    { name, description, quantity, price, brand, categories, imageUrl }
+  ) {
     await this.getProductById(productId);
 
     return await tx.product.update({
@@ -207,10 +210,14 @@ class ProductService {
         productImageUrl: imageUrl,
 
         categories: {
-          connect: categories?.add?.map(category => ({ categoryId: category })),
-          disconnect: categories?.remove?.map(category => ({ categoryId: category }))
+          connect: categories?.add?.map((category) => ({
+            categoryId: category,
+          })),
+          disconnect: categories?.remove?.map((category) => ({
+            categoryId: category,
+          })),
         },
-      }
+      },
     });
   }
 
@@ -219,8 +226,8 @@ class ProductService {
 
     await tx.product.delete({
       where: {
-        productId: productId
-      }
+        productId: productId,
+      },
     });
   }
 }
