@@ -49,7 +49,6 @@ app.use(passport.session());
 // app.use(flash());
 // Set user variable in response locals
 app.use((req, res, next) => {
-  console.log(req);
   res.locals.user = req.user || null;
   next();
 });

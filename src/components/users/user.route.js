@@ -9,6 +9,7 @@ router.get("/login", userController.getLoginPage);
 router.post("/login", userController.postLogin);
 router.get("/logout", userController.logout);
 router.post("/updatePassword", userController.updatePassword);
+router.get("/confirm", userController.getConfirmUser);
 router.post("/confirm", userController.confirmUser);
 router.post("/resetPassword", userController.resetPassword);
 router.post("/updatePasswordConfirm", userController.updatePasswordWithToken);

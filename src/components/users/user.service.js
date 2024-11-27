@@ -71,10 +71,16 @@ const userService = {
   confirmUser: async (email, confirmationCode) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
+    // console.debug(
+    //   confirmationCode,
+    //   confirmationCode === user.confirmationCode,
+    //   user.confirmationCode
+    // );
+
     if (user && user.confirmationCode === confirmationCode) {
       await prisma.user.update({
         where: { email },
-        data: { isConfirmed: true, confirmationCode: null },
+        data: { confirmedAt: new Date().toISOString(), confirmationCode: null },
       });
       return true;
     }
@@ -122,7 +128,7 @@ const userService = {
     }
   },
 
-  getUserByEmail: async (email) => {
+  findUserByEmail: async (email) => {
     try {
       return await prisma.user.findUnique({ where: { email } });
     } catch (error) {

@@ -9,7 +9,7 @@ passport.use(
     { usernameField: "email", passwordField: "password" },
     async (email, password, done) => {
       try {
-        const user = await userService.getUserByEmail(email);
+        const user = await userService.findUserByIdUserByEmail(email);
         if (!user) {
           return done(null, false, {
             message: "Email or password is invalid.",

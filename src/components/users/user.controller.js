@@ -56,6 +56,7 @@ const postRegister = async (req, res) => {
       ok: true,
       message:
         "Registration successful. Please check your email to verify your account.",
+      redirectUrl: `/confirm?email=${encodeURIComponent(validatedData.email)}`,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -68,6 +69,7 @@ const postRegister = async (req, res) => {
       ok: false,
       message: error.message,
     });
+    console.error(error.message);
   }
 };
 
@@ -100,7 +102,7 @@ const postLogin = (req, res, next) => {
 
 const logout = async (req, res) => {
   req.session.destroy();
-  res.redirect("/login");
+  res.redirect("/");
 };
 
 const updatePassword = async (req, res) => {
@@ -126,7 +128,15 @@ const updatePassword = async (req, res) => {
       ok: false,
       message: error.message,
     });
+    console.error(error.message);
   }
+};
+
+const getConfirmUser = async (req, res) => {
+  const email = req.query.email;
+  const categories = await productService.getAllCategories();
+
+  res.render("pages/confirmCode", { categories: categories, email: email });
 };
 
 const confirmUser = async (req, res) => {
@@ -134,11 +144,26 @@ const confirmUser = async (req, res) => {
   try {
     const confirmed = await userService.confirmUser(email, confirmationCode);
     if (confirmed) {
-      res.status(200).json({ message: "Account confirmed successfully" });
+      const user = await userService.findUserByEmail(email);
+      req.logIn(user, (err) => {
+        if (err) {
+          return res.status(500).json({ message: "Internal Server Error" });
+        }
+        req.session.save((err) => {
+          if (err) {
+            return res.status(500).json({ message: "Internal Server Error" });
+          }
+          return res.status(200).json({
+            message: "Account confirmed and logged in successfully",
+            redirectUrl: "/",
+          });
+        });
+      });
     } else {
       res.status(400).json({ message: "Invalid confirmation code" });
     }
   } catch (error) {
+    console.error(error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -149,6 +174,7 @@ const resetPassword = async (req, res) => {
     await userService.resetPassword(email);
     res.status(200).json({ message: "Password reset email sent" });
   } catch (error) {
+    console.error(error.message);
     res.status(400).json({ message: error.message });
   }
 };
@@ -167,6 +193,7 @@ const updatePasswordWithToken = async (req, res) => {
       res.status(400).json({ message: "Invalid reset token" });
     }
   } catch (error) {
+    console.error(error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -178,6 +205,7 @@ const userController = {
   postLogin,
   logout,
   updatePassword,
+  getConfirmUser,
   confirmUser,
   resetPassword,
   updatePasswordWithToken,
