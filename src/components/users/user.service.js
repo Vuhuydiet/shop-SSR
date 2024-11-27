@@ -1,6 +1,10 @@
 const prisma = require("../../models");
-const { hash, compare } = require("bcryptjs");
+const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 const logger = require("../../libraries/logger");
+
+const SALT_ROUNDS = 12;
 
 class AuthenticationError extends Error {
   constructor(message, code) {
@@ -10,38 +14,105 @@ class AuthenticationError extends Error {
   }
 }
 
-const SALT_ROUNDS = 12;
+const generateToken = () => {
+  // return crypto.randomBytes(20).toString("hex");
+  const randomBytes = crypto.randomBytes(3);
+  const randomInt = randomBytes.readUIntBE(0, 3);
+  const token = randomInt.toString(16).padStart(6, "0");
 
-const authService = {
-  registerUser: async (username, password) => {
-    try {
-      const hashedPassword = await hash(password, SALT_ROUNDS);
+  return token;
+};
 
-      const user = await prisma.user.create({
-        data: {
-          username,
-          password: hashedPassword,
-          lastLogin: new Date(),
-        },
-        select: {
-          id: true,
-          username: true,
-          createdAt: true,
-        },
-      });
+const sendEmail = async (email, subject, text) => {
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
 
-      logger.info(`User registered successfully: ${username}`);
-      return user;
-    } catch (error) {
-      logger.error(`Error registering user: ${error.message}`);
-      throw error;
-    }
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: subject,
+    text: text,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// const generateConfirmationCode = () => crypto.randomBytes(4).toString("hex");
+
+const userService = {
+  registerUser: async (email, password) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const confirmationCode = generateToken();
+
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        confirmationCode,
+      },
+    });
+
+    await sendEmail(
+      email,
+      "Account Confirmation",
+      `Please confirm your account using the following code: ${confirmationCode}`
+    );
+    return user;
   },
 
-  userExists: async (username) => {
+  confirmUser: async (email, confirmationCode) => {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (user && user.confirmationCode === confirmationCode) {
+      await prisma.user.update({
+        where: { email },
+        data: { isConfirmed: true, confirmationCode: null },
+      });
+      return true;
+    }
+    return false;
+  },
+
+  resetPassword: async (email) => {
+    const resetPasswordToken = generateToken();
+    await prisma.user.update({
+      where: { email },
+      data: { resetPasswordToken },
+    });
+
+    await sendEmail(
+      email,
+      "Password Reset",
+      `Please reset your password using the following token: ${resetPasswordToken}`
+    );
+  },
+
+  updatePassword: async (email, resetPasswordToken, newPassword) => {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (user && user.resetPasswordToken === resetPasswordToken) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await prisma.user.update({
+        where: { email },
+        data: { password: hashedPassword, resetPasswordToken: null },
+      });
+      return true;
+    }
+    return false;
+  },
+
+  userExists: async (email) => {
     try {
       const user = await prisma.user.findUnique({
-        where: { username },
+        where: { email },
         select: { id: true },
       });
       return user !== null;
@@ -51,75 +122,23 @@ const authService = {
     }
   },
 
-  login: async (username, password) => {
+  getUserByEmail: async (email) => {
     try {
-      const user = await prisma.user.findUnique({
-        where: { username },
-      });
-
-      if (!user) {
-        throw new AuthenticationError(
-          "Invalid username or password",
-          "INVALID_CREDENTIALS"
-        );
-      }
-
-      const isValidPassword = await compare(password, user.password);
-      if (!isValidPassword) {
-        throw new AuthenticationError(
-          "Invalid username or password",
-          "INVALID_CREDENTIALS"
-        );
-      }
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { lastLogin: new Date() },
-      });
-
-      const { password: _, ...userData } = user;
-      logger.info(`User logged in successfully: ${username}`);
-      return userData;
+      return await prisma.user.findUnique({ where: { email } });
     } catch (error) {
-      if (error instanceof AuthenticationError) {
-        logger.warn(`Failed login attempt for user ${username}`);
-        throw error;
-      }
-      logger.error(`Error during login: ${error.message}`);
-      throw new AuthenticationError("Authentication failed", "AUTH_ERROR");
+      logger.error(`Error getting user by email: ${error.message}`);
+      throw error;
     }
   },
 
-  updatePassword: async (username, currentPassword, newPassword) => {
+  findUserById: async (userId) => {
     try {
-      const user = await prisma.user.findUnique({
-        where: { username },
-      });
-
-      if (!user) {
-        throw new AuthenticationError("User not found", "USER_NOT_FOUND");
-      }
-
-      const isValidPassword = await compare(currentPassword, user.password);
-      if (!isValidPassword) {
-        throw new AuthenticationError(
-          "Current password is incorrect",
-          "INVALID_PASSWORD"
-        );
-      }
-
-      const hashedPassword = await hash(newPassword, SALT_ROUNDS);
-      await prisma.user.update({
-        where: { username },
-        data: { password: hashedPassword },
-      });
-
-      logger.info(`Password updated successfully for user: ${username}`);
+      return await prisma.user.findUnique({ where: { id: userId } });
     } catch (error) {
-      logger.error(`Error updating password: ${error.message}`);
+      logger.error(`Error getting user by id: ${error.message}`);
       throw error;
     }
   },
 };
 
-module.exports = authService;
+module.exports = userService;

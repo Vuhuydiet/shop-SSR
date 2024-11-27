@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.getElementById("loginForm");
-  const usernameInput = document.getElementById("username");
+  const emailInput = document.getElementById("email");
   const passwordInput = document.getElementById("password");
   const errorDiv = document.getElementById("errorMessage");
   const successDiv = document.getElementById("successMessage");
@@ -17,10 +17,10 @@ document.addEventListener("DOMContentLoaded", function () {
     errorDiv.classList.add("hidden");
     successDiv.classList.add("hidden");
 
-    const username = usernameInput.value;
+    const email = emailInput.value;
     const password = passwordInput.value;
 
-    if (!username || !password) {
+    if (!email || !password) {
       errorDiv.textContent = "Please fill in all fields";
       errorDiv.classList.remove("hidden");
       return;
@@ -36,12 +36,12 @@ document.addEventListener("DOMContentLoaded", function () {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
-      if (data.ok) {
+      if (response.ok) {
         successDiv.textContent = "Login successful";
         successDiv.classList.remove("hidden");
 

@@ -1,17 +1,12 @@
+const express = require("express");
+const passport = require("passport");
 const userService = require("./user.service");
 const productService = require("../products/product.service");
 const { z } = require("zod");
+const router = express.Router();
 
-// Input validation schemas
 const userSchema = z.object({
-  username: z
-    .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(50, "Username must be less than 50 characters")
-    .regex(
-      /^[a-zA-Z0-9_-]+$/,
-      "Username can only contain letters, numbers, underscores, and hyphens"
-    ),
+  email: z.string().email("Invalid email address"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -37,111 +32,155 @@ const isNotAuthenticated = (req, res, next) => {
   next();
 };
 
-const userController = {
-  getRegisterPage: async (req, res) => {
-    const categories = await productService.getAllCategories();
-    res.render("pages/register", { categories: categories });
-  },
+// Controller methods
+const getRegisterPage = async (req, res) => {
+  const categories = await productService.getAllCategories();
+  res.render("pages/register", { categories: categories });
+};
 
-  postRegister: async (req, res) => {
-    const { username, password } = req.body;
+const postRegister = async (req, res) => {
+  const { email, password } = req.body;
 
-    try {
-      const validatedData = userSchema.parse({ username, password });
+  try {
+    const validatedData = userSchema.parse({ email, password });
 
-      if (await userService.userExists(validatedData.username)) {
-        return res.status(400).json({
-          message: "Username already exists",
-          ok: false,
-        });
-      }
-      await userService.registerUser(
-        validatedData.username,
-        validatedData.password
-      );
-
-      res.status(201).json({
-        ok: true,
-        message: "Registration successful",
-      });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({
-          ok: false,
-          message: error.errors[0].message,
-        });
-      }
-      res.status(400).json({
+    if (await userService.userExists(validatedData.email)) {
+      return res.status(400).json({
+        message: "This email already taken. Please choose a different one.",
         ok: false,
-        message: error.message,
       });
     }
-  },
+    await userService.registerUser(validatedData.email, validatedData.password);
 
-  getLoginPage: async (req, res) => {
-    const categories = await productService.getAllCategories();
-    res.render("pages/login", { categories: categories });
-  },
+    res.status(201).json({
+      ok: true,
+      message:
+        "Registration successful. Please check your email to verify your account.",
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        ok: false,
+        message: error.errors[0].message,
+      });
+    }
+    res.status(400).json({
+      ok: false,
+      message: error.message,
+    });
+  }
+};
 
-  postLogin: async (req, res) => {
-    try {
-      const { username, password } = req.body;
-      const validatedData = userSchema.parse({ username, password });
+const getLoginPage = async (req, res) => {
+  const categories = await productService.getAllCategories();
+  res.render("pages/login", { categories: categories });
+};
 
-      const user = await userService.login(
-        validatedData.username,
-        validatedData.password
-      );
-
-      req.session.user = user;
+const postLogin = (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+    if (!user) {
+      return res.status(400).json({ message: info.message });
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
       req.session.save((err) => {
         if (err) {
-          console.error("Session save error:", err);
-          return res.status(500).json({ message: "Internal server error" });
+          return res.status(500).json({ message: "Internal Server Error" });
         }
-        res.status(200).json({ ok: true, message: "Login successful" });
+        return res.status(200).json({ message: "Login successful" });
       });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({
-          ok: false,
-          message: error.errors[0].message,
-        });
-      }
-      res.status(401).json({ ok: false, message: error.message });
-    }
-  },
+    });
+  })(req, res, next);
+};
 
-  logout: async (req, res) => {
-    req.session.destroy();
-    res.redirect("/login");
-  },
+const logout = async (req, res) => {
+  req.session.destroy();
+  res.redirect("/login");
+};
 
-  updatePassword: async (req, res) => {
-    const { username, currentPassword, newPassword } = req.body;
+const updatePassword = async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
 
-    try {
-      userSchema.shape.password.parse(newPassword);
+  try {
+    userSchema.shape.password.parse(newPassword);
 
-      await userService.updatePassword(username, currentPassword, newPassword);
+    await userService.updatePassword(email, currentPassword, newPassword);
 
-      res.status(200).json({
-        ok: true,
-        message: "Password updated successfully",
-      });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({
-          ok: false,
-          message: error.errors[0].message,
-        });
-      }
-      res.status(400).json({
+    res.status(200).json({
+      ok: true,
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
         ok: false,
-        message: error.message,
+        message: error.errors[0].message,
       });
     }
-  },
+    res.status(400).json({
+      ok: false,
+      message: error.message,
+    });
+  }
+};
+
+const confirmUser = async (req, res) => {
+  const { email, confirmationCode } = req.body;
+  try {
+    const confirmed = await userService.confirmUser(email, confirmationCode);
+    if (confirmed) {
+      res.status(200).json({ message: "Account confirmed successfully" });
+    } else {
+      res.status(400).json({ message: "Invalid confirmation code" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    await userService.resetPassword(email);
+    res.status(200).json({ message: "Password reset email sent" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const updatePasswordWithToken = async (req, res) => {
+  const { email, resetPasswordToken, newPassword } = req.body;
+  try {
+    const updated = await userService.updatePassword(
+      email,
+      resetPasswordToken,
+      newPassword
+    );
+    if (updated) {
+      res.status(200).json({ message: "Password updated successfully" });
+    } else {
+      res.status(400).json({ message: "Invalid reset token" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const userController = {
+  getRegisterPage,
+  postRegister,
+  getLoginPage,
+  postLogin,
+  logout,
+  updatePassword,
+  confirmUser,
+  resetPassword,
+  updatePasswordWithToken,
 };
 
 module.exports = {
