@@ -45,8 +45,6 @@ const sendEmail = async (email, subject, text) => {
   await transporter.sendMail(mailOptions);
 };
 
-// const generateConfirmationCode = () => crypto.randomBytes(4).toString("hex");
-
 const userService = {
   registerUser: async (email, password) => {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -70,12 +68,6 @@ const userService = {
 
   confirmUser: async (email, confirmationCode) => {
     const user = await prisma.user.findUnique({ where: { email } });
-
-    // console.debug(
-    //   confirmationCode,
-    //   confirmationCode === user.confirmationCode,
-    //   user.confirmationCode
-    // );
 
     if (user && user.confirmationCode === confirmationCode) {
       await prisma.user.update({

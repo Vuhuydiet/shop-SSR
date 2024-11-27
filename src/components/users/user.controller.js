@@ -21,7 +21,7 @@ const isAuthenticated = (req, res, next) => {
   if (req.session && req.session.user) {
     return next();
   }
-  res.redirect("/login");
+  res.redirect("/users/login");
 };
 
 // Middleware to check if user is NOT authenticated (for login/register pages)
@@ -101,7 +101,9 @@ const postLogin = (req, res, next) => {
         if (err) {
           return res.status(500).json({ message: "Internal Server Error" });
         }
-        return res.status(200).json({ message: "Login successful" });
+        return res
+          .status(200)
+          .json({ message: "Login successful", redirectUrl: "/" });
       });
     });
   })(req, res, next);
