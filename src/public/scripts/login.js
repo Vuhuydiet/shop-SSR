@@ -30,27 +30,28 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    const formData = new FormData(loginForm);
+    const data = Object.fromEntries(formData.entries());
+
     try {
       const response = await fetch("/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(data),
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
       if (response.ok) {
-        successDiv.textContent = "Login successful";
-        successDiv.classList.remove("hidden");
-
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 1000);
+        window.location.href = result.redirectUrl;
       } else {
-        errorDiv.textContent = data.message;
+        errorDiv.textContent = result.message;
         errorDiv.classList.remove("hidden");
+        if (result.redirectUrl) {
+          window.location.href = result.redirectUrl;
+        }
       }
     } catch (error) {
       errorDiv.textContent = "An error occurred. Please try again.";

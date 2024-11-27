@@ -9,7 +9,7 @@ passport.use(
     { usernameField: "email", passwordField: "password" },
     async (email, password, done) => {
       try {
-        const user = await userService.findUserByIdUserByEmail(email);
+        const user = await userService.findUserByEmail(email);
         if (!user) {
           return done(null, false, {
             message: "Email or password is invalid.",
@@ -24,6 +24,7 @@ passport.use(
         if (!user.confirmedAt) {
           return done(null, false, {
             message: `We've sent a confirmation email to ${email}. Please check your inbox.`,
+            redirectUrl: `/users/confirm?email=${encodeURIComponent(email)}`,
           });
         }
         return done(null, user);

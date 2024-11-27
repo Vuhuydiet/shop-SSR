@@ -81,9 +81,16 @@ const getLoginPage = async (req, res) => {
 const postLogin = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
+      console.log(err);
       return res.status(500).json({ message: "Internal Server Error" });
     }
     if (!user) {
+      console.log(info);
+      if (info && info.redirectUrl) {
+        return res
+          .status(400)
+          .json({ message: info.message, redirectUrl: info.redirectUrl });
+      }
       return res.status(400).json({ message: info.message });
     }
     req.logIn(user, (err) => {
