@@ -1,0 +1,67 @@
+<div class="contain py-16">
+    <div class="max-w-lg mx-auto shadow px-6 py-7 rounded overflow-hidden">
+        <h1 class="text-2xl uppercase font-medium mb-1 text-center">Verify Code</h1>
+        <p class="text-center text-sm text-gray-600 mt-2">
+            Please enter the code we just sent to your email<br>
+            <span class="text-gray-800 font-medium">liuliu@email.com</span>
+        </p>
+        <form action="/verify-code" method="POST" class="mt-6 space-y-4">
+            <div class="flex justify-center gap-4">
+                <input type="text" maxlength="1"
+                    class="code-input w-12 h-12 text-center border rounded-md border-gray-300 text-gray-800 text-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required>
+                <input type="text" maxlength="1"
+                    class="code-input w-12 h-12 text-center border rounded-md border-gray-300 text-gray-800 text-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required>
+                <input type="text" maxlength="1"
+                    class="code-input w-12 h-12 text-center border rounded-md border-gray-300 text-gray-800 text-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required>
+                <input type="text" maxlength="1"
+                    class="code-input w-12 h-12 text-center border rounded-md border-gray-300 text-gray-800 text-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required>
+                <input type="text" maxlength="1"
+                    class="code-input w-12 h-12 text-center border rounded-md border-gray-300 text-gray-800 text-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required>
+                <input type="text" maxlength="1"
+                    class="code-input w-12 h-12 text-center border rounded-md border-gray-300 text-gray-800 text-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required>
+            </div>
+            <p class="text-sm text-center text-gray-600">
+                Didn’t receive OTP?
+                <a href="/#" class="text-primary">Resend code</a>
+            </p>
+            <div class="flex justify-center">
+                <button type="submit"
+                    class="block w-full py-2 text-center text-white bg-primary border border-primary rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium">
+                    Verify
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    const inputs = document.querySelectorAll(".code-input");
+
+    inputs.forEach((input, index) => {
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowRight") {
+                if (index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            } else if (event.key === "ArrowLeft") {
+                if (index > 0) {
+                    inputs[index - 1].focus();
+                }
+            } else if (event.key === "Backspace" && input.value === "") {
+                if (index > 0) {
+                    inputs[index - 1].focus();
+                }
+            }
+        });
+        input.addEventListener("input", () => {
+            if (input.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        });
+    });
+</script>
