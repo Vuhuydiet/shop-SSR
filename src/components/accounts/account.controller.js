@@ -1,6 +1,6 @@
 const express = require("express");
 const passport = require("passport");
-const userService = require("./account.service");
+const accountService = require("./account.service");
 const productService = require("../products/product.service");
 const { z } = require("zod");
 const router = express.Router();
@@ -18,7 +18,7 @@ const userSchema = z.object({
 
 // Middleware to check if user is authenticated
 const isAuthenticated = (req, res, next) => {
-  if (req.session && req.session.user) {
+  if (req.isAuthenticated()) {
     return next();
   }
   res.redirect("/users/login");
@@ -26,7 +26,7 @@ const isAuthenticated = (req, res, next) => {
 
 // Middleware to check if user is NOT authenticated (for login/register pages)
 const isNotAuthenticated = (req, res, next) => {
-  if (req.session && req.session.user) {
+  if (req.isAuthenticated()) {
     return res.redirect("/");
   }
   next();
@@ -44,13 +44,16 @@ const postRegister = async (req, res) => {
   try {
     const validatedData = userSchema.parse({ email, password });
 
-    if (await userService.userExists(validatedData.email)) {
+    if (await accountService.userExists(validatedData.email)) {
       return res.status(400).json({
         message: "This email already taken. Please choose a different one.",
         ok: false,
       });
     }
-    await userService.registerUser(validatedData.email, validatedData.password);
+    await accountService.registerUser(
+      validatedData.email,
+      validatedData.password
+    );
 
     res.status(201).json({
       ok: true,
@@ -120,7 +123,7 @@ const updatePassword = async (req, res) => {
   try {
     userSchema.shape.password.parse(newPassword);
 
-    await userService.updatePassword(email, currentPassword, newPassword);
+    await accountService.updatePassword(email, currentPassword, newPassword);
 
     res.status(200).json({
       ok: true,
@@ -151,9 +154,9 @@ const getConfirmUser = async (req, res) => {
 const confirmUser = async (req, res) => {
   const { email, confirmationCode } = req.body;
   try {
-    const confirmed = await userService.confirmUser(email, confirmationCode);
+    const confirmed = await accountService.confirmUser(email, confirmationCode);
     if (confirmed) {
-      const user = await userService.findUserByEmail(email);
+      const user = await accountService.findUserByEmail(email);
       req.logIn(user, (err) => {
         if (err) {
           return res.status(500).json({ message: "Internal Server Error" });
@@ -180,7 +183,7 @@ const confirmUser = async (req, res) => {
 const resetPassword = async (req, res) => {
   const { email } = req.body;
   try {
-    await userService.resetPassword(email);
+    await accountService.resetPassword(email);
     res.status(200).json({ message: "Password reset email sent" });
   } catch (error) {
     console.error(error.message);
@@ -191,7 +194,7 @@ const resetPassword = async (req, res) => {
 const updatePasswordWithToken = async (req, res) => {
   const { email, resetPasswordToken, newPassword } = req.body;
   try {
-    const updated = await userService.updatePassword(
+    const updated = await accountService.updatePassword(
       email,
       resetPasswordToken,
       newPassword
