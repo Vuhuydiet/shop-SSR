@@ -2,35 +2,8 @@ const express = require("express");
 const passport = require("passport");
 const accountService = require("./account.service");
 const productService = require("../products/product.service");
+const { userSchema } = require("./account.validationSchema");
 const { z } = require("zod");
-const router = express.Router();
-
-const userSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    ),
-});
-
-// Middleware to check if user is authenticated
-const isAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/users/login");
-};
-
-// Middleware to check if user is NOT authenticated (for login/register pages)
-const isNotAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return res.redirect("/");
-  }
-  next();
-};
 
 // Controller methods
 const getRegisterPage = async (req, res) => {
@@ -38,83 +11,9 @@ const getRegisterPage = async (req, res) => {
   res.render("pages/register", { categories: categories });
 };
 
-const postRegister = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const validatedData = userSchema.parse({ email, password });
-
-    if (await accountService.userExists(validatedData.email)) {
-      return res.status(400).json({
-        message: "This email already taken. Please choose a different one.",
-        ok: false,
-      });
-    }
-    await accountService.registerUser(
-      validatedData.email,
-      validatedData.password
-    );
-
-    res.status(201).json({
-      ok: true,
-      message:
-        "Registration successful. Please check your email to verify your account.",
-      redirectUrl: `/confirm?email=${encodeURIComponent(validatedData.email)}`,
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        ok: false,
-        message: error.errors[0].message,
-      });
-    }
-    res.status(400).json({
-      ok: false,
-      message: error.message,
-    });
-    console.error(error.message);
-  }
-};
-
 const getLoginPage = async (req, res) => {
   const categories = await productService.getAllCategories();
   res.render("pages/login", { categories: categories });
-};
-
-const postLogin = (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({ message: "Internal Server Error" });
-    }
-    if (!user) {
-      console.log(info);
-      if (info && info.redirectUrl) {
-        return res
-          .status(400)
-          .json({ message: info.message, redirectUrl: info.redirectUrl });
-      }
-      return res.status(400).json({ message: info.message });
-    }
-    req.logIn(user, (err) => {
-      if (err) {
-        return res.status(500).json({ message: "Internal Server Error" });
-      }
-      req.session.save((err) => {
-        if (err) {
-          return res.status(500).json({ message: "Internal Server Error" });
-        }
-        return res
-          .status(200)
-          .json({ message: "Login successful", redirectUrl: "/" });
-      });
-    });
-  })(req, res, next);
-};
-
-const logout = async (req, res) => {
-  req.session.destroy();
-  res.redirect("/");
 };
 
 const updatePassword = async (req, res) => {
@@ -136,10 +35,12 @@ const updatePassword = async (req, res) => {
         message: error.errors[0].message,
       });
     }
+
     res.status(400).json({
       ok: false,
       message: error.message,
     });
+
     console.error(error.message);
   }
 };
@@ -155,12 +56,15 @@ const confirmUser = async (req, res) => {
   const { email, confirmationCode } = req.body;
   try {
     const confirmed = await accountService.confirmUser(email, confirmationCode);
+
     if (confirmed) {
       const user = await accountService.findUserByEmail(email);
+
       req.logIn(user, (err) => {
         if (err) {
           return res.status(500).json({ message: "Internal Server Error" });
         }
+
         req.session.save((err) => {
           if (err) {
             return res.status(500).json({ message: "Internal Server Error" });
@@ -212,10 +116,7 @@ const updatePasswordWithToken = async (req, res) => {
 
 const accountController = {
   getRegisterPage,
-  postRegister,
   getLoginPage,
-  postLogin,
-  logout,
   updatePassword,
   getConfirmUser,
   confirmUser,
@@ -225,6 +126,4 @@ const accountController = {
 
 module.exports = {
   ...accountController,
-  isAuthenticated,
-  isNotAuthenticated,
 };

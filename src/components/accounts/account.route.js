@@ -2,18 +2,27 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const accountController = require("./account.controller");
+const authController = require("./authController");
+const { isAuthenticated, isNotAuthenticated } = require("./account.middleware");
 
-router.get("/register", accountController.getRegisterPage);
-router.post("/register", accountController.postRegister);
-router.get("/login", accountController.getLoginPage);
-router.post("/login", accountController.postLogin);
-router.get("/logout", accountController.logout);
-router.post("/updatePassword", accountController.updatePassword);
+// Auth routes
+router.post("/register", isNotAuthenticated, authController.postRegister);
+router.post("/login", isNotAuthenticated, authController.postLogin);
+router.get("/logout", isAuthenticated, authController.logout);
+
+// User routes
+router.get("/register", isNotAuthenticated, accountController.getRegisterPage);
+router.get("/login", isNotAuthenticated, accountController.getLoginPage);
+router.post(
+  "/update-password",
+  isAuthenticated,
+  accountController.updatePassword
+);
 router.get("/confirm", accountController.getConfirmUser);
 router.post("/confirm", accountController.confirmUser);
-router.post("/resetPassword", accountController.resetPassword);
+router.post("/reset-password", accountController.resetPassword);
 router.post(
-  "/updatePasswordConfirm",
+  "/update-password-with-token",
   accountController.updatePasswordWithToken
 );
 
