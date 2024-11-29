@@ -1,6 +1,6 @@
 const express = require("express");
 const passport = require("passport");
-const userService = require("./user.service");
+const userService = require("./account.service");
 const productService = require("../products/product.service");
 const { z } = require("zod");
 const router = express.Router();
@@ -207,7 +207,7 @@ const updatePasswordWithToken = async (req, res) => {
   }
 };
 
-const userController = {
+const accountController = {
   getRegisterPage,
   postRegister,
   getLoginPage,
@@ -221,7 +221,7 @@ const userController = {
 };
 
 module.exports = {
-  ...userController,
+  ...accountController,
   isAuthenticated,
   isNotAuthenticated,
 };

@@ -2,14 +2,14 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const bcrypt = require("bcryptjs");
-const userService = require("./user.service");
+const accountService = require("./account.service");
 
 passport.use(
   new LocalStrategy(
     { usernameField: "email", passwordField: "password" },
     async (email, password, done) => {
       try {
-        const user = await userService.findUserByEmail(email);
+        const user = await accountService.findUserByEmail(email);
         if (!user) {
           return done(null, false, {
             message: "Email or password is invalid.",
@@ -44,7 +44,7 @@ passport.use(
 //     },
 //     async (token, tokenSecret, profile, done) => {
 //       try {
-//         let user = await userService.findOrCreateGoogleUser(profile);
+//         let user = await accountService.findOrCreateGoogleUser(profile);
 //         return done(null, user);
 //       } catch (err) {
 //         return done(err);
@@ -59,7 +59,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await userService.findUserById(id);
+    const user = await accountService.findUserById(id);
     done(null, user);
   } catch (err) {
     done(err);

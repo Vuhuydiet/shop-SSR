@@ -3,7 +3,7 @@ const cors = require("cors");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
-const passport = require("./components/users/passport");
+const passport = require("./components/accounts/passport");
 const flash = require("connect-flash");
 const app = express();
 
@@ -46,7 +46,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use(flash());
 // Set user variable in response locals
 app.use((req, res, next) => {
   res.locals.user = req.user || null;

@@ -45,7 +45,7 @@ const sendEmail = async (email, subject, text) => {
   await transporter.sendMail(mailOptions);
 };
 
-const userService = {
+const accountService = {
   registerUser: async (email, password) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const confirmationCode = generateToken();
@@ -139,4 +139,4 @@ const userService = {
   },
 };
 
-module.exports = userService;
+module.exports = accountService;

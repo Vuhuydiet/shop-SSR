@@ -3,7 +3,7 @@ const router = express.Router();
 
 const categoryMiddleware = require("./products/category.middleware");
 const homeRouter = require("./home/home.route");
-const userRouter = require("./users/user.route");
+const userRouter = require("./accounts/account.route");
 const productRouter = require("./products/product.route");
 
 router.use("/", categoryMiddleware.getCategory);
