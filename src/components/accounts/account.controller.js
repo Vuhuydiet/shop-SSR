@@ -22,8 +22,7 @@ const updatePassword = async (req, res) => {
     userSchema.shape.password.parse(newPassword);
   } catch (error) {
     throw new BadRequestError({
-      message: "Validation failed",
-      error: error.errors[0].message,
+      message: error.errors[0].message,
     });
   }
   await accountService.updatePassword(email, currentPassword, newPassword);
