@@ -17,6 +17,9 @@ const errorHandler = require("./libraries/errorHandler/errorHandler");
 const notFoundHandler = require("./libraries/errorHandler/notFoundHandler");
 const morgan = require("morgan");
 
+const pgSession = require('connect-pg-simple')(session);
+const { Pool } = require("pg");
+
 // middlewares
 app.use(morgan("dev"));
 app.use(cors());
@@ -37,6 +40,10 @@ app.set("layout", "components/layout");
 // session middleware
 app.use(
   session({
+    store: new pgSession({
+      pool: new Pool({connectionString: env.DATABASE_URL}),
+      tableName: "session",
+    }),
     secret: env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
