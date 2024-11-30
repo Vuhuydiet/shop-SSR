@@ -1,18 +1,20 @@
 const prisma = require("../../models");
 const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const logger = require("../../libraries/logger");
+const { getHashedPassword } = require("./password");
+const env = require("../../config/env");
+const { InternalServerError } = require("../../core/ErrorResponse");
 
-const SALT_ROUNDS = 12;
+// const SALT_ROUNDS = 12;
 
-class AuthenticationError extends Error {
-  constructor(message, code) {
-    super(message);
-    this.name = "AuthenticationError";
-    this.code = code;
-  }
-}
+// class AuthenticationError extends Error {
+//   constructor(message, code) {
+//     super(message);
+//     this.name = "AuthenticationError";
+//     this.code = code;
+//   }
+// }
 
 const generateToken = () => {
   // return crypto.randomBytes(20).toString("hex");
@@ -30,13 +32,13 @@ const sendEmail = async (email, subject, text) => {
     port: 465,
     secure: true,
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: env.EMAIL_USER,
+      pass: env.EMAIL_PASS,
     },
   });
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: env.EMAIL_USER,
     to: email,
     subject: subject,
     text: text,
@@ -47,7 +49,7 @@ const sendEmail = async (email, subject, text) => {
 
 const accountService = {
   registerUser: async (email, password) => {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = getHashedPassword(password);
     const confirmationCode = generateToken();
 
     const user = await prisma.user.create({
@@ -97,7 +99,7 @@ const accountService = {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (user && user.resetPasswordToken === resetPasswordToken) {
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const hashedPassword = getHashedPassword(newPassword);
       await prisma.user.update({
         where: { email },
         data: { password: hashedPassword, resetPasswordToken: null },
@@ -116,7 +118,7 @@ const accountService = {
       return user !== null;
     } catch (error) {
       logger.error(`Error checking user existence: ${error.message}`);
-      throw error;
+      throw new InternalServerError({ error: err });
     }
   },
 
@@ -125,7 +127,7 @@ const accountService = {
       return await prisma.user.findUnique({ where: { email } });
     } catch (error) {
       logger.error(`Error getting user by email: ${error.message}`);
-      throw error;
+      throw new InternalServerError({ error: err });
     }
   },
 
@@ -134,7 +136,7 @@ const accountService = {
       return await prisma.user.findUnique({ where: { id: userId } });
     } catch (error) {
       logger.error(`Error getting user by id: ${error.message}`);
-      throw error;
+      throw new InternalServerError({ error: err });
     }
   },
 };

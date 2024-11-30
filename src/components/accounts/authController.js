@@ -1,44 +1,42 @@
 // controllers/authController.js
 const passport = require("passport");
-const { userSchema } = require("./account.validationSchema");
+const { accountSchema } = require("./account.validationSchema");
 const accountService = require("./account.service");
+const {
+  BadRequestError,
+  InternalServerError,
+} = require("../../core/ErrorResponse");
+const { CreatedResponse, OKResponse } = require("../../core/SuccessResponse");
 
 const postRegister = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const validatedData = userSchema.parse({ email, password });
-
-    if (await accountService.userExists(validatedData.email)) {
-      return res.status(400).json({
-        message: "This email already taken. Please choose a different one.",
-        ok: false,
-      });
-    }
-    await accountService.registerUser(
-      validatedData.email,
-      validatedData.password
-    );
-
-    res.status(201).json({
-      ok: true,
-      message:
-        "Registration successful. Please check your email to verify your account.",
-      redirectUrl: `/confirm?email=${encodeURIComponent(validatedData.email)}`,
-    });
+    accountSchema.parse({ email, password });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        ok: false,
-        message: error.errors[0].message,
-      });
-    }
-    res.status(400).json({
-      ok: false,
-      message: error.message,
+    throw new BadRequestError({
+      message: "Validation failed",
+      error: error,
     });
-    console.error(error.message);
   }
+
+  if (await accountService.userExists(email)) {
+    throw new BadRequestError({
+      message: "This email already taken. Please choose a different one.",
+    });
+  }
+  await accountService.registerUser(
+    email,
+    password
+  );
+
+  new CreatedResponse({
+    message:
+      "Registration successful. Please check your email to verify your account.",
+    metadata: {
+      redirectUrl: `/users/confirm?email=${(email)}`,
+    },
+  }).send(res);
 };
 
 const postLogin = (req, res, next) => {
@@ -49,26 +47,38 @@ const postLogin = (req, res, next) => {
     }
 
     if (!user) {
-      console.error(info);
       if (info && info.redirectUrl) {
-        return res
-          .status(400)
-          .json({ message: info.message, redirectUrl: info.redirectUrl });
+        // throw new BadRequestError({
+        //   message: info.message,
+        //   error: { redirectUrl: info.redirectUrl },
+        // });
+        res.status(400).json({ message: info.message, redirectUrl: info.redirectUrl });
       }
-      return res.status(400).json({ message: info.message });
+
+      // throw new BadRequestError({ message: info.message });
+      res.status(400).json({ message: info.message });
     }
 
     req.logIn(user, (err) => {
       if (err) {
-        return res.status(500).json({ message: "Internal Server Error" });
+        // throw new InternalServerError({ error: err });
+        // res.status(500).json({ message: "Internal Server Error" });
+        console.error(err);
+        return;
       }
+
       req.session.save((err) => {
         if (err) {
-          return res.status(500).json({ message: "Internal Server Error" });
+          // throw new InternalServerError({ error: err });
+          // throw new Error(err);
+          console.error(err);
+        return;
         }
-        return res
-          .status(200)
-          .json({ message: "Login successful", redirectUrl: "/" });
+
+        new OKResponse({
+          message: "Login successful",
+          metadata: { redirectUrl: "/" },
+        }).send(res);
       });
     });
   })(req, res, next);
@@ -77,11 +87,11 @@ const postLogin = (req, res, next) => {
 const logout = async (req, res) => {
   req.logout((err) => {
     if (err) {
-      return res.status(500).json({ message: "Internal Server Error" });
+      throw new InternalServerError({ error: err });
     }
     req.session.destroy((err) => {
       if (err) {
-        return res.status(500).json({ message: "Internal Server Error" });
+        throw new InternalServerError({ error: err });
       }
       res.redirect("/");
     });

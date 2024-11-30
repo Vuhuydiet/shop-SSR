@@ -17,7 +17,6 @@ registerForm.addEventListener("submit", async (event) => {
   if (!email || !password || !confirmPassword) {
     errorDiv.textContent = "Please fill in all fields";
     errorDiv.classList.remove("hidden");
-    console.log(1);
     return;
   }
 
@@ -41,16 +40,17 @@ registerForm.addEventListener("submit", async (event) => {
       },
       body: JSON.stringify({ email, password }),
     });
-    console.log(response);
-
     const data = await response.json();
-    if (data.ok) {
+    console.log(data);
+    if (response.ok) {
       successDiv.textContent = data.message;
       successDiv.classList.remove("hidden");
 
-      setTimeout(() => {
-        window.location.href = "/users/login";
-      }, 2000);
+      window.location.href = data.metadata.redirectUrl;
+
+      // setTimeout(() => {
+      //   window.location.href = "/users/login";
+      // }, 2000);
     } else {
       errorDiv.textContent = data.message;
       errorDiv.classList.remove("hidden");

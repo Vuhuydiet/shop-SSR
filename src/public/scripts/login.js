@@ -45,12 +45,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const result = await response.json();
 
       if (response.ok) {
-        window.location.href = result.redirectUrl;
+        window.location.href = result.metadata.redirectUrl;
       } else {
         errorDiv.textContent = result.message;
         errorDiv.classList.remove("hidden");
         if (result.redirectUrl) {
-          window.location.href = result.redirectUrl;
+          window.location.href = result.error.redirectUrl;
         }
       }
     } catch (error) {

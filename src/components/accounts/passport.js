@@ -1,8 +1,8 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const bcrypt = require("bcryptjs");
 const accountService = require("./account.service");
+const { validatePassword } = require("./password");
 
 passport.use(
   new LocalStrategy(
@@ -15,7 +15,7 @@ passport.use(
             message: "Email or password is invalid.",
           });
         }
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = validatePassword(password, user.password);
         if (!isMatch) {
           return done(null, false, {
             message: "Email or password is invalid.",
@@ -24,7 +24,7 @@ passport.use(
         if (!user.confirmedAt) {
           return done(null, false, {
             message: `We've sent a confirmation email to ${email}. Please check your inbox.`,
-            redirectUrl: `/users/confirm?email=${encodeURIComponent(email)}`,
+            redirectUrl: `/users/confirm?email=${(email)}`,
           });
         }
         return done(null, user);
@@ -62,7 +62,7 @@ passport.deserializeUser(async (id, done) => {
     const user = await accountService.findUserById(id);
     done(null, user);
   } catch (err) {
-    done(err);
+    done(err, false);
   }
 });
 

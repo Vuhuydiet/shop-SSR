@@ -6,6 +6,7 @@ const session = require("express-session");
 const passport = require("./components/accounts/passport");
 const flash = require("connect-flash");
 const app = express();
+const env = require("./config/env");
 
 require("express-async-errors");
 
@@ -34,11 +35,11 @@ app.set("layout", "components/layout");
 // session middleware
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "your-secret-key",
+    secret: env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: env.NODE_ENV === "production",
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
