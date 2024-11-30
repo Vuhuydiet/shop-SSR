@@ -24,6 +24,8 @@ npm install
 npm run prisma:gen
 npm run prisma:migrate:dev
 npm run seed                 # For seeding data
+
+psql -U <username> -d <db name> < node_modules/connect-pg-simple/table.sql
 ```
 
 4. Start the server:
