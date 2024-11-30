@@ -4,7 +4,7 @@ const successDiv = document.getElementById("successMessage");
 
 registerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const username = document.getElementById("username").value;
+  const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirm").value;
   const agree = document.getElementById("agreement").checked;
@@ -14,10 +14,9 @@ registerForm.addEventListener("submit", async (event) => {
   errorDiv.classList.add("hidden");
   successDiv.classList.add("hidden");
 
-  if (!username || !password || !confirmPassword) {
+  if (!email || !password || !confirmPassword) {
     errorDiv.textContent = "Please fill in all fields";
     errorDiv.classList.remove("hidden");
-    console.log(1);
     return;
   }
 
@@ -39,18 +38,19 @@ registerForm.addEventListener("submit", async (event) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
-    console.log(response);
-
     const data = await response.json();
-    if (data.ok) {
+    console.log(data);
+    if (response.ok) {
       successDiv.textContent = data.message;
       successDiv.classList.remove("hidden");
 
-      setTimeout(() => {
-        window.location.href = "/users/login";
-      }, 2000);
+      window.location.href = data.metadata.redirectUrl;
+
+      // setTimeout(() => {
+      //   window.location.href = "/users/login";
+      // }, 2000);
     } else {
       errorDiv.textContent = data.message;
       errorDiv.classList.remove("hidden");

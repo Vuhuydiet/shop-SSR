@@ -37,31 +37,31 @@ class RequestError extends Error {
 }
 
 class NotFoundError extends RequestError {
-  constructor(message = ErrorMessage.NOT_FOUND, error) {
+  constructor({ message = ErrorMessage.NOT_FOUND, error }) {
     super({ statusCode: ErrorStatusCode.NOT_FOUND, message, error });
   }
 }
 
 class BadRequestError extends RequestError {
-  constructor(message = ErrorMessage.BAD_REQUEST, error) {
+  constructor({ message = ErrorMessage.BAD_REQUEST, error }) {
     super({ statusCode: ErrorStatusCode.BAD_REQUEST, message, error });
   }
 }
 
 class UnauthorizedError extends RequestError {
-  constructor(message= ErrorMessage.UNAUTHORIZED, error) {
+  constructor({ message= ErrorMessage.UNAUTHORIZED, error }) {
     super({ statusCode: ErrorStatusCode.UNAUTHORIZED, message, error });
   }
 }
 
 class ForbiddenError extends RequestError {
-  constructor(message = ErrorMessage.FORBIDDEN, error) {
+  constructor({ message = ErrorMessage.FORBIDDEN, error }) {
     super({ statusCode: ErrorStatusCode.FORBIDDEN, message, error });
   }
 }
 
 class InternalServerError extends RequestError {
-  constructor(message = ErrorMessage.INTERNAL_SERVER_ERROR, error) {
+  constructor({ message = ErrorMessage.INTERNAL_SERVER_ERROR, error }) {
     super({ statusCode: ErrorStatusCode.INTERNAL_SERVER_ERROR, message, error });
   }
 }
