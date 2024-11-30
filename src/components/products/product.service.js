@@ -154,7 +154,7 @@ class ProductService {
       },
     });
 
-    if (!product) throw new NotFoundError("Product not found");
+    if (!product) throw new NotFoundError({ message: "Product not found" });
 
     return product;
   }

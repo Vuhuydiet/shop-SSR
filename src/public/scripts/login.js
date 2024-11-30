@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.getElementById("loginForm");
-  const usernameInput = document.getElementById("username");
+  const emailInput = document.getElementById("email");
   const passwordInput = document.getElementById("password");
   const errorDiv = document.getElementById("errorMessage");
   const successDiv = document.getElementById("successMessage");
@@ -17,10 +17,10 @@ document.addEventListener("DOMContentLoaded", function () {
     errorDiv.classList.add("hidden");
     successDiv.classList.add("hidden");
 
-    const username = usernameInput.value;
+    const email = emailInput.value;
     const password = passwordInput.value;
 
-    if (!username || !password) {
+    if (!email || !password) {
       errorDiv.textContent = "Please fill in all fields";
       errorDiv.classList.remove("hidden");
       return;
@@ -30,27 +30,28 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    const formData = new FormData(loginForm);
+    const data = Object.fromEntries(formData.entries());
+
     try {
       const response = await fetch("/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(data),
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
-      if (data.ok) {
-        successDiv.textContent = "Login successful";
-        successDiv.classList.remove("hidden");
-
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 1000);
+      if (response.ok) {
+        window.location.href = result.metadata.redirectUrl;
       } else {
-        errorDiv.textContent = data.message;
+        errorDiv.textContent = result.message;
         errorDiv.classList.remove("hidden");
+        if (result.redirectUrl) {
+          window.location.href = result.error.redirectUrl;
+        }
       }
     } catch (error) {
       errorDiv.textContent = "An error occurred. Please try again.";

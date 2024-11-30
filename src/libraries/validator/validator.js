@@ -8,7 +8,7 @@ const validate = (validations) => {
     for (const validation of validations) {
       const result = await validation.run(req);
       if (!result.isEmpty()) {
-        throw new BadRequestError("Validation failed", result.array());
+        throw new BadRequestError({ message: "Validation failed", error: result.array() });
       }
     }
 
@@ -19,7 +19,7 @@ const validate = (validations) => {
 const handleValidationErrors = (req, _res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new BadRequestError("Validation failed", errors.array());
+    throw new BadRequestError({ message: "Validation failed", error: errors.array() });
   }
   next();
 };
