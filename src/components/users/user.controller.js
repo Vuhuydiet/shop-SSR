@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const userService = require("./user.service");
 const productService = require("../products/product.service");
 
@@ -58,12 +59,25 @@ const userController = {
       const { username, password } = req.body;
       const user = await userService.login(username, password);
 
+      const token = jwt.sign(
+        { id: user.id, username: user.username }, 
+        "SECRET_KEY", 
+        { expiresIn: "1h" } 
+      );
+
       req.session.user = user;
       req.session.save((err) => {
         if (err) {
           console.error("Session save error:", err);
           return res.status(500).json({ message: "Internal server error" });
         }
+
+        res.cookie("token", token, {
+          httpOnly: true, 
+          secure: process.env.NODE_ENV === "production", 
+          maxAge: 60 * 60 * 1000, 
+        });
+
         res.status(200).json({ ok: true, message: "Login successful" });
       });
     } catch (error) {
@@ -73,6 +87,7 @@ const userController = {
 
   logout: async (req, res) => {
     req.session.destroy();
+    res.clearCookie("token"); 
     res.redirect("/");
   },
 };

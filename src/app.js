@@ -4,6 +4,7 @@ const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const app = express();
+const cookieParser = require('cookie-parser');
 
 require("express-async-errors");
 
@@ -17,6 +18,7 @@ const morgan = require("morgan");
 app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 // static files
