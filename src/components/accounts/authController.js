@@ -15,8 +15,7 @@ const postRegister = async (req, res) => {
     accountSchema.parse({ email, password });
   } catch (error) {
     throw new BadRequestError({
-      message: "Validation failed",
-      error: error,
+      message: error.errors[0].message,
     });
   }
 
