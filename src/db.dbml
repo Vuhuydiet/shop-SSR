@@ -1,0 +1,162 @@
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
+Table User {
+  userId int [primary key, increment]
+  status UserStatus 
+  
+  email string [unique, not null]
+  hashedPassword string [not null]
+  
+  createdAt datetime [not null]
+  lastLogin datetime
+  phoneNumber string
+
+  avatarUrl string
+  publicImgId string
+  
+  oauthProvider string
+  oauthId string [unique]
+  oauthToken string
+}
+
+Table ShippingAddress {
+  addressId int [primary key, increment]
+  userId int
+  country string
+  city string
+  district string
+  ward string
+  detailAddress string
+}
+
+Table Category {
+  categoryId int [primary key]
+  categoryName string [not null]
+  description string
+}
+
+Table Brand {
+  brandId int [primary key]
+  brandName string [not null]
+  description string
+
+  imageUrl string
+  publicImgId string
+}
+
+enum ProductStatus {
+  PUBLISHED
+  UNPUBLISHED
+  DELETED
+}
+
+Table Product {
+  productId int [primary key, increment]
+  productName string [not null]
+  currentPrice int
+  originalPrice int [not null]
+  stock int [default: 0]
+  publishedAt datetime [not null]
+  updatedAt datetime
+  productDescription string
+  status ProductStatus [not null]
+
+  categoryId int 
+  brandId int
+  
+  soldQuantity int [default: 0]
+  stars decimal [default: 0]
+  numReviews decimal
+}
+
+Table ProductImage {
+  imageId Guid [primary key]
+  productId int
+
+  publicId string [not null]
+  url string [not null]
+}
+
+Table Review {
+  reviewId int [primary key, increment]
+  userId int
+  productId int
+  reviewContent string [not null]
+  stars decimal [not null]
+  createdAt datetime [not null]
+}
+
+enum OrderStatus {
+  PENDING
+  CANCELLED
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+}
+
+Table Order {
+  orderId int [primary key, increment]
+  userId int
+  totalPrice int
+  orderStatus OrderStatus [default: PENDING]
+  createdAt datetime
+
+  country string
+  city string
+  district string
+  ward string
+  addressDetail string // so nha, ten duong
+}
+
+Table OrderDetail {
+  orderDetailId int [primary key, increment]
+  orderId int
+  productId int
+  quantity int
+  priceAtPurchase float
+}
+
+Table CartItem {
+  cartItemId int [primary key, increment]
+  userId int
+  productId int
+  quantity int
+  createdAt datetime
+}
+
+Table Admin {
+  adminId int [primary key, increment]
+  fullname string
+  
+  username string [not null]
+  hashedPassword string [not null]
+}
+
+Table Payment {
+  paymentId int [primary key, increment]
+  orderId int
+  paymentMethod string
+  paymentStatus string
+  createdAt datetime
+}
+
+Ref: Product.categoryId > Category.categoryId
+Ref: Product.brandId > Brand.brandId
+
+
+Ref: Order.userId > User.userId
+Ref: OrderDetail.orderId > Order.orderId
+Ref: OrderDetail.productId > Product.productId
+
+Ref: ProductImage.productId > Product.productId
+
+Ref: ShippingAddress.userId > User.userId
+
+Ref: Review.userId > User.userId
+Ref: Review.productId > Product.productId
+
+Ref: CartItem.userId > User.userId
