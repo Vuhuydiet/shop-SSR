@@ -147,11 +147,10 @@
             <div class="text-xs text-gray-500 ml-3">(<%= product.numReviews %>)</div>
           </div>
         </div>
-        <a
-          href="#"
-          class="block w-full py-1 text-center text-white bg-primary border border-primary rounded-b hover:bg-transparent hover:text-primary transition"
-          >Add to cart</a
-        >
+        <button
+          class="item-<%= product.productId %> add-to-cart block w-full py-1 text-center text-white bg-primary border border-primary rounded-b hover:bg-transparent hover:text-primary transition"
+          >Add to cart
+        </button>
       </div>
     <% }) %>
     
@@ -216,14 +215,45 @@
             <div class="text-xs text-gray-500 ml-3">(product.numReviews)</div>
           </div>
         </div>
-        <a
-          href="#"
-          class="block w-full py-1 text-center text-white bg-primary border border-primary rounded-b hover:bg-transparent hover:text-primary transition"
-          >Add to cart</a
-        >
+        <button
+          class="item-<%= product.productId %> add-to-cart block w-full py-1 text-center text-white bg-primary border border-primary rounded-b hover:bg-transparent hover:text-primary transition"
+          >Add to cart
+        </button>
       </div>
      
     <% }) %>
   </div>
 </div>
 <!-- ./product -->
+
+<%- include('../components/popup') %>
+
+<div id="isAuthenticated" style="display: none;"><%= (user ? 'true' : 'false') %></div>
+
+<script src="/scripts/requests.js"></script>
+<script src="/scripts/handleAddToCart.js"></script>
+
+<script>
+  const isAuthenticated = document.getElementById('isAuthenticated').textContent === 'true';
+
+  const popup = document.getElementById('popup');
+  const popupHeader = document.querySelector('#popup .popup-header');
+  const popupContent = document.querySelector('#popup .popup-content');
+
+  document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', async () => {
+      const productId = +button.classList[0].split('-')[1];
+      try {
+        await handleAddToCart(productId, 1, isAuthenticated);
+        popupHeader.textContent = 'Success';
+        popupContent.textContent = 'Product added to cart successfully';
+      }
+      catch (error) {
+        popupHeader.textContent = 'Error';
+        popupContent.textContent = error.message;
+      }
+      popup.classList.remove('hidden');
+
+    });
+  });
+</script>
