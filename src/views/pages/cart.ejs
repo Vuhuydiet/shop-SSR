@@ -129,8 +129,8 @@
       
       try {
         await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
-        updateOrderSummary();
         quantityInput.value = quantity;
+        updateOrderSummary();
       }
       catch(error) {
         console.error(error);
@@ -146,8 +146,8 @@
       
       try {
         await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
-        updateOrderSummary();
         quantityInput.value = quantity;
+        updateOrderSummary();
       }
       catch(error) {
         console.error(error);
@@ -203,7 +203,7 @@
       const productId = +box.name;
       const quantity = +document.querySelector(`.item-quantity.item-${productId}`).value;
       const price = +document.querySelector(`.total-each.item-${productId}`).innerText.slice(1);
-      subtotalAmount += price;
+      subtotalAmount += quantity * price;
     })
     const totalAmount = subtotalAmount;
 
