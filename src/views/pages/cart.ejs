@@ -203,6 +203,7 @@
       const productId = +box.name;
       const quantity = +document.querySelector(`.item-quantity.item-${productId}`).value;
       const price = +document.querySelector(`.total-each.item-${productId}`).innerText.slice(1);
+
       subtotalAmount += quantity * price;
     })
     const totalAmount = subtotalAmount;
