@@ -12,13 +12,28 @@ module.exports = {
       cartItems = await CartService.getCartItems(id);
     }
     else {
-      const { productIds, quantity } = matchedData(req);
-      const products = await Promise.all(productIds.map(id => ProductService.getProductById(id)));
-      cartItems = products.map((product, i) => ({
-        product,
-        quantity: quantity[i],
-      }));
-      console.log(productIds, quantity);
+      const { productIds, quantity } = req.query;
+      let ProductId;
+      let Quantity;
+      if (productIds && quantity) {
+        if (typeof productIds === 'string')
+          ProductId = [+productIds];
+        else {
+          ProductId = productIds.map(id => +id);
+        }
+        if (typeof quantity === 'string')
+          Quantity = [+quantity];
+        else {
+          Quantity = quantity.map(q => +q);
+        }
+
+        const products = await Promise.all(ProductId.map(id => ProductService.getProductById(id)));
+        cartItems = products.map((product, i) => ({
+          product,
+          quantity: Quantity[i],
+        }));
+        console.log(ProductId, Quantity);
+      }
     }
     res.render('pages/cart', { cartItems });
   },

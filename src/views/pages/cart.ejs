@@ -40,7 +40,7 @@
             Availability: <span class="text-green-600"><%= product.quantity > 0 ? 'In Stock' : 'Out of stock' %></span>
           </p>
         </div>
-        <div class="text-primary text-lg font-semibold">$<%= product.currentPrice %></div>
+        <div class="item-<%= product.productId %> item-price text-primary text-lg font-semibold">$<%= product.currentPrice %></div>
         <div class="flex items-center">
           <button class="item-<%= product.productId %> sub-quantity text-gray-600 hover:text-primary px-2 mr-2">
             <i class="fa-solid fa-minus"></i>
@@ -130,6 +130,7 @@
       try {
         await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
         quantityInput.value = quantity;
+        updateTotalEach(productId);
         updateOrderSummary();
       }
       catch(error) {
@@ -147,6 +148,7 @@
       try {
         await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
         quantityInput.value = quantity;
+        updateTotalEach(productId);
         updateOrderSummary();
       }
       catch(error) {
@@ -163,6 +165,7 @@
 
       try {
         await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
+        updateTotalEach(productId);
         updateOrderSummary();
       }
       catch (error) {
@@ -195,15 +198,21 @@
     });
   })
 
+  function updateTotalEach(productId) {
+    const quantity = +document.querySelector(`.item-quantity.item-${productId}`).value;
+    const price = +document.querySelector(`.item-price.item-${productId}`).innerText.slice(1);
+    const totalEach = document.querySelector(`.total-each.item-${productId}`);
+    totalEach.innerText = `$${quantity * price}`;
+  }
+
   function updateOrderSummary() {
     const checkedBoxes = document.querySelectorAll(".chosen-item:checked");
 
     let subtotalAmount = 0;
     checkedBoxes.forEach(box => {
       const productId = +box.name;
-      const quantity = +document.querySelector(`.item-quantity.item-${productId}`).value;
-      const price = +document.querySelector(`.total-each.item-${productId}`).innerText.slice(1);
-      subtotalAmount += quantity * price;
+      const totalEach = +document.querySelector(`.total-each.item-${productId}`).innerText.slice(1);
+      subtotalAmount += totalEach;
     })
     const totalAmount = subtotalAmount;
 
