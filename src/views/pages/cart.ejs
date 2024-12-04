@@ -1,0 +1,244 @@
+<!-- breadcrumb -->
+<div class="container py-4 flex items-center gap-3">
+  <a href="/" class="text-primary text-base">
+    <i class="fa-solid fa-house"></i>
+  </a>
+  <span class="text-sm text-gray-400">
+    <i class="fa-solid fa-chevron-right"></i>
+  </span>
+  <p class="text-gray-600 font-medium">Shopping Cart</p>
+</div>
+<!-- ./breadcrumb -->
+
+<!-- cart wrapper -->
+<div class="container grid grid-cols-12 gap-6">
+  <!-- cart items -->
+  <div class="col-span-8">
+    <div class="bg-white shadow rounded-md p-4">
+      <div class="flex items-center justify-between border-b pb-4">
+        <h2 class="text-gray-700 font-medium">Shopping Cart</h2>
+        <span class="text-gray-600"><%= cartItems.length %> Items</span>
+      </div>
+
+      <% cartItems.forEach(({ product, quantity }) => { %>
+        
+      <div class="item-<%= product.productId %> item-detail-container flex items-center justify-between border gap-6 p-4 border-gray-200 rounded">
+        <input type="checkbox" class="item-<%= product.productId %> chosen-item" name="<%= product.productId %>">
+
+        <div class="w-28">
+          <img
+            src="<%= product.productImageUrl %>"
+            alt="<%= product.productName %>"
+            class="w-full"
+          />
+        </div>
+        <div class="w-1/3">
+          <h2 class="text-gray-800 text-xl font-medium uppercase">
+            <%= product.productName %>
+          </h2>
+          <p class="text-gray-500 text-sm">
+            Availability: <span class="text-green-600"><%= product.quantity > 0 ? 'In Stock' : 'Out of stock' %></span>
+          </p>
+        </div>
+        <div class="text-primary text-lg font-semibold">$<%= product.currentPrice %></div>
+        <div class="flex items-center">
+          <button class="item-<%= product.productId %> sub-quantity text-gray-600 hover:text-primary px-2 mr-2">
+            <i class="fa-solid fa-minus"></i>
+          </button>
+          <input
+            type="number"
+            min="1"
+            value="<%= quantity %>"
+            class="item-<%= product.productId %> item-quantity text-center border border-gray-300 rounded-md mx-2"
+          />
+          <button class="item-<%= product.productId %> add-quantity text-gray-600 hover:text-primary px-2 ml-2">
+            <i class="fa-plus"></i>
+          </button>
+        </div>
+        <div class="item-<%= product.productId %> total-each text-primary text-lg font-semibold">$<%= product.currentPrice * quantity %></div>
+        <button class="item-<%= product.productId %> delete-item text-gray-600 cursor-pointer hover:text-primary">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+
+      <% }) %>
+
+      <!-- repeat cart items as needed -->
+    </div>
+    <div class="flex justify-between mt-4">
+      <a href="./products"
+        class="text-primary hover:text-white hover:bg-primary border border-primary px-4 py-2 rounded-md transition"
+        >Continue Shopping
+      </a>
+      <!-- <a href="./checkout"
+        class="bg-primary text-white px-4 py-2 rounded-md hover:bg-transparent hover:text-primary border border-primary transition"
+        >Proceed to Checkout
+      </a> -->
+    </div>
+  </div>
+  <!-- order summary -->
+  <div class="col-span-4">
+    <div class="bg-white shadow rounded-md p-4">
+      <h2 class="text-gray-700 font-medium">Order Summary</h2>
+      <div class="mt-4 space-y-2">
+        <div class="flex justify-between">
+          <span class="text-gray-600">Subtotal</span>
+          <span class="subtotal text-gray-700 font-medium">$0</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">Shipping</span>
+          <span class="text-gray-700 font-medium">Free</span>
+        </div>
+        <div class="flex justify-between border-t pt-2">
+          <span class="text-gray-700 font-semibold">Total</span>
+          <span class="total text-gray-700 font-semibold">$0</span>
+        </div>
+      </div>
+      <button
+        class="checkout block mt-4 bg-primary text-white text-center py-2 rounded-md hover:bg-transparent hover:text-primary border border-primary transition"
+        >Checkout
+      </button>
+    </div>
+  </div>
+  
+  <%- include('../components/popup') %>
+</div>
+<!-- ./cart wrapper -->
+
+<div class="isAuthenticated" style="display: none;"><%= (user ? 'true' : 'false') %></div>
+
+<script src="/scripts/requests.js"></script>
+<script src="/scripts/handleAddToCart.js"></script>
+
+<script>
+  const isAuthenticated = document.querySelector(".isAuthenticated").innerText === "true";
+  const subtotal = document.querySelector(".subtotal");
+  const total = document.querySelector(".total");
+
+  const addQuantity = document.querySelectorAll(".add-quantity");
+  const subQuantity = document.querySelectorAll(".sub-quantity");
+  const itemQuantity = document.querySelectorAll(".item-quantity");
+  const checkboxes = document.querySelectorAll(".chosen-item");
+  const deleteItem = document.querySelectorAll(".delete-item");
+
+  addQuantity.forEach((button) => {
+    button.addEventListener("click", async function () {
+      const productId = +button.classList[0].split("-")[1];
+      const quantityInput = document.querySelector(`.item-quantity.item-${productId}`);
+      const quantity = +quantityInput.value + 1;
+      
+      try {
+        await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
+        updateOrderSummary();
+        quantityInput.value = quantity;
+      }
+      catch(error) {
+        console.error(error);
+      }
+    });
+  });
+
+  subQuantity.forEach((button) => {
+    button.addEventListener("click", async function () {
+      const productId = +button.classList[0].split("-")[1];
+      const quantityInput = document.querySelector(`.item-quantity.item-${productId}`);
+      const quantity = +quantityInput.value - 1;
+      
+      try {
+        await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
+        updateOrderSummary();
+        quantityInput.value = quantity;
+      }
+      catch(error) {
+        console.error(error);
+      }
+    });
+  });
+
+  itemQuantity.forEach((input) => {
+    input.addEventListener("change", async function () {
+      const productId = +input.classList[0].split("-")[1];
+      const quantityInput = document.querySelector(`.item-quantity.item-${productId}`);
+      const quantity = +quantityInput.value;
+
+      try {
+        await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
+        updateOrderSummary();
+      }
+      catch (error) {
+        console.error(error);
+      }
+    });
+  });
+
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", function () {
+      updateOrderSummary();
+    });
+  });
+
+
+  deleteItem.forEach((button) => {
+    button.addEventListener("click", async function () {
+      const productId = +button.classList[0].split("-")[1];
+      console.log(`.item-${productId}.item-detail-container`);
+      const item = document.querySelector(`.item-${productId}.item-detail-container`);
+      
+      try {
+        await handleDeleteCartItem(productId, isAuthenticated);
+        updateOrderSummary();
+        item.remove();
+      }
+      catch (error) {
+        console.error(error);
+      }
+    });
+  })
+
+  function updateOrderSummary() {
+    const checkedBoxes = document.querySelectorAll(".chosen-item:checked");
+
+    let subtotalAmount = 0;
+    checkedBoxes.forEach(box => {
+      const productId = +box.name;
+      const quantity = +document.querySelector(`.item-quantity.item-${productId}`).value;
+      const price = +document.querySelector(`.total-each.item-${productId}`).innerText.slice(1);
+      subtotalAmount += price;
+    })
+    const totalAmount = subtotalAmount;
+
+    subtotal.innerText = `$${subtotalAmount}`;
+    total.innerText = `$${totalAmount}`;
+  }
+
+</script>
+
+
+<!-- src="https://code.jquery.com/jquery-3.6.4.min.js" -->
+<script>
+  const checkout = document.querySelector(".checkout");
+  const errorPopup = document.querySelector("#popup");
+
+  const popupHeader = document.querySelector("#popup .popup-header");
+  const popupContent = document.querySelector("#popup .popup-content");
+  popupHeader.innerText = "Error";
+  popupContent.innerText = "Please select at least one item to checkout.";
+
+  checkout.addEventListener("click", async function () {
+    const checkedBoxes = document.querySelectorAll(".chosen-item:checked");
+    const products = Array.from(checkedBoxes).map(box => ({ 
+      productId: +box.name, 
+      quantity: +document.querySelector(`.item-quantity.item-${ box.name }`).value 
+    }));
+
+    if (products.length === 0) {
+      errorPopup.classList.remove("hidden");
+      return;
+    }
+
+    await handleSendCheckout(products, isAuthenticated);
+
+  });
+
+
+</script>

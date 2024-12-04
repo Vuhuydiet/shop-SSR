@@ -41,7 +41,7 @@ registerForm.addEventListener("submit", async (event) => {
       body: JSON.stringify({ email, password }),
     });
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     if (response.ok) {
       successDiv.textContent = data.message;
       successDiv.classList.remove("hidden");
