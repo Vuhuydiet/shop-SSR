@@ -8,11 +8,11 @@ const { handleValidationErrors } = require('../../libraries/validator/validator'
 
 router.get(
   '/',
-  query('productIds').optional().isArray(),
-  query('productIds.*').optional().isInt().toInt(),
-  query('quantity').optional().isArray(),
-  query('quantity.*').optional().isInt().toInt(),
-  handleValidationErrors,
+  // query('productIds').optional().isArray(),
+  // query('productIds.*').optional().isInt().toInt(),
+  // query('quantity').optional().isArray(),
+  // query('quantity.*').optional().isInt().toInt(),
+  // handleValidationErrors,
 
   cartController.getCartPage
 );
