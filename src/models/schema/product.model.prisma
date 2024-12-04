@@ -13,4 +13,5 @@ model Product {
     numReviews         Float
 
     categories ProductCategory[]
+    itemInCarts CartItem[]
 }
