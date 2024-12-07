@@ -1,17 +1,59 @@
-model Product {
-    productId          Int      @id @default(autoincrement())
-    productName        String
-    currentPrice       Int
-    originalPrice      Int
-    quantity           Int      @default(0)
-    publishedAt        DateTime @default(now())
-    brand              String?
-    productDescription String?
-    numSoldProduct     Int      @default(0)
-    productImageUrl    String?
-    stars              Float    @default(1)
-    numReviews         Float
+model Category {
+  categoryId   Int     @id @default(autoincrement())
+  categoryName String  @unique
+  description  String?
 
-    categories ProductCategory[]
-    itemInCarts CartItem[]
+  products Product[]
+}
+
+model Brand {
+  brandId     Int     @id @default(autoincrement())
+  brandName   String
+  description String?
+
+  imageUrl    String?
+  publicImgId String?
+
+  products Product[]
+}
+
+enum ProductStatus {
+  PUBLISHED
+  UNPUBLISHED
+  DELETED
+}
+
+model Product {
+  productId          Int      @id @default(autoincrement())
+  productName        String
+  productDescription String?
+  publishedAt        DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  brandId    Int
+  categoryId Int
+
+  stock         Int @default(0)
+  currentPrice  Int
+  originalPrice Int
+
+  soldQuantity Int   @default(0)
+  stars        Float @default(5)
+  numReviews   Int @default(0)
+
+  category    Category   @relation(fields: [categoryId], references: [categoryId], onDelete: Restrict)
+	brand Brand @relation(fields: [brandId], references: [brandId], onDelete: Restrict)
+	productImages ProductImage[]
+  itemInCarts CartItem[]
+	orderDetails OrderDetail[]
+}
+
+model ProductImage {
+	imageId Int @id @default(autoincrement())
+	productId Int
+
+	publicId String
+	url String
+
+	product Product @relation(fields: [productId], references: [productId], onDelete: Restrict)
 }

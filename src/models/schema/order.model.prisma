@@ -1,0 +1,41 @@
+
+enum OrderStatus {
+  PENDING
+  CANCELLED
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+}
+
+
+model Order {
+  orderId Int @id @default(autoincrement())
+  userId Int
+  totalAmount Float
+  orderStatus OrderStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+  phoneNumber String?
+  country String
+  city String
+  district String
+  ward String
+  addressDetail String?
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Restrict)
+
+  details OrderDetail[]
+}
+
+model OrderDetail {
+  orderId Int
+  productId Int
+  quantity Int
+  priceAtPurchase Float
+
+  @@id([orderId, productId])
+  
+  order Order @relation(fields: [orderId], references: [orderId], onDelete: Restrict)
+  product Product @relation(fields: [productId], references: [productId], onDelete: Restrict)
+}
+

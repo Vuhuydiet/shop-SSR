@@ -1,0 +1,8 @@
+model Review {
+  reviewId      Int      @id @default(autoincrement())
+  userId        Int
+  productId     Int
+  reviewContent String
+  stars         Float    @default(1)
+  createdAt     DateTime @default(now())
+}
