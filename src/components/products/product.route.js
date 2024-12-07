@@ -2,46 +2,16 @@ const express = require("express");
 const router = express.Router();
 
 const productController = require("./product.controller");
-const {
-  handleValidationErrors,
-} = require("../../libraries/validator/validator");
-const { body, query, param } = require("express-validator");
-
-const productIdValidator = () => {
-  return [param("productId").isNumeric().toInt()];
-};
+const { handleValidationErrors } = require("../../libraries/validator/validator");
+const { query, param } = require("express-validator");
 
 const queryValidator = () => {
   return [
-    // query('category')      .optional() .isNumeric().toInt(),
     query("page").optional().isNumeric().toInt(),
     query("limit").optional().isNumeric().toInt(),
-    query("categories")
-      .optional()
-      .custom((value) => {
-        return Array.isArray(value) || Number.isFinite(Number(value));
-      })
-      .customSanitizer((value) => {
-        if (!Array.isArray(value)) {
-          return [Number(value)];
-        }
-        return value.map((val) => Number(val));
-      }),
-    query("categories.*").optional().isNumeric().toInt(),
-    query("brands")
-      .optional()
-      .custom((value) => {
-        return (
-          Array.isArray(value) || (typeof value === "string" && value !== "")
-        );
-      })
-      .customSanitizer((value) => {
-        if (!Array.isArray(value)) {
-          return [value];
-        }
-        return value;
-      }),
-    query("brands.*").optional().isString(),
+    query("keyword").optional().isString(),
+    query("category").optional().isNumeric().toInt(),
+    query("brand").optional().isNumeric().toInt(),
     query("postedAfter").optional().isISO8601().toDate(),
     query("postedBefore").optional().isISO8601().toDate(),
     query("minPrice").optional().isNumeric().toFloat(),
@@ -50,23 +20,15 @@ const queryValidator = () => {
     query("maxStar").optional().isNumeric().toFloat(),
     query("minQuantity").optional().isNumeric().toInt(),
     query("maxQuantity").optional().isNumeric().toInt(),
-    query("sortBy")
-      .optional()
-      .isString()
-      .isIn(["currentPrice", "quantity", "publishedAt"]),
+    query("sortBy").optional().isString().isIn(["currentPrice", "quantity", "publishedAt"]),
     query("order").optional().isString().isIn(["asc", "desc"]),
     query("offset").optional().isNumeric().toInt(),
     query("limit").optional().isNumeric().toInt(),
   ];
 };
 
-const keywordQueryValidator = () => {
-  return [query("keyword").optional().isString()];
-};
-
 router.get(
   "/",
-  keywordQueryValidator(),
   queryValidator(),
   handleValidationErrors,
   productController.getAllProducts
@@ -74,7 +36,7 @@ router.get(
 
 router.get(
   "/:productId",
-  productIdValidator(),
+  param("productId").isNumeric().toInt(),
   handleValidationErrors,
   productController.getProductById
 );

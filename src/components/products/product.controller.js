@@ -5,7 +5,6 @@ module.exports = {
   getAllProducts: async (req, res) => {
     const queries = matchedData(req);
 
-
     const brands = await ProductService.getAllBrands();
 
     const limit = queries.limit || 9;

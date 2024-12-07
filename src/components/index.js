@@ -9,7 +9,7 @@ const profileRouter = require("./profile/profile.route");
 const cartRouter = require("./cart/cart.route");
 const checkoutRouter = require("./payments/checkout.route");
 
-router.use("/", categoryMiddleware.getCategory);
+router.use("/", categoryMiddleware.getCategories);
 
 router.use("/", homeRouter);
 router.use("/users", userRouter);

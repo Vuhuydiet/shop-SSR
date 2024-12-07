@@ -10,6 +10,7 @@ module.exports = {
     const recommendedProducts = await ProductService.getAllProducts({
       limit: 4,
       sortedBy: "stars",
+      order: "desc",
     });
 
     res.render("pages/home", { newArrivalProducts: newArrivalProducts.products, recommendedProducts: recommendedProducts.products });

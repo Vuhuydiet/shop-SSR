@@ -14,18 +14,15 @@ type ProductData = {
   description?: string;
   quantity?: number;
   price: number;
-  brand?: string;
-  imageUrl?: string;
-  categories?: {
-    add?: number[],
-    remove?: number[]
-  }
+  brand?: number;
+  category?: number;
+
+  imageUrl?: Express.Multer.File;
 }
 
 type ProductQueryParams = {
-  shopId?: number;
   category?: number;
-  brand?: string;
+  brand?: number;
   postedAfter?: Date;
   postedBefore?: Date;
   minPrice?: number;
@@ -44,11 +41,9 @@ type ProductQueryParams = {
 
 function getCondition(queryParams) {
   return {
-    categories: queryParams.categories
-      ? { some: { categoryId: { in: queryParams.categories.map(Number) } } }
-      : undefined,
-    brand: queryParams.brands ? { in: queryParams.brands } : undefined,
-    quantity: {
+    category: queryParams.category,
+    brand: queryParams.brand,
+    stock: {
       gte: queryParams?.minQuantity,
       lte: queryParams?.maxQuantity,
     },
@@ -68,28 +63,21 @@ function getCondition(queryParams) {
 }
 
 class ProductService {
-  static async getAllBrands() {
-    return (
-      await prisma.product.findMany({
-        select: {
-          brand: true,
-        },
-        distinct: ["brand"],
-      })
-    ).map((product) => product.brand);
-  }
 
-  static async createCategory({ name, description }) {
-    return await prisma.productCategory.create({
-      data: {
-        categoryName: name,
-        description: description,
+  static async getBrandById(brandId) {
+    return await prisma.brand.findUnique({
+      where: {
+        brandId: brandId,
       },
     });
   }
 
+  static async getAllBrands() {
+    return await prisma.brand.findMany();
+  }
+
   static async getCategoryById(categoryId) {
-    return await prisma.productCategory.findUnique({
+    return await prisma.category.findUnique({
       where: {
         categoryId: categoryId,
       },
@@ -97,51 +85,7 @@ class ProductService {
   }
 
   static async getAllCategories() {
-    return await prisma.productCategory.findMany();
-  }
-
-  static async updateCategory(categoryId, { name, description }) {
-    return await prisma.productCategory.update({
-      where: {
-        categoryId: categoryId,
-      },
-      data: {
-        categoryName: name,
-        description: description,
-      },
-    });
-  }
-
-  static async deleteCategory(categoryId) {
-    await prisma.productCategory.delete({
-      where: {
-        categoryId: categoryId,
-      },
-    });
-  }
-
-  static async createProduct(shopId, productData) {
-    await ShopService.checkShopExists(shopId);
-
-    return await tx.product.create({
-      data: {
-        productName: productData.name,
-        productDescription: productData.description,
-        quantity: productData.quantity,
-        currentPrice: productData.price,
-        originalPrice: productData.price,
-        brand: productData.brand,
-        productImageUrl: productData.productImageUrl,
-        categories: {
-          connect: productData.categories?.add?.map((category) => ({
-            categoryId: category,
-          })),
-        },
-      },
-      include: {
-        categories: true,
-      },
-    });
+    return await prisma.category.findMany();
   }
 
   static async getProductById(productId) {
@@ -150,7 +94,7 @@ class ProductService {
         productId: productId,
       },
       include: {
-        categories: true,
+        category: true,
       },
     });
 
@@ -160,17 +104,6 @@ class ProductService {
   }
 
   static async getAllProducts(queryParams = {}) {
-    // const condition = {
-    //   categories: queryParams.categories
-    //     ? { some: { categoryId: { in: queryParams.categories.map(Number) } } }
-    //     : undefined,
-    //   brand: queryParams.brands ? { in: queryParams.brands } : undefined,
-    //   currentPrice: {
-    //     ...(queryParams.minPrice ? { gte: Number(queryParams.minPrice) } : {}),
-    //     ...(queryParams.maxPrice ? { lte: Number(queryParams.maxPrice) } : {}),
-    //   },
-    // };
-
     const condition = getCondition(queryParams);
 
     const [count, products] = await Promise.all([
@@ -188,52 +121,13 @@ class ProductService {
           : undefined,
 
         include: {
-          categories: true,
+          category: true,
         },
       }),
     ]);
     return { count, products };
   }
 
-  static async updateProduct(
-    productId,
-    { name, description, quantity, price, brand, categories, imageUrl }
-  ) {
-    await this.getProductById(productId);
-
-    return await tx.product.update({
-      where: {
-        productId: productId,
-      },
-      data: {
-        productName: name,
-        productDescription: description,
-        quantity: quantity,
-        currentPrice: price,
-        brand: brand,
-        productImageUrl: imageUrl,
-
-        categories: {
-          connect: categories?.add?.map((category) => ({
-            categoryId: category,
-          })),
-          disconnect: categories?.remove?.map((category) => ({
-            categoryId: category,
-          })),
-        },
-      },
-    });
-  }
-
-  static async deleteProduct(productId) {
-    await this.getProductById(productId);
-
-    await tx.product.delete({
-      where: {
-        productId: productId,
-      },
-    });
-  }
 }
 
 module.exports = ProductService;
