@@ -1,6 +1,7 @@
 const addressAPI = {
   async getAddresses() {
-    const response = await fetch("/profile/address");
+    const response = await fetch("/profile/api/address");
+    console.log(response);
     if (!response.ok) throw new Error("Failed to fetch addresses");
     return response.json();
   },
@@ -39,12 +40,14 @@ const addressAPI = {
 };
 
 async function loadAddresses() {
-  try {
-    const { data } = await addressAPI.getAddresses();
-    const addressContainer = document.querySelector(".sm\\:divide-y");
-    const template = document.getElementById("address-template");
+  const container = document.getElementById("address-container");
+  const loadingState = document.getElementById("loading-state");
+  const template = document.getElementById("address-template");
 
-    addressContainer.innerHTML = "";
+  try {
+    container.innerHTML = loadingState.outerHTML;
+    const { data } = await addressAPI.getAddresses();
+    container.innerHTML = "";
 
     data.addresses.forEach((address) => {
       const clone = template.content.cloneNode(true);
@@ -57,18 +60,41 @@ async function loadAddresses() {
         "[data-location]"
       ).textContent = `${address.ward}, ${address.district}, ${address.city}, ${address.country}`;
 
-      clone
-        .querySelector("[data-edit]")
-        .addEventListener("click", () => editAddress(address.addressId));
+      clone.querySelector("[data-edit]").addEventListener("click", () => {
+        window.location.href = `/profile/address/edit/${address.addressId}`;
+      });
+
       clone
         .querySelector("[data-delete]")
-        .addEventListener("click", () => deleteAddress(address.addressId));
+        .addEventListener("click", async () => {
+          if (!confirm("Are you sure you want to delete this address?")) return;
 
-      clone.firstElementChild.dataset.addressId = address.addressId;
+          try {
+            const response = await fetch(
+              `/profile/address/delete/${address.addressId}`,
+              {
+                method: "POST",
+              }
+            );
 
-      addressContainer.appendChild(clone);
+            if (response.ok) {
+              clone.firstElementChild.remove();
+            } else {
+              throw new Error("Failed to delete address");
+            }
+          } catch (error) {
+            alert("Error deleting address: " + error.message);
+          }
+        });
+
+      container.appendChild(clone);
     });
   } catch (error) {
+    container.innerHTML = `
+      <div class="text-center py-4 text-red-500">
+        Failed to load addresses. Please try again later.
+      </div>
+    `;
     console.error("Error loading addresses:", error);
   }
 }
