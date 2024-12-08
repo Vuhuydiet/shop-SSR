@@ -15,16 +15,16 @@ passport.use(
             message: "Email or password is invalid.",
           });
         }
-        const isMatch = validatePassword(password, user.password);
+        const isMatch = validatePassword(password, user.hashedPassword);
         if (!isMatch) {
           return done(null, false, {
             message: "Email or password is invalid.",
           });
         }
-        if (!user.confirmedAt) {
+        if (!user.confirmed) {
           return done(null, false, {
             message: `We've sent a confirmation email to ${email}. Please check your inbox.`,
-            redirectUrl: `/users/confirm?email=${(email)}`,
+            redirectUrl: `/users/confirm?email=${email}`,
           });
         }
         return done(null, user);
@@ -54,7 +54,7 @@ passport.use(
 // );
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.userId);
 });
 
 passport.deserializeUser(async (id, done) => {

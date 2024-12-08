@@ -5,21 +5,25 @@ enum UserStatus {
 
 model User {
   userId Int        @id @default(autoincrement())
-  status UserStatus
+  status UserStatus @default(ACTIVE)
 
   email          String @unique
   hashedPassword String
 
+  confirmed Boolean @default(false)
   createdAt   DateTime  @default(now())
   lastLogin   DateTime?
   phoneNumber String?
+
+  confirmationCode String?
+  confirmationCodeExpires DateTime?
 
   avatarUrl   String?
   publicImgId String?
 
   oauthProvider String?
   oauthId       String? @unique
-  oauthToken    String
+  oauthToken    String?
 
   shippingAddresses ShippingAddress[]
   cartItems CartItem[]

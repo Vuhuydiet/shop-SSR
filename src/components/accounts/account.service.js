@@ -17,7 +17,6 @@ const { InternalServerError } = require("../../core/ErrorResponse");
 // }
 
 const generateToken = () => {
-  // return crypto.randomBytes(20).toString("hex");
   const randomBytes = crypto.randomBytes(3);
   const randomInt = randomBytes.readUIntBE(0, 3);
   const token = randomInt.toString(16).padStart(6, "0");
@@ -51,19 +50,21 @@ const accountService = {
   registerUser: async (email, password) => {
     const hashedPassword = getHashedPassword(password);
     const confirmationCode = generateToken();
+    const confirmationCodeExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
     const user = await prisma.user.create({
       data: {
         email,
-        password: hashedPassword,
+        hashedPassword,
         confirmationCode,
+        confirmationCodeExpires,
       },
     });
 
     await sendEmail(
       email,
       "Account Confirmation",
-      `Please confirm your account using the following code: ${confirmationCode}`
+      `Please confirm your account using the following code: ${confirmationCode}\nThe code will expire in 1 hour.`
     );
     return user;
   },
@@ -74,7 +75,7 @@ const accountService = {
     if (user && user.confirmationCode === confirmationCode) {
       await prisma.user.update({
         where: { email },
-        data: { confirmedAt: new Date().toISOString(), confirmationCode: null },
+        data: { confirmed: true, confirmationCode: null },
       });
       return true;
     }
@@ -113,7 +114,7 @@ const accountService = {
     try {
       const user = await prisma.user.findUnique({
         where: { email },
-        select: { id: true },
+        select: { userId: true },
       });
       return user !== null;
     } catch (error) {
@@ -133,7 +134,7 @@ const accountService = {
 
   findUserById: async (userId) => {
     try {
-      return await prisma.user.findUnique({ where: { id: userId } });
+      return await prisma.user.findUnique({ where: { userId } });
     } catch (error) {
       logger.error(`Error getting user by id: ${error.message}`);
       throw new InternalServerError({ error: err });
