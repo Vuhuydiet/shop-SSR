@@ -8,7 +8,7 @@ model Category {
 
 model Brand {
   brandId     Int     @id @default(autoincrement())
-  brandName   String
+  brandName   String  @unique
   description String?
 
   imageUrl    String?
@@ -29,6 +29,7 @@ model Product {
   productDescription String?
   publishedAt        DateTime @default(now())
   updatedAt          DateTime @updatedAt
+  status             ProductStatus @default(PUBLISHED)
 
   brandId    Int
   categoryId Int
@@ -39,21 +40,21 @@ model Product {
 
   soldQuantity Int   @default(0)
   stars        Float @default(5)
-  numReviews   Int @default(0)
+  numReviews   Int   @default(0)
 
-  category    Category   @relation(fields: [categoryId], references: [categoryId], onDelete: Restrict)
-	brand Brand @relation(fields: [brandId], references: [brandId], onDelete: Restrict)
-	productImages ProductImage[]
-  itemInCarts CartItem[]
-	orderDetails OrderDetail[]
+  category      Category       @relation(fields: [categoryId], references: [categoryId], onDelete: Restrict)
+  brand         Brand          @relation(fields: [brandId], references: [brandId], onDelete: Restrict)
+  productImages ProductImage[]
+  itemInCarts   CartItem[]
+  orderDetails  OrderDetail[]
 }
 
 model ProductImage {
-	imageId Int @id @default(autoincrement())
-	productId Int
+  imageId   Int @id @default(autoincrement())
+  productId Int
 
-	publicId String
-	url String
+  publicId String
+  url      String
 
-	product Product @relation(fields: [productId], references: [productId], onDelete: Restrict)
+  product Product @relation(fields: [productId], references: [productId], onDelete: Restrict)
 }
