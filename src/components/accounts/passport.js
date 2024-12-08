@@ -27,6 +27,8 @@ passport.use(
             redirectUrl: `/users/confirm?email=${email}`,
           });
         }
+
+        await accountService.updateLastLogin(user.userId);
         return done(null, user);
       } catch (err) {
         return done(err);

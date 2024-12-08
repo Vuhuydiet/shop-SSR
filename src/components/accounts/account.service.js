@@ -6,16 +6,6 @@ const { getHashedPassword } = require("./password");
 const env = require("../../config/env");
 const { InternalServerError } = require("../../core/ErrorResponse");
 
-// const SALT_ROUNDS = 12;
-
-// class AuthenticationError extends Error {
-//   constructor(message, code) {
-//     super(message);
-//     this.name = "AuthenticationError";
-//     this.code = code;
-//   }
-// }
-
 const generateToken = () => {
   const randomBytes = crypto.randomBytes(3);
   const randomInt = randomBytes.readUIntBE(0, 3);
@@ -137,6 +127,18 @@ const accountService = {
       return await prisma.user.findUnique({ where: { userId } });
     } catch (error) {
       logger.error(`Error getting user by id: ${error.message}`);
+      throw new InternalServerError({ error: err });
+    }
+  },
+
+  updateLastLogin: async (userId) => {
+    try {
+      return await prisma.user.update({
+        where: { userId },
+        data: { lastLogin: new Date() },
+      });
+    } catch (error) {
+      logger.error(`Error updating last login: ${error.message}`);
       throw new InternalServerError({ error: err });
     }
   },
