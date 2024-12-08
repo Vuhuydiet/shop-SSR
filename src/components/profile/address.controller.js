@@ -36,7 +36,12 @@ class AddressController {
   getUserAddresses = async (req, res, next) => {
     try {
       const addresses = await this.addressService.getUserAddresses(req.user.id);
-      return new OKResponse("Addresses retrieved", { addresses }).send(res);
+      return res.send({
+        ok: true,
+        message: "Addresses retrieved",
+        data: { addresses },
+      });
+      // return new OKResponse("Addresses retrieved", { addresses }).send(res);
     } catch (error) {
       next(new InternalServerError("Failed to fetch addresses", 500));
     }

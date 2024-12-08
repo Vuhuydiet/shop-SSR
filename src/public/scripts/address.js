@@ -49,6 +49,15 @@ async function loadAddresses() {
     const { data } = await addressAPI.getAddresses();
     container.innerHTML = "";
 
+    if (data.addresses.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-4">
+          No addresses found. <a class="text-red-500" href="/profile/address/add">Add one now</a>.
+        </div>
+      `;
+      return;
+    }
+
     data.addresses.forEach((address) => {
       const clone = template.content.cloneNode(true);
 
