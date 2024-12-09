@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const provinceSelect = document.getElementById("city");
   const districtSelect = document.getElementById("district");
   const wardSelect = document.getElementById("ward");
+  const detailAddressInput = document.getElementById("detailAddress");
   const addressForm = document.getElementById("address-form");
 
   const fetchProvinces = async () => {
@@ -79,6 +80,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  detailAddressInput.addEventListener("input", () => {
+    const detailAddress = detailAddressInput.value;
+
+    const notFullySelected = provinceSelect.selectedIndex === 0 || districtSelect.selectedIndex === 0 || wardSelect.selectedIndex === 0;
+    if (notFullySelected) {
+      return;
+    }
+    const cityName = provinceSelect.options[provinceSelect.selectedIndex]?.text || "";
+    const districtName = districtSelect.options[districtSelect.selectedIndex]?.text || "";
+    const wardName = wardSelect.options[wardSelect.selectedIndex]?.text || "";
+    const country = document.getElementById("country").value;
+
+    const fullAddress = `${detailAddress}, ${wardName}, ${districtName}, ${cityName}, ${country}`;
+    const addressPreview = document.getElementById("address-preview");
+    addressPreview.textContent = fullAddress;
+  });
+
   addressForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -132,7 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
       submitButton.style = submitButtonStyle;
     }
   });
-
+  
   // Initial fetch of provinces
   fetchProvinces();
 });
+
