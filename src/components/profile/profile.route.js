@@ -9,7 +9,7 @@ const addressSchema = z.object({
   recipientName: z
     .string()
     .min(3, "Recipient name must be at least 3 characters"),
-  phoneNumber: z.string().regex(/^\d{10,11}$/, "Invalid phone number"),
+  phoneNumber: z.string().regex(/^[+]*\d{10,11}$/, "Invalid phone number"),
   country: z.string().min(3, "Country must be at least 3 characters"),
   city: z.string().min(3, "City must be at least 3 characters"),
   district: z.string().min(2, "District must be at least 2 characters"),
