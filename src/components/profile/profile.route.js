@@ -75,7 +75,7 @@ router.put(
 );
 
 router.delete(
-  "/address/:addressId",
+  "/api/address/:addressId",
   isAuthenticated,
   validateAddressId,
   addressController.deleteAddress

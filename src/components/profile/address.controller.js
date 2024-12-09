@@ -84,12 +84,8 @@ class AddressController {
    * @description Deletes an address
    */
   deleteAddress = async (req, res, next) => {
-    try {
       await this.addressService.deleteAddress(parseInt(req.params.addressId));
-      return new NoContentResponse().send(res);
-    } catch (error) {
-      next(new InternalServerError("Failed to delete address", 500));
-    }
+      return new NoContentResponse("Deleted").send(res);
   };
 }
 

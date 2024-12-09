@@ -31,11 +31,9 @@ const addressAPI = {
   },
 
   async deleteAddress(addressId) {
-    const response = await fetch(`/profile/address/${addressId}`, {
+    return await fetch(`/profile/api/address/${addressId}`, {
       method: "DELETE",
     });
-    if (!response.ok) throw new Error("Failed to delete address");
-    return response.json();
   },
 };
 
@@ -60,6 +58,7 @@ async function loadAddresses() {
 
     data.addresses.forEach((address) => {
       const clone = template.content.cloneNode(true);
+      const addressElement = clone.firstElementChild;
 
       clone.querySelector("[data-recipient]").textContent =
         address.recipientName;
@@ -79,17 +78,12 @@ async function loadAddresses() {
           if (!confirm("Are you sure you want to delete this address?")) return;
 
           try {
-            const response = await fetch(
-              `/profile/address/delete/${address.addressId}`,
-              {
-                method: "POST",
-              }
-            );
-
-            if (response.ok) {
-              clone.firstElementChild.remove();
-            } else {
-              throw new Error("Failed to delete address");
+            const response = await addressAPI.deleteAddress(address.addressId);
+            
+            if (response.status === 204) {
+              alert("Address deleted successfully");
+              addressElement.remove();
+              return;
             }
           } catch (error) {
             alert("Error deleting address: " + error.message);
