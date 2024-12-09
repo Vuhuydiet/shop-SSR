@@ -9,7 +9,7 @@ module.exports = {
 
     const recommendedProducts = await ProductService.getAllProducts({
       limit: 4,
-      sortedBy: "stars",
+      sortedBy: "rating",
       order: "desc",
     });
 

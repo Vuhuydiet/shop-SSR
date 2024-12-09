@@ -51,9 +51,9 @@ function getCondition(queryParams) {
       gte: queryParams?.minPrice || undefined,
       lte: queryParams?.maxPrice || undefined,
     },
-    stars: {
-      gte: queryParams?.minStar || undefined,
-      lte: queryParams?.maxStar || undefined,
+    rating: {
+      gte: queryParams?.minRating || undefined,
+      lte: queryParams?.maxRating || undefined,
     },
     publishedAt: {
       gte: queryParams?.postedAfter,

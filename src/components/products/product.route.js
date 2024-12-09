@@ -4,6 +4,7 @@ const router = express.Router();
 const productController = require("./product.controller");
 const { handleValidationErrors } = require("../../libraries/validator/validator");
 const { query, param } = require("express-validator");
+const reviewController = require("./reviews/review.controller");
 
 const queryValidator = () => {
   return [
@@ -16,8 +17,8 @@ const queryValidator = () => {
     query("postedBefore").optional().isISO8601().toDate(),
     query("minPrice").optional().isNumeric().toFloat(),
     query("maxPrice").optional().isNumeric().toFloat(),
-    query("minStar").optional().isNumeric().toFloat(),
-    query("maxStar").optional().isNumeric().toFloat(),
+    query("minRating").optional().isNumeric().toFloat(),
+    query("maxRating").optional().isNumeric().toFloat(),
     query("minQuantity").optional().isNumeric().toInt(),
     query("maxQuantity").optional().isNumeric().toInt(),
     query("sortBy").optional().isString().isIn(["currentPrice", "quantity", "publishedAt"]),
@@ -40,5 +41,19 @@ router.get(
   handleValidationErrors,
   productController.getProductById
 );
+
+
+router.get(
+  '/:productId/reviews',
+
+  param('productId').isInt().toInt(),
+  query('page').optional().isInt().toInt(),
+  query('limit').optional().isInt().toInt(),
+  query('rating').optional().isInt().toInt(),
+  query('sortBy').optional().isIn(['createdAt']),
+  handleValidationErrors,
+
+  reviewController.getReviews
+)
 
 module.exports = router;

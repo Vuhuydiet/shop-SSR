@@ -79,19 +79,19 @@
         <h3 class="text-xl text-gray-800 mb-3 uppercase font-medium">Star</h3>
         <div class="mt-4 flex items-center">
           <!--
-          <label for="minStars">Min Stars:</label>
-          <input type="number" name="minStars" min="0" max="5" step="0.1" />
+          <label for="minRating">Min rating:</label>
+          <input type="number" name="minRating" min="0" max="5" step="0.1" />
 
-          <label for="maxStars">Max Stars:</label>
-          <input type="number" name="maxStars" min="0" max="5" step="0.1" />
+          <label for="maxRating">Max Rating:</label>
+          <input type="number" name="maxRating" min="0" max="5" step="0.1" />
         -->
-          <input type="number" name="minStar" id="minStar" min="1" max="5" step="0.1"
-            value="<%= locals.query && locals.query.minStar || undefined %>"
+          <input type="number" name="minRating" id="minRating" min="1" max="5" step="0.1"
+            value="<%= locals.query && locals.query.minRating || undefined %>"
             class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
             placeholder="min" />
           <span class="mx-3 text-gray-500">-</span>
-          <input type="number" name="maxStar" id="maxStar" min="1" max="5" step="0.1"
-            value="<%= locals.query && locals.query.maxStar || undefined %>"
+          <input type="number" name="maxRating" id="maxRating" min="1" max="5" step="0.1"
+            value="<%= locals.query && locals.query.maxRating || undefined %>"
             class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
             placeholder="max" />
         </div>
@@ -154,7 +154,7 @@
               <div class="flex gap-1 text-sm text-yellow-400">
                 <span><i class="fa-solid fa-star"></i></span>
                 <span>
-                  <%= product.stars %>
+                  <%= product.rating %>
                 </span>
               </div>
             </div>
@@ -199,12 +199,12 @@
 <script>
   const form = document.getElementById('searchForm');
   form.addEventListener('submit', async (e) => {
-    const minStars = parseFloat(document.getElementById('minStar').value);
-    const maxStars = parseFloat(document.getElementById('maxStar').value);
+    const minRating = parseFloat(document.getElementById('minRating').value);
+    const maxRating = parseFloat(document.getElementById('maxRating').value);
 
-    if (minStars > maxStars) {
+    if (minRating > maxRating) {
       e.preventDefault();
-      alert('Min Stars is less than or equal to Max Stars.');
+      alert('Min rating is less than or equal to Max rating.');
     }
     else {
       e.preventDefault();
@@ -227,11 +227,11 @@
       if (formData.get('maxPrice')) {
         searchParams.append('maxPrice', formData.get('maxPrice'));
       }
-      if (formData.get('minStar')) {
-        searchParams.append('minStar', formData.get('minStar'));
+      if (formData.get('minRating')) {
+        searchParams.append('minRating', formData.get('minRating'));
       }
-      if (formData.get('maxStar')) {
-        searchParams.append('maxStar', formData.get('maxStar'));
+      if (formData.get('maxRating')) {
+        searchParams.append('maxRating', formData.get('maxRating'));
       }
 
       if (formData.get('sortBy')) {

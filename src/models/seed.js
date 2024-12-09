@@ -4,6 +4,10 @@ const prisma = require("./index");
 
 async function main() {
   console.log("Start seeding ...");
+  
+  await prisma.product.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.brand.deleteMany();
 
   const productcategory = [
     { categoryName: "Furniture" },
@@ -14,7 +18,6 @@ async function main() {
     { categoryName: "Books" },
   ];
 
-  await prisma.category.deleteMany();
   await prisma.category.createMany({
     data: productcategory,
   });
@@ -28,7 +31,6 @@ async function main() {
     { brandName: "Honda" },
   ];
 
-  await prisma.brand.deleteMany();
   await prisma.brand.createMany({
     data: productBrands,
   });
@@ -43,7 +45,7 @@ async function main() {
       productDescription:
         "A table is an item of furniture with a flat top and one or more legs, used as a surface for working at, eating from or on which to place things.",
       // productImageUrl: 'assets/images/products/product7.jpg',
-      stars: 4,
+      rating: 4,
       numReviews: 1203,
       category: { connect: { categoryName: "Furniture" } }
     },
@@ -55,7 +57,7 @@ async function main() {
       brand: { connect: { brandName: "Nike" } },
       productDescription: "pixaupwwkjfsiowancolhoiarishxdwtp",
       // productImageUrl: 'assets/images/products/product1.jpg',
-      stars: 1.6,
+      rating: 1.6,
       numReviews: 534,
       category: { connect: { categoryName: "Electronics" } }
     },
@@ -67,7 +69,7 @@ async function main() {
       brand: { connect: { brandName: "Adidas" } },
       productDescription: "ihdvfhyosvsrfmmpcqiwiizslqxpjmjjj",
       // productImageUrl: 'assets/images/products/product2.jpg',
-      stars: 2.1,
+      rating: 2.1,
       numReviews: 939,
       category: {
         connect: {
@@ -83,7 +85,7 @@ async function main() {
       brand: { connect: { brandName: "Samsung" } },
       productDescription: "firrrfzsaeccliwthgaogqjdrbloxwxub",
       // productImageUrl: 'assets/images/products/product3.jpg',
-      stars: 4.4,
+      rating: 4.4,
       numReviews: 232,
       category: {
         connect: {
@@ -99,7 +101,7 @@ async function main() {
       brand: { connect: { brandName: "Apple" } },
       productDescription: "qmpinapsmoketikusqdzfkbjnwvyhnmug",
       // productImageUrl: 'assets/images/products/product4.jpg',
-      stars: 2.9,
+      rating: 2.9,
       numReviews: 750,
       category: {
         connect: {
@@ -116,12 +118,11 @@ async function main() {
       brand: { connect: { brandName: "Nike" } },
       productDescription: "jmmghvtakphnpptlobeltkwupytyhsxgh",
       // productImageUrl: 'assets/images/products/product5.jpg',
-      stars: 3.5,
+      rating: 3.5,
       numReviews: 239,
       category: {
         connect: {
           categoryName: "Electronics",
-
         }
       }
     },
@@ -133,7 +134,7 @@ async function main() {
       brand: { connect: { brandName: "Adidas" } },
       productDescription: "qhyulqjkgikthsenvyutkkcyyrtsecsek",
       // productImageUrl: 'assets/images/products/product6.jpg',
-      stars: 1.2,
+      rating: 1.2,
       numReviews: 657,
       category: {
         connect: {
@@ -150,7 +151,7 @@ async function main() {
       brand: { connect: { brandName: "Apple" } },
       productDescription: "lkkogdhkrkbneyqsdmvyrktvzbhqzckcu",
       // productImageUrl: 'assets/images/products/product7.jpg',
-      stars: 4.8,
+      rating: 4.8,
       numReviews: 392,
       category: {
         connect: {
@@ -166,7 +167,7 @@ async function main() {
       brand: { connect: { brandName: "Apple" } },
       productDescription: "vxxpqibophkiwnrjrinwtpcewywkwhpwu",
       // productImageUrl: 'assets/images/products/product8.jpg',
-      stars: 1.9,
+      rating: 1.9,
       numReviews: 561,
       category: {
         connect: {
@@ -182,7 +183,7 @@ async function main() {
       brand: { connect: { brandName: "Adidas" } },
       productDescription: "hyklcghvyvexrlhzagabbfxxasxtkcskd",
       // productImageUrl: 'assets/images/products/product9.jpg',
-      stars: 3.1,
+      rating: 3.1,
       numReviews: 334,
       category: {
         connect: {
@@ -198,7 +199,7 @@ async function main() {
       brand: { connect: { brandName: "Adidas" } },
       productDescription: "dbqxvismedntkmwgglhujwuglrzzkpomn",
       // productImageUrl: 'assets/images/products/product10.jpg',
-      stars: 1.2,
+      rating: 1.2,
       numReviews: 2,
       category: {
         connect: {
@@ -214,7 +215,7 @@ async function main() {
       brand: { connect: { brandName: "Toyota" } },
       productDescription: "yznvbfbrzivmdkaxcqyrhczwkesmfzvqn",
       // productImageUrl: 'assets/images/products/product11.jpg',
-      stars: 3.0,
+      rating: 3.0,
       numReviews: 953,
       category: {
         connect: {
@@ -230,7 +231,7 @@ async function main() {
       brand: { connect: { brandName: "Honda" } },
       productDescription: "xywalpogyofagrratnjyxfilbubhjtkho",
       // productImageUrl: 'assets/images/products/product12.jpg',
-      stars: 3.2,
+      rating: 3.2,
       numReviews: 89,
       category: {
         connect: {
@@ -240,7 +241,6 @@ async function main() {
     },
   ];
 
-  await prisma.product.deleteMany();
   products.forEach(async (product) => {
     await prisma.product.create({
       data: product,
