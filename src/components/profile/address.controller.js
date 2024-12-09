@@ -47,34 +47,37 @@ class AddressController {
     }
   };
 
+  getAddAddressPage = async (req, res, next) => {
+    try {
+      return res.render("pages/addAddress", {
+        user: req.user,
+      });
+    } catch (error) {
+      next(new InternalServerError("Failed to fetch address", 500));
+    }
+  };
+
   /**
    * @description Adds a new address
    */
-  addAddress = async (req, res, next) => {
-    try {
+  postAddAddress = async (req, res, next) => {
+      console.log(req.body);
       const address = await this.addressService.addAddress(
-        req.user.id,
+        req.user.userId,
         req.body
       );
       return new CreatedResponse("Address added", { address }).send(res);
-    } catch (error) {
-      next(new InternalServerError("Failed to add address", 500));
-    }
   };
 
   /**
    * @description Updates an existing address
    */
   updateAddress = async (req, res, next) => {
-    try {
       const address = await this.addressService.updateAddress(
         parseInt(req.params.addressId),
         req.body
       );
       return new OKResponse("Address updated", { address }).send(res);
-    } catch (error) {
-      next(new InternalServerError("Failed to update address", 500));
-    }
   };
 
   /**
