@@ -10,6 +10,7 @@ model User {
   email          String @unique
   hashedPassword String
 
+  confirmed Boolean @default(false)
   createdAt   DateTime  @default(now())
   lastLogin   DateTime?
   phoneNumber String?

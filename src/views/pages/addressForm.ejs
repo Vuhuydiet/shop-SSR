@@ -1,0 +1,130 @@
+<!-- breadcrumb -->
+<div class="container py-4 flex items-center gap-3">
+  <a href="../index.html" class="text-primary text-base">
+    <i class="fa-solid fa-house"></i>
+  </a>
+  <span class="text-sm text-gray-400">
+    <i class="fa-solid fa-chevron-right"></i>
+  </span>
+  <p class="text-gray-600 font-medium">Account</p>
+</div>
+<!-- ./breadcrumb -->
+
+<!-- wrapper -->
+<div class="container grid grid-cols-12 items-start pb-16 pt-4 gap-6">
+  <div class="col-span-8 border border-gray-200 p-4 rounded">
+    <h3 class="text-lg font-medium capitalize mb-4">
+      <%= address ? 'Edit' : 'Add' %> Address
+    </h3>
+    <form id="address-form" class="space-y-4">
+      <input
+        type="hidden"
+        id="addressId"
+        name="addressId"
+        value="<%= address ? address.addressId : '' %>"
+      />
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="recipientName" class="text-gray-600"
+            >Name <span class="text-primary">*</span></label
+          >
+          <input
+            type="text"
+            name="recipientName"
+            id="recipientName"
+            class="input-box"
+            value="<%= address ? address.recipientName : '' %>"
+            required
+          />
+        </div>
+        <div>
+          <label for="phoneNumber" class="text-gray-600"
+            >Phone number <span class="text-primary">*</span></label
+          >
+          <input
+            type="tel"
+            name="phoneNumber"
+            id="phoneNumber"
+            pattern="[+]*[0-9]{10,11}"
+            class="input-box"
+            value="<%= address ? address.phoneNumber : '' %>"
+            required
+          />
+        </div>
+      </div>
+      <div>
+        <label for="country" class="text-gray-600">Country/Region</label>
+        <input
+          class="bg-gray-100 input-box"
+          type="text"
+          name="country"
+          id="country"
+          value="Việt Nam"
+          disabled
+        />
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label for="city" class="text-gray-600">Province/City</label>
+          <select
+            id="city"
+            name="city"
+            class="input-box"
+            value="<%= address?.city %>"
+            required
+          >
+            <option value="">Select Province/City</option>
+          </select>
+        </div>
+        <div>
+          <label for="district" class="text-gray-600">District</label>
+          <select
+            id="district"
+            name="district"
+            class="input-box"
+            value="<%= address?.district %>"
+            disabled
+            required
+          >
+            <option value="">Select District</option>
+          </select>
+        </div>
+        <div>
+          <label for="ward" class="text-gray-600">Ward</label>
+          <select
+            id="ward"
+            name="ward"
+            class="input-box"
+            value="<%= address?.ward %>"
+            disabled
+            required
+          >
+            <option value="">Select Ward</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label for="detailAddress" class="text-gray-600">Detail Address</label>
+        <input
+          type="text"
+          name="detailAddress"
+          id="detailAddress"
+          class="input-box"
+          value="<%= address ? address.detailAddress : '' %>"
+          required
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          class="bg-primary text-white px-4 py-2 rounded transition duration-200 hover:opacity-80 active:opacity-70 shadow-sm hover:shadow-md"
+        >
+          <%= address ? 'Update' : 'Add' %> Address
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<script src="/scripts/addressForm.js"></script>

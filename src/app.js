@@ -6,7 +6,7 @@ const session = require("express-session");
 const passport = require("./components/accounts/passport");
 const flash = require("connect-flash");
 const app = express();
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const env = require("./config/env");
 
 require("express-async-errors");
@@ -17,7 +17,7 @@ const errorHandler = require("./libraries/errorHandler/errorHandler");
 const notFoundHandler = require("./libraries/errorHandler/notFoundHandler");
 const morgan = require("morgan");
 
-const pgSession = require('connect-pg-simple')(session);
+const pgSession = require("connect-pg-simple")(session);
 const { Pool } = require("pg");
 
 // middlewares
@@ -41,7 +41,7 @@ app.set("layout", "components/layout");
 app.use(
   session({
     store: new pgSession({
-      pool: new Pool({connectionString: env.DATABASE_URL}),
+      pool: new Pool({ connectionString: env.DATABASE_URL }),
       tableName: "session",
     }),
     secret: env.SESSION_SECRET || "your-secret-key",

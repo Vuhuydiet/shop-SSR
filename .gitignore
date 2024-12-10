@@ -4,6 +4,7 @@ migrations
 .ignored/
 
 .vscode
+.idea
 
 
 # Logs

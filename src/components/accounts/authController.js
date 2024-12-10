@@ -24,16 +24,13 @@ const postRegister = async (req, res) => {
       message: "This email already taken. Please choose a different one.",
     });
   }
-  await accountService.registerUser(
-    email,
-    password
-  );
+  await accountService.registerUser(email, password);
 
   new CreatedResponse({
     message:
       "Registration successful. Please check your email to verify your account.",
     metadata: {
-      redirectUrl: `/users/confirm?email=${(email)}`,
+      redirectUrl: `/users/confirm?email=${email}`,
     },
   }).send(res);
 };
@@ -51,7 +48,9 @@ const postLogin = (req, res, next) => {
         //   message: info.message,
         //   error: { redirectUrl: info.redirectUrl },
         // });
-        res.status(400).json({ message: info.message, redirectUrl: info.redirectUrl });
+        res
+          .status(400)
+          .json({ message: info.message, redirectUrl: info.redirectUrl });
       }
 
       // throw new BadRequestError({ message: info.message });
@@ -71,7 +70,7 @@ const postLogin = (req, res, next) => {
           // throw new InternalServerError({ error: err });
           // throw new Error(err);
           console.error(err);
-        return;
+          return;
         }
 
         new OKResponse({

@@ -1,9 +1,11 @@
 const registerForm = document.getElementById("registerForm");
 const errorDiv = document.getElementById("errorMessage");
 const successDiv = document.getElementById("successMessage");
+const submitButton = document.getElementById("submitButton");
 
-registerForm.addEventListener("submit", async (event) => {
+const handleRegisterSubmit = async (event) => {
   event.preventDefault();
+
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirm").value;
@@ -32,6 +34,9 @@ registerForm.addEventListener("submit", async (event) => {
     return;
   }
 
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
+
   try {
     const response = await fetch("/users/register", {
       method: "POST",
@@ -41,16 +46,12 @@ registerForm.addEventListener("submit", async (event) => {
       body: JSON.stringify({ email, password }),
     });
     const data = await response.json();
-    // console.log(data);
+
     if (response.ok) {
       successDiv.textContent = data.message;
       successDiv.classList.remove("hidden");
 
       window.location.href = data.metadata.redirectUrl;
-
-      // setTimeout(() => {
-      //   window.location.href = "/users/login";
-      // }, 2000);
     } else {
       errorDiv.textContent = data.message;
       errorDiv.classList.remove("hidden");
@@ -58,5 +59,10 @@ registerForm.addEventListener("submit", async (event) => {
   } catch (error) {
     errorDiv.textContent = "An error occurred. Please try again.";
     errorDiv.classList.remove("hidden");
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Submit";
   }
-});
+};
+
+registerForm.addEventListener("submit", handleRegisterSubmit);
