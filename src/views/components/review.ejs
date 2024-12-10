@@ -131,7 +131,7 @@
 
   async function fetchReviews(page = 1) {
     try {
-      const response = await fetch(`/products/${productId}/reviews?page=${page}&limit=${PAGE_SIZE}`);
+      const response = await fetch(`/products/${productId}/reviews?page=${page}&limit=${PAGE_SIZE}&sortBy=createdAt&order=desc`);
       const data = await response.json();
 
       const reviewsContainer = document.getElementById("reviews-container");
