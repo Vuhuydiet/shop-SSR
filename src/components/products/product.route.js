@@ -38,7 +38,7 @@ router.get(
 
 
 router.get(
-    "/api/products",
+    "/api",
     queryValidator(),
     handleValidationErrors,
     productController.getAllProductsJSON

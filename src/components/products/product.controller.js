@@ -20,8 +20,8 @@ module.exports = {
     //console.log('Query passed to frontend:', products);
 
     res.render("pages/products", {
-      products: products,
-      count: count,
+
+
       brands: brands,
       totalPages: totalPages,
       currentPage: page,

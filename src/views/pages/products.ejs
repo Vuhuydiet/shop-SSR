@@ -124,43 +124,8 @@
       </select>
     </div>
 
-    <div class="grid md:grid-cols-3 grid-cols-2 gap-6">
-      <% locals.products.forEach(product=> { %>
-        <div class="bg-white shadow rounded overflow-hidden group">
-          <div class="relative">
-            <a href="/products/<%= product.productId %>">
-              <img src="<%= product.productImageUrl %>" alt="<%= product.productName %>" class="w-full" />
-              <div
-                class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-              </div>
-            </a>
-          </div>
-          <div class="pt-4 pb-3 px-4 w-full">
-            <a href="/products/<%= product.productId %>">
-              <h4
-                class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition truncate whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
-                <%= product.productName %>
-              </h4>
-            </a>
-            <div class="flex items-baseline mb-1 space-x-2">
-              <p class="text-xl text-primary font-semibold">
-                $<%= product.currentPrice %>
-              </p>
-              <p class="text-sm text-gray-400 line-through">
-                $<%= product.originalPrice %>
-              </p>
-            </div>
-            <div class="flex items-center">
-              <div class="flex gap-1 text-sm text-yellow-400">
-                <span><i class="fa-solid fa-star"></i></span>
-                <span>
-                  <%= product.rating %>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <% }) %>
+    <div class="product-container grid md:grid-cols-3 grid-cols-2 gap-6">
+
     </div>
   </div>
 
@@ -196,10 +161,29 @@
 <!-- ./shop wrapper -->
 
 <script>
+  const PAGE_SIZE=9;
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await fetchProducts();
+  });
+
+  async function fetchProducts(page=1) {
+    try {
+      const response = await fetch(`/products/api?page=${page}&limit=${PAGE_SIZE}`);
+      const data = await response.json();
+      console.log(data);
+      renderProducts(data.products);
+      renderPagination(data.currentPage, data.totalPages);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      alert('Failed to fetch products. Please try again.');
+    }
+  }
+
   const form = document.getElementById('searchForm');
 
   form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the default form submission behavior
 
     const minRating = parseFloat(document.getElementById('minRating').value);
     const maxRating = parseFloat(document.getElementById('maxRating').value);
@@ -251,9 +235,11 @@
     console.log('Query Params:', queryString);
 
     try {
+      // Send AJAX request to the /api/products endpoint
       const response = await fetch(`/api/products?${queryString}`);
       const data = await response.json();
 
+      // Update the UI with the new product list and pagination
       renderProducts(data.products);
       renderPagination(data.currentPage, data.totalPages);
     } catch (error) {
@@ -262,9 +248,10 @@
     }
   });
 
+  // Function to render products dynamically
   function renderProducts(products) {
-    const productGrid = document.querySelector('.grid');
-    productGrid.innerHTML = '';
+    const productGrid = document.querySelector('.product-container');
+    productGrid.innerHTML = ''; // Clear existing products
 
     products.forEach((product) => {
       const productHTML = `
@@ -296,9 +283,10 @@
     });
   }
 
+  // Function to render pagination dynamically
   function renderPagination(currentPage, totalPages) {
     const paginationContainer = document.querySelector('.pagination-container');
-    paginationContainer.innerHTML = '';
+    paginationContainer.innerHTML = ''; // Clear existing pagination
 
     if (currentPage > 1) {
       paginationContainer.innerHTML += `
@@ -324,6 +312,7 @@
     setupPaginationListeners();
   }
 
+  // Function to handle pagination click events
   function setupPaginationListeners() {
     const paginationLinks = document.querySelectorAll('.pagination-link');
     paginationLinks.forEach((link) => {
@@ -333,7 +322,8 @@
         const formData = new FormData(form);
         formData.append('page', page);
         const searchParams = new URLSearchParams(formData).toString();
-        const response = await fetch(`/api/products?${searchParams}`);
+        console.log(searchParams);
+        const response = await fetch(`/api?${searchParams}`);
         const data = await response.json();
 
         renderProducts(data.products);
