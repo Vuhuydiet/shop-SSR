@@ -6,6 +6,8 @@ const { getHashedPassword } = require("./password");
 const env = require("../../config/env");
 const { InternalServerError } = require("../../core/ErrorResponse");
 
+const otpMap = new Map();
+
 const generateToken = () => {
   const randomBytes = crypto.randomBytes(3);
   const randomInt = randomBytes.readUIntBE(0, 3);
@@ -46,9 +48,12 @@ const accountService = {
       data: {
         email,
         hashedPassword,
-        confirmationCode,
-        confirmationCodeExpires,
       },
+    });
+
+    otpMap.set(user.userId, {
+      otp: confirmationCode,
+      expiresAt: confirmationCodeExpires,
     });
 
     await sendEmail(
@@ -62,40 +67,62 @@ const accountService = {
   confirmUser: async (email, confirmationCode) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (user && user.confirmationCode === confirmationCode) {
-      await prisma.user.update({
-        where: { email },
-        data: { confirmed: true, confirmationCode: null },
-      });
-      return true;
+    if (user) {
+      const otpData = otpMap.get(user.userId);
+      if (
+        otpData &&
+        otpData.otp === confirmationCode &&
+        otpData.expiresAt > new Date()
+      ) {
+        await prisma.user.update({
+          where: { email },
+          data: { confirmed: true },
+        });
+        otpMap.delete(user.userId);
+        return true;
+      }
     }
     return false;
   },
 
   resetPassword: async (email) => {
-    const resetPasswordToken = generateToken();
-    await prisma.user.update({
-      where: { email },
-      data: { resetPasswordToken },
-    });
+    const user = await prisma.user.findUnique({ where: { email } });
 
-    await sendEmail(
-      email,
-      "Password Reset",
-      `Please reset your password using the following token: ${resetPasswordToken}`
-    );
+    if (user) {
+      const resetPasswordToken = generateToken();
+      const resetPasswordTokenExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+      otpMap.set(user.userId, {
+        otp: resetPasswordToken,
+        expiresAt: resetPasswordTokenExpires,
+      });
+
+      await sendEmail(
+        email,
+        "Password Reset",
+        `Please reset your password using the following token: ${resetPasswordToken}`
+      );
+    }
   },
 
   updatePassword: async (email, resetPasswordToken, newPassword) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (user && user.resetPasswordToken === resetPasswordToken) {
-      const hashedPassword = getHashedPassword(newPassword);
-      await prisma.user.update({
-        where: { email },
-        data: { password: hashedPassword, resetPasswordToken: null },
-      });
-      return true;
+    if (user) {
+      const otpData = otpMap.get(user.userId);
+      if (
+        otpData &&
+        otpData.otp === resetPasswordToken &&
+        otpData.expiresAt > new Date()
+      ) {
+        const hashedPassword = getHashedPassword(newPassword);
+        await prisma.user.update({
+          where: { email },
+          data: { password: hashedPassword },
+        });
+        otpMap.delete(user.userId);
+        return true;
+      }
     }
     return false;
   },
@@ -109,7 +136,7 @@ const accountService = {
       return user !== null;
     } catch (error) {
       logger.error(`Error checking user existence: ${error.message}`);
-      throw new InternalServerError({ error: err });
+      throw new InternalServerError({ error: error });
     }
   },
 
@@ -118,7 +145,7 @@ const accountService = {
       return await prisma.user.findUnique({ where: { email } });
     } catch (error) {
       logger.error(`Error getting user by email: ${error.message}`);
-      throw new InternalServerError({ error: err });
+      throw new InternalServerError({ error: error });
     }
   },
 
@@ -127,7 +154,7 @@ const accountService = {
       return await prisma.user.findUnique({ where: { userId } });
     } catch (error) {
       logger.error(`Error getting user by id: ${error.message}`);
-      throw new InternalServerError({ error: err });
+      throw new InternalServerError({ error: error });
     }
   },
 
@@ -139,7 +166,7 @@ const accountService = {
       });
     } catch (error) {
       logger.error(`Error updating last login: ${error.message}`);
-      throw new InternalServerError({ error: err });
+      throw new InternalServerError({ error: error });
     }
   },
 };

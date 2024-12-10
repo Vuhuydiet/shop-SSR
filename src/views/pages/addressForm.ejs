@@ -65,8 +65,14 @@
       </div>
       <div class="grid grid-cols-3 gap-4">
         <div>
-          <label for="province" class="text-gray-600">Province/City</label>
-          <select id="province" name="province" class="input-box" required>
+          <label for="city" class="text-gray-600">Province/City</label>
+          <select
+            id="city"
+            name="city"
+            class="input-box"
+            value="<%= address?.city %>"
+            required
+          >
             <option value="">Select Province/City</option>
           </select>
         </div>
@@ -76,6 +82,7 @@
             id="district"
             name="district"
             class="input-box"
+            value="<%= address?.district %>"
             disabled
             required
           >
@@ -84,7 +91,14 @@
         </div>
         <div>
           <label for="ward" class="text-gray-600">Ward</label>
-          <select id="ward" name="ward" class="input-box" disabled required>
+          <select
+            id="ward"
+            name="ward"
+            class="input-box"
+            value="<%= address?.ward %>"
+            disabled
+            required
+          >
             <option value="">Select Ward</option>
           </select>
         </div>
@@ -113,4 +127,4 @@
 </div>
 <!-- ./wrapper -->
 
-<script src="/scripts/manageAddress.js"></script>
+<script src="/scripts/addressForm.js"></script>

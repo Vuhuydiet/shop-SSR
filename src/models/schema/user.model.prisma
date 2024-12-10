@@ -15,9 +15,6 @@ model User {
   lastLogin   DateTime?
   phoneNumber String?
 
-  confirmationCode String?
-  confirmationCodeExpires DateTime?
-
   avatarUrl   String?
   publicImgId String?
 
