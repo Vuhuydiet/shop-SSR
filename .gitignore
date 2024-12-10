@@ -2,6 +2,7 @@
 migrations
 
 .vscode
+.idea
 
 # Logs
 logs
