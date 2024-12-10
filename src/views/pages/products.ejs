@@ -167,7 +167,7 @@
 
 </form>
 <!-- Pagination Controls -->
-<div class="flex justify-center items-center space-x-2 mt-6">
+<div class="pagination-container flex justify-center items-center space-x-2 mt-6">
   <% if (currentPage> 1) { %>
     <a href="?<%= `page=${currentPage - 1}&limit=${query.limit || 9}` %>"
       class="px-4 py-2 bg-gray-300 text-gray-800 rounded">
@@ -195,7 +195,161 @@
 
 <!-- ./shop wrapper -->
 
+<script>
+  const form = document.getElementById('searchForm');
+  console.log("OK!1234");
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
 
+    const minRating = parseFloat(document.getElementById('minRating').value);
+    const maxRating = parseFloat(document.getElementById('maxRating').value);
+
+    if (minRating > maxRating) {
+      alert('Min rating must be less than or equal to Max rating.');
+      return;
+    }
+
+    // Collect form data
+    const formData = new FormData(form);
+    const searchParams = new URLSearchParams();
+
+    if (formData.get('categories')) {
+      formData.getAll('categories').forEach((category) => {
+        searchParams.append('categories', category);
+      });
+    }
+
+    if (formData.get('brands')) {
+      formData.getAll('brands').forEach((brand) => {
+        searchParams.append('brands', brand);
+      });
+    }
+
+    if (formData.get('minPrice')) {
+      searchParams.append('minPrice', formData.get('minPrice'));
+    }
+
+    if (formData.get('maxPrice')) {
+      searchParams.append('maxPrice', formData.get('maxPrice'));
+    }
+
+    if (formData.get('minRating')) {
+      searchParams.append('minRating', formData.get('minRating'));
+    }
+
+    if (formData.get('maxRating')) {
+      searchParams.append('maxRating', formData.get('maxRating'));
+    }
+
+    if (formData.get('sortBy')) {
+      const [sortBy, order] = formData.get('sortBy').split('-');
+      searchParams.append('sortBy', sortBy);
+      searchParams.append('order', order);
+    }
+
+    const queryString = searchParams.toString();
+    console.log('Query Params:', queryString);
+
+    try {
+
+      const response = await fetch(`/api/products?${queryString}`);
+      const data = await response.json();
+      console.log(data);
+
+      renderProducts(data.products);
+      renderPagination(data.currentPage, data.totalPages);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      alert('Failed to fetch products. Please try again.');
+    }
+  });
+
+  // Function to render products dynamically
+  function renderProducts(products) {
+    const productGrid = document.querySelector('.grid');
+    productGrid.innerHTML = ''; // Clear existing products
+
+    products.forEach((product) => {
+      const productHTML = `
+            <div class="bg-white shadow rounded overflow-hidden group">
+                <div class="relative">
+                    <a href="/products/${product.productId}">
+                        <img src="${product.productImageUrl}" alt="${product.productName}" class="w-full" />
+                    </a>
+                </div>
+                <div class="pt-4 pb-3 px-4 w-full">
+                    <a href="/products/${product.productId}">
+                        <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition truncate whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+                            ${product.productName}
+                        </h4>
+                    </a>
+                    <div class="flex items-baseline mb-1 space-x-2">
+                        <p class="text-xl text-primary font-semibold">$${product.currentPrice}</p>
+                        <p class="text-sm text-gray-400 line-through">$${product.originalPrice}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="flex gap-1 text-sm text-yellow-400">
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span>${product.rating}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+      productGrid.innerHTML += productHTML;
+    });
+  }
+
+  // Function to render pagination dynamically
+  function renderPagination(currentPage, totalPages) {
+    const paginationContainer = document.querySelector('.pagination-container');
+    paginationContainer.innerHTML = ''; // Clear existing pagination
+
+    if (currentPage > 1) {
+      paginationContainer.innerHTML += `
+            <a href="#" class="pagination-link px-4 py-2 bg-gray-300 text-gray-800 rounded" data-page="${currentPage - 1}">
+                Previous
+            </a>`;
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      paginationContainer.innerHTML += `
+            <a href="#" class="pagination-link px-4 py-2 rounded ${i === currentPage ? "bg-primary text-white" : "bg-gray-300 text-gray-800"}" data-page="${i}">
+                ${i}
+            </a>`;
+    }
+
+    if (currentPage < totalPages) {
+      paginationContainer.innerHTML += `
+            <a href="#" class="pagination-link px-4 py-2 bg-gray-300 text-gray-800 rounded" data-page="${currentPage + 1}">
+                Next
+            </a>`;
+    }
+
+    setupPaginationListeners();
+  }
+
+  // Function to handle pagination click events
+  function setupPaginationListeners() {
+    const paginationLinks = document.querySelectorAll('.pagination-link');
+    paginationLinks.forEach((link) => {
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        const formData = new FormData(form);
+        formData.append('page', page);
+        const searchParams = new URLSearchParams(formData).toString();
+        const response = await fetch(`/api/products?${searchParams}`);
+        const data = await response.json();
+
+        renderProducts(data.products);
+        renderPagination(data.currentPage, data.totalPages);
+      });
+    });
+  }
+
+</script>
+
+<!--
 <script>
   const form = document.getElementById('searchForm');
   form.addEventListener('submit', async (e) => {
@@ -251,3 +405,4 @@
   });
 
 </script>
+-->

@@ -28,11 +28,20 @@ const queryValidator = () => {
   ];
 };
 
+
 router.get(
   "/",
   queryValidator(),
   handleValidationErrors,
   productController.getAllProducts
+);
+
+
+router.get(
+    "/api/products",
+    queryValidator(),
+    handleValidationErrors,
+    productController.getAllProductsJSON
 );
 
 router.get(

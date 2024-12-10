@@ -29,6 +29,43 @@ module.exports = {
     });
   },
 
+  getAllProductsJSON: async (req, res) => {
+    const queries = matchedData(req);
+
+    const brands = await ProductService.getAllBrands();
+
+    const limit = queries.limit || 9;
+    const page = Math.max(1, queries.page || 1);
+    const offset = (page - 1) * limit;
+
+    queries.limit = limit;
+    queries.offset = offset;
+
+    const { products, count } = await ProductService.getAllProducts(queries);
+    const totalPages = Math.ceil(count / limit);
+
+
+      return res.json({
+        products,
+        count,
+        totalPages,
+        currentPage: page,
+        query: queries,
+      });
+
+    /*
+    res.render("pages/products", {
+      products,
+      count,
+      brands,
+      totalPages,
+      currentPage: page,
+      query: queries,
+    });
+
+     */
+  },
+
   getProductById: async (req, res) => {
     const { productId } = matchedData(req);
 
