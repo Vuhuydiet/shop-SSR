@@ -1,5 +1,6 @@
 const { matchedData } = require("express-validator");
 const ProductService = require("./product.service");
+const ReviewService = require("./reviews/review.service");
 
 module.exports = {
   getAllProducts: async (req, res) => {
@@ -32,12 +33,12 @@ module.exports = {
   getProductById: async (req, res) => {
     const { productId } = matchedData(req);
 
-    const categories = await ProductService.getAllCategories();
     const product = await ProductService.getProductById(productId);
+    const reviewCount = await ReviewService.getReviewCountByProductId(productId);
 
     const query = req.query;
     //console.log('Query passed to frontend:', query);
-    query.brands = [product.brand];
+    query.brands = [product.brand.brandName];
     //query.categories.map(Number)=[query.categories];
 
     const { count, products } = await ProductService.getAllProducts(query);
@@ -47,8 +48,8 @@ module.exports = {
       additionalScripts: ['https://unpkg.com/swiper/swiper-bundle.min.js'],
       count,
       product,
-      categories: categories,
       products: products,
+      reviewCount,
     });
   },
 };

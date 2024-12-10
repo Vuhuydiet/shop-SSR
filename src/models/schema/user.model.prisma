@@ -14,6 +14,7 @@ model User {
   createdAt   DateTime  @default(now())
   lastLogin   DateTime?
   phoneNumber String?
+  fullname    String?
 
   avatarUrl   String?
   publicImgId String?
@@ -23,8 +24,7 @@ model User {
   oauthToken    String?
 
   shippingAddresses ShippingAddress[]
-  cartItems CartItem[]
-  orders Order[]
+  cartItems         CartItem[]
+  orders            Order[]
+  reviews           Review[]
 }
-
-

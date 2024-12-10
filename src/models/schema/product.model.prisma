@@ -39,7 +39,7 @@ model Product {
   originalPrice Int
 
   soldQuantity Int   @default(0)
-  stars        Float @default(5)
+  rating        Float @default(5)
   numReviews   Int   @default(0)
 
   category      Category       @relation(fields: [categoryId], references: [categoryId], onDelete: Restrict)
