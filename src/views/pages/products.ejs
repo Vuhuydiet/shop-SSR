@@ -199,7 +199,7 @@
   const form = document.getElementById('searchForm');
 
   form.addEventListener('submit', async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault();
 
     const minRating = parseFloat(document.getElementById('minRating').value);
     const maxRating = parseFloat(document.getElementById('maxRating').value);
@@ -251,11 +251,9 @@
     console.log('Query Params:', queryString);
 
     try {
-      // Send AJAX request to the /api/products endpoint
       const response = await fetch(`/api/products?${queryString}`);
       const data = await response.json();
 
-      // Update the UI with the new product list and pagination
       renderProducts(data.products);
       renderPagination(data.currentPage, data.totalPages);
     } catch (error) {
@@ -264,10 +262,9 @@
     }
   });
 
-  // Function to render products dynamically
   function renderProducts(products) {
     const productGrid = document.querySelector('.grid');
-    productGrid.innerHTML = ''; // Clear existing products
+    productGrid.innerHTML = '';
 
     products.forEach((product) => {
       const productHTML = `
@@ -299,10 +296,9 @@
     });
   }
 
-  // Function to render pagination dynamically
   function renderPagination(currentPage, totalPages) {
     const paginationContainer = document.querySelector('.pagination-container');
-    paginationContainer.innerHTML = ''; // Clear existing pagination
+    paginationContainer.innerHTML = '';
 
     if (currentPage > 1) {
       paginationContainer.innerHTML += `
@@ -328,7 +324,6 @@
     setupPaginationListeners();
   }
 
-  // Function to handle pagination click events
   function setupPaginationListeners() {
     const paginationLinks = document.querySelectorAll('.pagination-link');
     paginationLinks.forEach((link) => {
