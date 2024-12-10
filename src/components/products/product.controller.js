@@ -46,11 +46,12 @@ module.exports = {
 
 
       return res.json({
-        products,
-        count,
-        totalPages,
-        currentPage: page,
-        query: queries,
+          products,
+          count,
+          brands,
+          totalPages,
+          currentPage: page,
+          query: queries,
       });
 
     /*
