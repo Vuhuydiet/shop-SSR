@@ -13,14 +13,29 @@
 <!-- wrapper -->
 <div class="container grid grid-cols-12 items-start pb-16 pt-4 gap-6">
   <div class="col-span-8 border border-gray-200 p-4 rounded">
-    <h3 class="text-lg font-medium capitalize mb-4">Add new address</h3>
+    <h3 class="text-lg font-medium capitalize mb-4">
+      <%= address ? 'Edit' : 'Add' %> Address
+    </h3>
     <form id="address-form" class="space-y-4">
+      <input
+        type="hidden"
+        id="addressId"
+        name="addressId"
+        value="<%= address ? address.addressId : '' %>"
+      />
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label for="recipientName" class="text-gray-600"
             >Name <span class="text-primary">*</span></label
           >
-          <input type="text" name="recipientName" id="recipientName" class="input-box" required />
+          <input
+            type="text"
+            name="recipientName"
+            id="recipientName"
+            class="input-box"
+            value="<%= address ? address.recipientName : '' %>"
+            required
+          />
         </div>
         <div>
           <label for="phoneNumber" class="text-gray-600"
@@ -32,7 +47,7 @@
             id="phoneNumber"
             pattern="[+]*[0-9]{10,11}"
             class="input-box"
-            oninvalid="this.setCustomValidity('Please enter a valid phone number')"
+            value="<%= address ? address.phoneNumber : '' %>"
             required
           />
         </div>
@@ -50,14 +65,20 @@
       </div>
       <div class="grid grid-cols-3 gap-4">
         <div>
-          <label for="city" class="text-gray-600">Province/City</label>
-          <select id="city" name="city" class="input-box" required>
+          <label for="province" class="text-gray-600">Province/City</label>
+          <select id="province" name="province" class="input-box" required>
             <option value="">Select Province/City</option>
           </select>
         </div>
         <div>
           <label for="district" class="text-gray-600">District</label>
-          <select id="district" name="district" class="input-box" disabled required>
+          <select
+            id="district"
+            name="district"
+            class="input-box"
+            disabled
+            required
+          >
             <option value="">Select District</option>
           </select>
         </div>
@@ -70,15 +91,21 @@
       </div>
       <div>
         <label for="detailAddress" class="text-gray-600">Detail Address</label>
-        <input type="text" name="detailAddress" id="detailAddress" class="input-box" required />
+        <input
+          type="text"
+          name="detailAddress"
+          id="detailAddress"
+          class="input-box"
+          value="<%= address ? address.detailAddress : '' %>"
+          required
+        />
       </div>
-      <div id="address-preview"></div>
       <div>
-        <button id="add-btn"
+        <button
           type="submit"
           class="bg-primary text-white px-4 py-2 rounded transition duration-200 hover:opacity-80 active:opacity-70 shadow-sm hover:shadow-md"
         >
-          Submit
+          <%= address ? 'Update' : 'Add' %> Address
         </button>
       </div>
     </form>
@@ -86,4 +113,4 @@
 </div>
 <!-- ./wrapper -->
 
-<script src="/scripts/addAddress.js"></script>
+<script src="/scripts/manageAddress.js"></script>

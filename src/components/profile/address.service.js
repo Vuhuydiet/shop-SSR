@@ -7,6 +7,12 @@ class AddressService {
     });
   }
 
+  static async getAddressById(addressId) {
+    return await prisma.shippingAddress.findUnique({
+      where: { addressId },
+    });
+  }
+
   static async addAddress(userId, addressData) {
     return await prisma.shippingAddress.create({
       data: {

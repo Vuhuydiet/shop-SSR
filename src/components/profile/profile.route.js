@@ -58,6 +58,11 @@ router.get(
   isAuthenticated,
   addressController.getAddAddressPage
 );
+router.get(
+  "/address/edit/:addressId",
+  isAuthenticated,
+  addressController.getUpdateAddressPage
+);
 
 router.post(
   "/api/address/add",

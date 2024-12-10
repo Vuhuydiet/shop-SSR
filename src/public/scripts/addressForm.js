@@ -83,12 +83,17 @@ document.addEventListener("DOMContentLoaded", () => {
   detailAddressInput.addEventListener("input", () => {
     const detailAddress = detailAddressInput.value;
 
-    const notFullySelected = provinceSelect.selectedIndex === 0 || districtSelect.selectedIndex === 0 || wardSelect.selectedIndex === 0;
+    const notFullySelected =
+      provinceSelect.selectedIndex === 0 ||
+      districtSelect.selectedIndex === 0 ||
+      wardSelect.selectedIndex === 0;
     if (notFullySelected) {
       return;
     }
-    const cityName = provinceSelect.options[provinceSelect.selectedIndex]?.text || "";
-    const districtName = districtSelect.options[districtSelect.selectedIndex]?.text || "";
+    const cityName =
+      provinceSelect.options[provinceSelect.selectedIndex]?.text || "";
+    const districtName =
+      districtSelect.options[districtSelect.selectedIndex]?.text || "";
     const wardName = wardSelect.options[wardSelect.selectedIndex]?.text || "";
     const country = document.getElementById("country").value;
 
@@ -100,58 +105,48 @@ document.addEventListener("DOMContentLoaded", () => {
   addressForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const countryInput = document.getElementById("country");
-    countryInput.disabled = false;
-    
-    const cityName =
+    const addressId = document.getElementById("addressId").value;
+    const provinceName =
       provinceSelect.options[provinceSelect.selectedIndex].text;
     const districtName =
       districtSelect.options[districtSelect.selectedIndex].text;
     const wardName = wardSelect.options[wardSelect.selectedIndex].text;
 
     const formData = new FormData(addressForm);
-    formData.set("city", cityName);
+    formData.set("province", provinceName);
     formData.set("district", districtName);
     formData.set("ward", wardName);
 
     const data = Object.fromEntries(formData.entries());
 
-    countryInput.disabled = true;
-
-    const submitButton = document.getElementById("add-btn");
-    const submitButtonStyle = submitButton.style;
-    const disabledButtonStyle = "opacity: 0.5; cursor: not-allowed; background-color: grey;";
-    submitButton.disabled = true;
-    submitButtonStyle.cssText = disabledButtonStyle;
-    
-    
     try {
-      console.log(data);
-      const response = await fetch("/profile/api/address/add", {
-        method: "POST",
+      const url = addressId
+        ? `/api/profile/address/${addressId}`
+        : "/api/profile/address/add";
+      const method = addressId ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
-      
+
+      const result = await response.json();
+
       if (response.ok) {
-        alert("Address added successfully!");
+        alert(result.message);
         window.location.href = "/profile/address";
       } else {
-        const errorData = await response.json();
-        alert("Error adding address: " + errorData.message);
+        alert("Error: " + result.message);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("Error submitting form: " + error.message);
-    } finally {
-      submitButton.disabled = false;
-      submitButton.style = submitButtonStyle;
     }
   });
-  
+
   // Initial fetch of provinces
   fetchProvinces();
 });
-
