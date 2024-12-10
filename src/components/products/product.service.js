@@ -95,6 +95,7 @@ class ProductService {
       },
       include: {
         category: true,
+        brand: true
       },
     });
 

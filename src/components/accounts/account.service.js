@@ -113,7 +113,7 @@ const accountService = {
     try {
       const user = await prisma.user.findUnique({
         where: { email },
-        select: { id: true },
+        select: { userId: true },
       });
       return user !== null;
     } catch (error) {
@@ -133,7 +133,7 @@ const accountService = {
 
   findUserById: async (userId) => {
     try {
-      return await prisma.user.findUnique({ where: { id: userId } });
+      return await prisma.user.findUnique({ where: { userId: userId } });
     } catch (error) {
       logger.error(`Error getting user by id: ${error.message}`);
       throw new InternalServerError({ error: err });

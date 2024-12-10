@@ -5,7 +5,7 @@ enum UserStatus {
 
 model User {
   userId Int        @id @default(autoincrement())
-  status UserStatus
+  status UserStatus @default(ACTIVE)
 
   email          String @unique
   hashedPassword String
@@ -13,17 +13,17 @@ model User {
   createdAt   DateTime  @default(now())
   lastLogin   DateTime?
   phoneNumber String?
+  fullname    String?
 
   avatarUrl   String?
   publicImgId String?
 
   oauthProvider String?
   oauthId       String? @unique
-  oauthToken    String
+  oauthToken    String?
 
   shippingAddresses ShippingAddress[]
-  cartItems CartItem[]
-  orders Order[]
+  cartItems         CartItem[]
+  orders            Order[]
+  reviews           Review[]
 }
-
-

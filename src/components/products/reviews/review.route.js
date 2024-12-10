@@ -6,7 +6,7 @@ const { param, query, body } = require("express-validator");
 const {
   handleValidationErrors,
 } = require("../../../libraries/validator/validator");
-const { isAuthenticated } = require("../../accounts/account.middleware");
+const { isAuthenticated, isAuthenicatedReturnsErrror } = require("../../accounts/account.middleware");
 
 router.get(
   "/:reviewId",
@@ -19,7 +19,7 @@ router.get(
 
 router.post(
   "/",
-  isAuthenticated,
+  isAuthenicatedReturnsErrror,
 
   body("productId").isInt().toInt(),
   body("rating").isInt({ min: 1, max: 5 }).toInt(),

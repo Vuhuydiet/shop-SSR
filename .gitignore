@@ -1,7 +1,10 @@
 # prisma
 migrations
 
+.ignored/
+
 .vscode
+
 
 # Logs
 logs
