@@ -20,12 +20,7 @@ module.exports = {
     //console.log('Query passed to frontend:', products);
 
     res.render("pages/products", {
-
-
       brands: brands,
-      totalPages: totalPages,
-      currentPage: page,
-      query: queries,
     });
   },
 
@@ -41,21 +36,11 @@ module.exports = {
     queries.limit = limit;
     queries.offset = offset;
 
-    const { products, count } = await ProductService.getAllProducts(queries);
+
+    const {products, count} = await ProductService.getAllProducts(queries);
     const totalPages = Math.ceil(count / limit);
 
-
-      return res.json({
-          products,
-          count,
-          brands,
-          totalPages,
-          currentPage: page,
-          query: queries,
-      });
-
-    /*
-    res.render("pages/products", {
+    return res.json({
       products,
       count,
       brands,
@@ -63,8 +48,6 @@ module.exports = {
       currentPage: page,
       query: queries,
     });
-
-     */
   },
 
   getProductById: async (req, res) => {
