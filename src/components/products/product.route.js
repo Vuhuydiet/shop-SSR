@@ -33,9 +33,8 @@ router.get(
   "/",
   queryValidator(),
   handleValidationErrors,
-  productController.getAllProducts
+  productController.getAllProductsJSON
 );
-
 
 router.get(
     "/api",

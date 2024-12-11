@@ -39,15 +39,29 @@ module.exports = {
 
     const {products, count} = await ProductService.getAllProducts(queries);
     const totalPages = Math.ceil(count / limit);
-
-    return res.json({
-      products,
-      count,
-      brands,
-      totalPages,
-      currentPage: page,
-      query: queries,
-    });
+    console.log("Before Entered JSON");
+    if (req.xhr || req.headers.accept.includes('application/json')) {
+      console.log("Entered JSON");
+      return res.json({
+        products,
+        count,
+        brands,
+        totalPages,
+        currentPage: page,
+        query: queries,
+      });
+    }
+    else{
+        console.log("Entered HTML");
+        res.render("pages/products", {
+          products,
+          count,
+          brands,
+          totalPages,
+          currentPage: page,
+          query: queries,
+        });
+    }
   },
 
   getProductById: async (req, res) => {
