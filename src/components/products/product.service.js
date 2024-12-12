@@ -100,6 +100,8 @@ class ProductService {
       },
       include: {
         category: true,
+        brands: true,
+        productImages: true
       },
     });
 
@@ -127,6 +129,8 @@ class ProductService {
 
         include: {
           category: true,
+          brands: true,
+          productImages: true
         },
       }),
     ]);
