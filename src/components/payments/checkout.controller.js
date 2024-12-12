@@ -6,7 +6,6 @@ module.exports = {
     const { products } = matchedData(req);
 
     req.session.products = products;
-    console.log('session saving into: ', req.session.products);
 
     res.redirect(`/checkout`);
   },

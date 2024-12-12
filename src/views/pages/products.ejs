@@ -51,7 +51,7 @@
         <div class="space-y-2">
           <% locals.brands.forEach((brand, idx) => { %>
             <div class="flex items-center">
-              <input type="checkbox" name="brands" value="<%= brand.brandName %>" id="<%= `brand-${idx}` %>"
+              <input type="checkbox" name="brands" value="<%= brand.brandId %>" id="<%= `brand-${idx}` %>"
                       <%= locals.query && locals.query.brands?.includes(brand.brandName) ? 'checked' : '' %>
                      class="text-primary focus:ring-0 rounded-sm cursor-pointer" />
               <label for="<%= `brand-${idx}` %>" class="text-gray-600 ml-3 cursor-pointer">
@@ -172,4 +172,4 @@
 
 <!-- ./shop wrapper -->
 
-<script src="scripts/products.js"></script>
+<script src="/scripts/products.js"></script>
