@@ -2,6 +2,7 @@
 migrations
 
 .vscode
+.ignored
 
 # Logs
 logs
