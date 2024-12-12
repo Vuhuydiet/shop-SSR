@@ -56,7 +56,9 @@ function generateSearchParams(config = {}) {
 async function fetchProducts(page = 1, query = {}) {
     try {
         const searchParams = new URLSearchParams({ ...query, page, limit: PAGE_SIZE });
-        const response = await fetch(`/products/api?${searchParams.toString()}`);
+        const response = await fetch(`/products/api?${searchParams.toString()}`,{
+            headers: { 'Accept': 'application/json' },
+        });
         const data = await response.json();
         console.log("Search para:", searchParams.toString());
         updateURL(searchParams.toString());
