@@ -69,7 +69,6 @@ function getCondition(queryParams) {
 }
 
 class ProductService {
-
   static async getBrandById(brandId) {
     return await prisma.brand.findUnique({
       where: {
@@ -101,6 +100,8 @@ class ProductService {
       },
       include: {
         category: true,
+        brand: true,
+        productImages: true
       },
     });
 
@@ -121,19 +122,20 @@ class ProductService {
         skip: queryParams?.offset || 0,
         take: queryParams?.limit || 9,
         orderBy: queryParams?.sortBy
-          ? {
+            ? {
               [queryParams?.sortBy]: queryParams?.order || "asc",
             }
-          : undefined,
+            : undefined,
 
         include: {
           category: true,
+          brand: true,
+          productImages: true
         },
       }),
     ]);
     return { count, products };
   }
-
 }
 
 module.exports = ProductService;

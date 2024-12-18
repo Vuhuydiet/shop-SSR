@@ -67,23 +67,19 @@ module.exports = {
   getProductById: async (req, res) => {
     const { productId } = matchedData(req);
 
-    const categories = await ProductService.getAllCategories();
     const product = await ProductService.getProductById(productId);
 
-    const query = req.query;
-    //console.log('Query passed to frontend:', query);
-    query.brands = [product.brand];
-    //query.categories.map(Number)=[query.categories];
+    const { count, products } = await ProductService.getAllProducts({
+      brands: [product.brandId],
+      categories: [product.categoryId],
+    });
 
-    const { count, products } = await ProductService.getAllProducts(query);
-    //console.log('Query passed to frontend:', products.map(p => p.productImageUrl));
     res.render("pages/productDetail", {
       additionalStylesheets: ['https://unpkg.com/swiper/swiper-bundle.min.css'],
       additionalScripts: ['https://unpkg.com/swiper/swiper-bundle.min.js'],
       count,
       product,
-      categories: categories,
-      products: products,
+      products,
     });
   },
 };
