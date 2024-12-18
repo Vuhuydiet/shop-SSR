@@ -40,18 +40,30 @@ type ProductQueryParams = {
 */
 
 function getCondition(queryParams) {
+  console.log("Query Params:", queryParams);
+  const categories = typeof queryParams.categories === "string"
+      ? queryParams.categories.split(",").map(Number)
+      : queryParams.categories;
+
+  const brands = typeof queryParams.brands === "string"
+      ? queryParams.brands.split(",").map(Number)
+      : queryParams.brands;
+
+  console.log("Categories:", categories);
+  console.log("Brands:", brands);
+
   return {
-    OR: (queryParams.categories || queryParams.brands)  && [
+    OR: (categories || brands) && [
       {
-        categoryId: queryParams.categories && { in: queryParams.categories },
+        categoryId: categories && { in: categories },
       },
       {
-        brandId: queryParams.brands && { in: queryParams.brands },
-      }
+        brandId: brands && { in: brands },
+      },
     ],
     stock: {
-      gte: queryParams?.minQuantity,
-      lte: queryParams?.maxQuantity,
+      gte: queryParams?.minQuantity || undefined,
+      lte: queryParams?.maxQuantity || undefined,
     },
     currentPrice: {
       gte: queryParams?.minPrice || undefined,
@@ -62,11 +74,12 @@ function getCondition(queryParams) {
       lte: queryParams?.maxRating || undefined,
     },
     publishedAt: {
-      gte: queryParams?.postedAfter,
-      lte: queryParams?.postedBefore,
+      gte: queryParams?.postedAfter || undefined,
+      lte: queryParams?.postedBefore || undefined,
     },
   };
 }
+
 
 class ProductService {
   static async getBrandById(brandId) {
@@ -112,7 +125,7 @@ class ProductService {
 
   static async getAllProducts(queryParams = {}) {
     const condition = getCondition(queryParams);
-
+    console.log("Condition:", condition);
     const [count, products] = await Promise.all([
       prisma.product.count({
         where: condition,

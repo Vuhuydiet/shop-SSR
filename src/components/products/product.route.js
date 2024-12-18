@@ -11,23 +11,26 @@ const queryValidator = () => {
     query("page").optional().isNumeric().toInt(),
     query("limit").optional().isNumeric().toInt(),
     query("keyword").optional().isString(),
-    query("categories").optional().customSanitizer(value => {
-      const values = Array.isArray(value) ? value : [value];
-      return values.map(value => parseInt(value));
-    }).custom(values => {
-      return !values.some(value => {
-        return isNaN(value);
-      })
-    }),
-    query("brands").optional().customSanitizer(value => {
-      const values = Array.isArray(value) ? value : [value];
-      return values.map(value => parseInt(value));
-    }).custom(values => {
-      // console.log(values);
-      return !values.some(value => {
-        return isNaN(value);
-      })
-    }).withMessage('failed'),
+    query("categories")
+        .optional()
+        .customSanitizer(value => {
+          const values = typeof value === "string" ? value.split(",") : Array.isArray(value) ? value : [value];
+          return values.map(val => parseInt(val));
+        })
+        .custom(values => {
+          // Kiểm tra nếu có giá trị không phải là số
+          return !values.some(value => isNaN(value));
+        }),
+    query("brands").optional()
+        .customSanitizer(value => {
+          const values = typeof value === "string" ? value.split(",") : Array.isArray(value) ? value : [value];
+          return values.map(val => parseInt(val));
+        })
+        .custom(values => {
+          // Kiểm tra nếu có giá trị không phải là số
+          return !values.some(value => isNaN(value));
+        }).withMessage('failed'),
+
     query("postedAfter").optional().isISO8601().toDate(),
     query("postedBefore").optional().isISO8601().toDate(),
     query("minPrice").optional().isNumeric().toFloat(),

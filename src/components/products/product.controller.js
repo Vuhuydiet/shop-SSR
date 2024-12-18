@@ -26,6 +26,15 @@ module.exports = {
 
   getAllProductsJSON: async (req, res) => {
     const queries = matchedData(req);
+    console.log("Before query: ",queries);
+    if (queries.categories && typeof queries.categories === "string") {
+      queries.categories = queries.categories.split(",").map(Number);
+    }
+    if (queries.brands && typeof queries.brands === "string") {
+      queries.brands = queries.brands.split(",").map(Number);
+    }
+
+
 
     const brands = await ProductService.getAllBrands();
 
@@ -36,15 +45,11 @@ module.exports = {
     queries.limit = limit;
     queries.offset = offset;
 
-
-    const {products, count} = await ProductService.getAllProducts(queries);
-
-    console.log(products[0].productImages);
+    const { products, count } = await ProductService.getAllProducts(queries);
 
     const totalPages = Math.ceil(count / limit);
-    console.log("Before Entered JSON");
+
     if (req.xhr || req.headers.accept.includes('application/json')) {
-      console.log("Entered JSON");
       return res.json({
         products,
         count,
@@ -53,9 +58,7 @@ module.exports = {
         currentPage: page,
         query: queries,
       });
-    }
-    else{
-      console.log("Entered HTML");
+    } else {
       res.render("pages/products", {
         products,
         count,

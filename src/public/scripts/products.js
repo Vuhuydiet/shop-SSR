@@ -37,10 +37,9 @@ function generateSearchParams(config = {}) {
             continue;
         }
 
-        if (isArray && formData.get(field)) {
-            formData.getAll(field).forEach((value) => {
-                searchParams.append(field, value);
-            });
+        if (isArray && formData.getAll(field).length > 0) {
+            const values = formData.getAll(field).join(',');
+            searchParams.append(field, values);
             continue;
         }
 
