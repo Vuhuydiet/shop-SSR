@@ -41,8 +41,14 @@ type ProductQueryParams = {
 
 function getCondition(queryParams) {
   return {
-    category: queryParams.category,
-    brand: queryParams.brand,
+    OR: (queryParams.categories || queryParams.brands)  && [
+      {
+        categoryId: queryParams.categories && { in: queryParams.categories },
+      },
+      {
+        brandId: queryParams.brands && { in: queryParams.brands },
+      }
+    ],
     stock: {
       gte: queryParams?.minQuantity,
       lte: queryParams?.maxQuantity,

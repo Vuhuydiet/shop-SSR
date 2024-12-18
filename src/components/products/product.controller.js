@@ -52,15 +52,15 @@ module.exports = {
       });
     }
     else{
-        console.log("Entered HTML");
-        res.render("pages/products", {
-          products,
-          count,
-          brands,
-          totalPages,
-          currentPage: page,
-          query: queries,
-        });
+      console.log("Entered HTML");
+      res.render("pages/products", {
+        products,
+        count,
+        brands,
+        totalPages,
+        currentPage: page,
+        query: queries,
+      });
     }
   },
 

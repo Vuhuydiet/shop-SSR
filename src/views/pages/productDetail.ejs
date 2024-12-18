@@ -21,14 +21,14 @@
     <img src="/<%= product.productImageUrl %>" alt="product" class="w-full" />
     <div class="grid grid-cols-5 gap-4 mt-4">
       <img
-        src="/<%= product.productImageUrl %>"
-        alt="<%= product.productName %>"
-        class="w-full cursor-pointer border border-primary"
+              src="/<%= product.productImageUrl %>"
+              alt="<%= product.productName %>"
+              class="w-full cursor-pointer border border-primary"
       />
       <img
-        src="/<%= product.productImageUrl %>"
-        alt="<%= product.productName %>"
-        class="w-full cursor-pointer border"
+              src="/<%= product.productImageUrl %>"
+              alt="<%= product.productName %>"
+              class="w-full cursor-pointer border"
       />
     </div>
   </div>
@@ -83,13 +83,13 @@
       <div class="flex border border-gray-300 text-gray-600 divide-x divide-gray-300 w-max">
         <button class="sub-quantity  w-8 text-xl flex items-center justify-center cursor-pointer select-none">
           -
-				</button>
-        
-				<div class=" quantity w-8 text-base flex items-center justify-center">1</div>
-        
-				<button class="add-quantity h-8 w-8 text-xl flex items-center justify-center cursor-pointer select-none">
+        </button>
+
+        <div class=" quantity w-8 text-base flex items-center justify-center">1</div>
+
+        <button class="add-quantity h-8 w-8 text-xl flex items-center justify-center cursor-pointer select-none">
           +
-			</button>
+        </button>
       </div>
     </div>
 
@@ -101,20 +101,20 @@
 
     <div class="flex gap-3 mt-4">
       <a
-        href="#"
-        class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
+              href="#"
+              class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
       >
         <i class="fa-brands fa-facebook-f"></i>
       </a>
       <a
-        href="#"
-        class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
+              href="#"
+              class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
       >
         <i class="fa-brands fa-twitter"></i>
       </a>
       <a
-        href="#"
-        class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
+              href="#"
+              class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
       >
         <i class="fa-brands fa-instagram"></i>
       </a>
@@ -144,32 +144,32 @@
   <div class="swiper related-products-slider">
     <div class="swiper-wrapper">
       <% locals.products.forEach(product=> { %>
-      <div class="swiper-slide">
-        <div class="bg-white shadow rounded overflow-hidden group">
-          <img
-            src="../<%= product.productImageUrl %>"
-            alt="<%= product.productName %>"
-            class="w-full"
-          />
-          <div class="pt-4 pb-3 px-4">
-            <a href="/products/<%= product.productId %>">
-              <h4
-                class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition"
-              >
-                <%= product.productName %>
-              </h4>
-            </a>
-            <div class="flex items-baseline mb-1 space-x-2">
-              <p class="text-xl text-primary font-semibold">
-                <%= product.currentPrice %>
-              </p>
-              <p class="text-sm text-gray-400 line-through">
-                <%= product.originalPrice %>
-              </p>
+        <div class="swiper-slide">
+          <div class="bg-white shadow rounded overflow-hidden group">
+            <img
+                    src="../<%= product.productImageUrl %>"
+                    alt="<%= product.productName %>"
+                    class="w-full"
+            />
+            <div class="pt-4 pb-3 px-4">
+              <a href="/products/<%= product.productId %>">
+                <h4
+                        class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition"
+                >
+                  <%= product.productName %>
+                </h4>
+              </a>
+              <div class="flex items-baseline mb-1 space-x-2">
+                <p class="text-xl text-primary font-semibold">
+                  <%= product.currentPrice %>
+                </p>
+                <p class="text-sm text-gray-400 line-through">
+                  <%= product.originalPrice %>
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       <% }) %>
     </div>
     <!-- Swiper Navigation Buttons -->
@@ -219,43 +219,43 @@
 <script src="/scripts/requests.js"></script>
 <script src="/scripts/handleAddToCart.js"></script>
 <script>
-	const subQuantity = document.querySelector('.sub-quantity');
-	const addQuantity = document.querySelector('.add-quantity');
-	const quantity = document.querySelector('.quantity');
-	const popup = document.querySelector('#popup');
-	const addToCart = document.querySelector('.add-to-cart');
-	const popupHeader = document.querySelector('#popup .popup-header');
-	const popupContent = document.querySelector('#popup .popup-content');
+  const subQuantity = document.querySelector('.sub-quantity');
+  const addQuantity = document.querySelector('.add-quantity');
+  const quantity = document.querySelector('.quantity');
+  const popup = document.querySelector('#popup');
+  const addToCart = document.querySelector('.add-to-cart');
+  const popupHeader = document.querySelector('#popup .popup-header');
+  const popupContent = document.querySelector('#popup .popup-content');
 
-	const isAuthenticated = document.querySelector('.isAuthenticated').textContent == 'true';
-	const productId = +document.querySelector('.productId').textContent;
+  const isAuthenticated = document.querySelector('.isAuthenticated').textContent == 'true';
+  const productId = +document.querySelector('.productId').textContent;
 
-	subQuantity.addEventListener('click', () => {
-		if (quantity.textContent > 1) {
-			quantity.textContent = parseInt(quantity.textContent) - 1;
-		}
-	});
+  subQuantity.addEventListener('click', () => {
+    if (quantity.textContent > 1) {
+      quantity.textContent = parseInt(quantity.textContent) - 1;
+    }
+  });
 
-	addQuantity.addEventListener('click', () => {
-		quantity.textContent = parseInt(quantity.textContent) + 1;
-	});
+  addQuantity.addEventListener('click', () => {
+    quantity.textContent = parseInt(quantity.textContent) + 1;
+  });
 
-	addToCart.addEventListener('click', async () => {
-		const quantityNumber = parseInt(quantity.textContent);
+  addToCart.addEventListener('click', async () => {
+    const quantityNumber = parseInt(quantity.textContent);
 
-		try {
-			await handleAddToCart(productId, quantityNumber, isAuthenticated);
-			popupHeader.textContent = 'Success';
-			popupContent.textContent = 'Product added to cart';
-		}
-		catch (error) {
-			popupHeader.textContent = 'Error';
-			popupContent.textContent = error.message;
-			return;
-		}
-		popup.classList.remove('hidden');
+    try {
+      await handleAddToCart(productId, quantityNumber, isAuthenticated);
+      popupHeader.textContent = 'Success';
+      popupContent.textContent = 'Product added to cart';
+    }
+    catch (error) {
+      popupHeader.textContent = 'Error';
+      popupContent.textContent = error.message;
+      return;
+    }
+    popup.classList.remove('hidden');
 
-	});
+  });
 
 
 </script>

@@ -11,8 +11,23 @@ const queryValidator = () => {
     query("page").optional().isNumeric().toInt(),
     query("limit").optional().isNumeric().toInt(),
     query("keyword").optional().isString(),
-    query("category").optional().isNumeric().toInt(),
-    query("brand").optional().isNumeric().toInt(),
+    query("categories").optional().customSanitizer(value => {
+      const values = Array.isArray(value) ? value : [value];
+      return values.map(value => parseInt(value));
+    }).custom(values => {
+      return !values.some(value => {
+        return isNaN(value);
+      })
+    }),
+    query("brands").optional().customSanitizer(value => {
+      const values = Array.isArray(value) ? value : [value];
+      return values.map(value => parseInt(value));
+    }).custom(values => {
+      // console.log(values);
+      return !values.some(value => {
+        return isNaN(value);
+      })
+    }).withMessage('failed'),
     query("postedAfter").optional().isISO8601().toDate(),
     query("postedBefore").optional().isISO8601().toDate(),
     query("minPrice").optional().isNumeric().toFloat(),
@@ -30,10 +45,10 @@ const queryValidator = () => {
 
 
 router.get(
-  "/",
-  queryValidator(),
-  handleValidationErrors,
-  productController.getAllProductsJSON
+    "/",
+    queryValidator(),
+    handleValidationErrors,
+    productController.getAllProductsJSON
 );
 
 router.get(
@@ -44,24 +59,24 @@ router.get(
 );
 
 router.get(
-  "/:productId",
-  param("productId").isNumeric().toInt(),
-  handleValidationErrors,
-  productController.getProductById
+    "/:productId",
+    param("productId").isNumeric().toInt(),
+    handleValidationErrors,
+    productController.getProductById
 );
 
 
 router.get(
-  '/:productId/reviews',
+    '/:productId/reviews',
 
-  param('productId').isInt().toInt(),
-  query('page').optional().isInt().toInt(),
-  query('limit').optional().isInt().toInt(),
-  query('rating').optional().isInt().toInt(),
-  query('sortBy').optional().isIn(['createdAt']),
-  handleValidationErrors,
+    param('productId').isInt().toInt(),
+    query('page').optional().isInt().toInt(),
+    query('limit').optional().isInt().toInt(),
+    query('rating').optional().isInt().toInt(),
+    query('sortBy').optional().isIn(['createdAt']),
+    handleValidationErrors,
 
-  reviewController.getReviews
+    reviewController.getReviews
 )
 
 module.exports = router;
