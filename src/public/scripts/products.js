@@ -82,10 +82,10 @@ form.addEventListener("submit", async (e) => {
     const searchParams = generateSearchParams(config);
     const queryString = searchParams.toString();
     console.log("Query Params:", queryString);
-    const params = Object.fromEntries(searchParams.entries());
-    console.log("Pagination Params:", params);
-    updateURL(params);
-    await fetchProducts(1, params);
+    //const params = Object.fromEntries(searchParams.entries());
+    //console.log("Pagination Params:", params);
+    updateURL(queryString);
+    await fetchProducts(1, Object.fromEntries(searchParams.entries()));
 });
 
 function renderFilter(query) {
@@ -128,10 +128,10 @@ sortSelect.addEventListener("change", async (e) => {
     const searchParams = generateSearchParams(config);
     const queryString = searchParams.toString();
     console.log("Query Params:", queryString);
-    const params = Object.fromEntries(searchParams.entries());
-    console.log("Pagination Params:", params);
-    updateURL(params);
-    await fetchProducts(1, params);
+    //const params = Object.fromEntries(searchParams.entries());
+    //console.log("Pagination Params:", params);
+    updateURL(queryString);
+    await fetchProducts(1, Object.fromEntries(searchParams.entries()));
 });
 
 // Function to render products dynamically
@@ -143,7 +143,7 @@ function renderProducts(products) {
 			<div class="bg-white shadow rounded overflow-hidden group">
 				<div class="relative">
 					<a href="/products/${product.productId}">
-						<img src="${product.productImageUrl || '/assets/images/products/product1.jpg'}" alt="${product.productName}" class="w-full" />
+						<img src="${product.productImages[0]?.url || '/assets/images/products/product1.jpg'}" alt="${product.productName}" class="w-full" />
 					</a>
 				</div>
 				<div class="pt-4 pb-3 px-4 w-full">
@@ -212,11 +212,11 @@ function setupPaginationListeners(query) {
         link.addEventListener("click", async (e) => {
             e.preventDefault();
             const url = new URL(e.target.href);
-            const params = Object.fromEntries(url.searchParams.entries());
-            console.log("Pagination Params:", params);
-            updateURL(params);
-            const page = parseInt(params.page);
-            await fetchProducts(page, params);
+            //const params = Object.fromEntries(url.searchParams.entries());
+            //console.log("Pagination Params:", params);
+            updateURL(url);
+            const page = parseInt(Object.fromEntries(url.searchParams.entries()).page);
+            await fetchProducts(page, Object.fromEntries(url.searchParams.entries()));
         });
     });
 }

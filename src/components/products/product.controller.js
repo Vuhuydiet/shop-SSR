@@ -38,6 +38,9 @@ module.exports = {
 
 
     const {products, count} = await ProductService.getAllProducts(queries);
+
+    console.log(products[0].productImages);
+
     const totalPages = Math.ceil(count / limit);
     console.log("Before Entered JSON");
     if (req.xhr || req.headers.accept.includes('application/json')) {
@@ -68,6 +71,7 @@ module.exports = {
     const { productId } = matchedData(req);
 
     const product = await ProductService.getProductById(productId);
+    console.log(product)
 
     const { count, products } = await ProductService.getAllProducts({
       brands: [product.brandId],

@@ -4,7 +4,8 @@ const prisma = require("./index");
 
 async function main() {
   console.log("Start seeding ...");
-  
+
+  await prisma.productImage.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
   await prisma.brand.deleteMany();
@@ -43,11 +44,19 @@ async function main() {
       stock: 884,
       brand: { connect: { brandName: "Toyota" } },
       productDescription:
-        "A table is an item of furniture with a flat top and one or more legs, used as a surface for working at, eating from or on which to place things.",
+          "A table is an item of furniture with a flat top and one or more legs, used as a surface for working at, eating from or on which to place things.",
       // productImageUrl: 'assets/images/products/product7.jpg',
       rating: 4,
       numReviews: 1203,
-      category: { connect: { categoryName: "Furniture" } }
+      category: { connect: { categoryName: "Furniture" } },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product1.jpg"
+          }
+        ]
+      }
     },
     {
       productName: "iOS 10.3.2, up to iPadOS 14.6",
@@ -75,6 +84,14 @@ async function main() {
         connect: {
           categoryName: "Electronics",
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product2.jpg"
+          }
+        ]
       }
     },
     {
@@ -91,6 +108,14 @@ async function main() {
         connect: {
           categoryName: "Electronics",
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product3.jpg"
+          }
+        ]
       }
     },
     {
@@ -108,6 +133,14 @@ async function main() {
           categoryName: "Electronics",
 
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product4.jpg"
+          }
+        ]
       }
     },
     {
@@ -125,6 +158,15 @@ async function main() {
           categoryName: "Electronics",
         }
       }
+      ,
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product6.jpg"
+          }
+        ]
+      }
     },
     {
       productName: "Feature phone",
@@ -141,6 +183,14 @@ async function main() {
           categoryName: "Electronics",
 
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product7.jpg"
+          }
+        ]
       }
     },
     {
@@ -157,6 +207,14 @@ async function main() {
         connect: {
           categoryName: "Electronics",
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product8.jpg"
+          }
+        ]
       }
     },
     {
@@ -173,6 +231,14 @@ async function main() {
         connect: {
           categoryName: "Electronics",
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product9.jpg"
+          }
+        ]
       }
     },
     {
@@ -189,6 +255,14 @@ async function main() {
         connect: {
           categoryName: "Electronics",
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product10.jpg"
+          }
+        ]
       }
     },
     {
@@ -205,6 +279,14 @@ async function main() {
         connect: {
           categoryName: "Electronics",
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product11.jpg"
+          }
+        ]
       }
     },
     {
@@ -221,6 +303,14 @@ async function main() {
         connect: {
           categoryName: "Electronics",
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product12.jpg"
+          }
+        ]
       }
     },
     {
@@ -237,6 +327,14 @@ async function main() {
         connect: {
           categoryName: "Electronics",
         }
+      },
+      productImages: {
+        create: [
+          {
+            publicId: "a",
+            url: "/assets/images/products/product6.jpg"
+          }
+        ]
       }
     },
   ];
@@ -249,13 +347,13 @@ async function main() {
 }
 
 main()
-  .then(() => {
-    console.log("Database has been seeded!");
-  })
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+    .then(() => {
+      console.log("Database has been seeded!");
+    })
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });

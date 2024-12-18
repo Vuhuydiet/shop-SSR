@@ -126,7 +126,7 @@
         <div class="bg-white shadow rounded overflow-hidden group">
           <div class="relative">
             <a href="/products/<%= product.productId %>">
-              <img src="<%= product.productImageUrl %>" alt="<%= product.productName %>" class="w-full" />
+              <img src="<%= product.productImages[0]?.url %>" alt="<%= product.productName %>" class="w-full" />
               <div
                       class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
               </div>

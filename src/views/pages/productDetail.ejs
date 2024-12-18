@@ -18,15 +18,15 @@
 <!-- product-detail -->
 <div class="container grid grid-cols-2 gap-6">
   <div>
-    <img src="/<%= product.productImageUrl %>" alt="product" class="w-full" />
+    <img src="<%= product.productImages[0]?.url %>" alt="product" class="w-full" />
     <div class="grid grid-cols-5 gap-4 mt-4">
       <img
-              src="/<%= product.productImageUrl %>"
+              src="<%= product.productImages[0]?.url %>"
               alt="<%= product.productName %>"
               class="w-full cursor-pointer border border-primary"
       />
       <img
-              src="/<%= product.productImageUrl %>"
+              src="<%= product.productImages[0]?.url %>"
               alt="<%= product.productName %>"
               class="w-full cursor-pointer border"
       />
@@ -147,7 +147,7 @@
         <div class="swiper-slide">
           <div class="bg-white shadow rounded overflow-hidden group">
             <img
-                    src="../<%= product.productImageUrl %>"
+                    src="../<%= product.productImages[0]?.url %>"
                     alt="<%= product.productName %>"
                     class="w-full"
             />
