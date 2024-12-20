@@ -38,23 +38,19 @@ passport.use(
   )
 );
 
-// passport.use(
-//   new GoogleStrategy(
-//     {
-//       clientID: process.env.GOOGLE_CLIENT_ID,
-//       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//       callbackURL: "/auth/google/callback",
-//     },
-//     async (token, tokenSecret, profile, done) => {
-//       try {
-//         let user = await accountService.findOrCreateGoogleUser(profile);
-//         return done(null, user);
-//       } catch (err) {
-//         return done(err);
-//       }
-//     }
-//   )
-// );
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "/auth/google/callback",
+    },
+    function (accessToken, refreshToken, profile, done) {
+      // Here you can save the user profile to your database
+      return done(null, profile);
+    }
+  )
+);
 
 passport.serializeUser((user, done) => {
   done(null, user.userId);
