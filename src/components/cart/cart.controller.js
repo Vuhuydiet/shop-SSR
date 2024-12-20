@@ -4,11 +4,12 @@ const { OKResponse } = require("../../core/SuccessResponse");
 const ProductService = require("../products/product.service");
 
 module.exports = {
+  
   getCartPage: async (req, res) => {
     let cartItems = [];
     if (req.isAuthenticated()) {
-      const { id } = req.user;
-      cartItems = await CartService.getCartItems(id);
+      const { userId } = req.user;
+      cartItems = await CartService.getCartItems(userId);
     } else {
       const { productIds, quantity } = req.query;
       let ProductId;
@@ -36,18 +37,18 @@ module.exports = {
   },
 
   addCartItem: async (req, res) => {
-    const { id } = req.user;
+    const { userId } = req.user;
     const { productId, quantity } = matchedData(req);
 
-    const cartItem = await CartService.addCartItem(id, { productId, quantity });
+    const cartItem = await CartService.addCartItem(userId, { productId, quantity });
     new OKResponse("Cart item added", { cartItem }).send(res);
   },
 
   updateCartItemQuantity: async (req, res) => {
-    const { id } = req.user;
+    const { userId } = req.user;
     const { productId, quantity } = matchedData(req);
 
-    const cartItem = await CartService.updateCartItemQuantity(id, {
+    const cartItem = await CartService.updateCartItemQuantity(userId, {
       productId,
       quantity,
     });
@@ -55,10 +56,10 @@ module.exports = {
   },
 
   deleteCartItem: async (req, res) => {
-    const { id } = req.user;
+    const { userId } = req.user;
     const { productId } = req.params;
 
-    await CartService.deleteCartItem(id, productId);
+    await CartService.deleteCartItem(userId, productId);
     new OKResponse("Cart item deleted").send(res);
   },
 };
