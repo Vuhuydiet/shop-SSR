@@ -27,7 +27,7 @@
 
         <div class="w-28">
           <img
-            src="<%= product.productImageUrl %>"
+            src="<%= product.productImages[0]?.url %>"
             alt="<%= product.productName %>"
             class="w-full"
           />
@@ -37,7 +37,7 @@
             <%= product.productName %>
           </h2>
           <p class="text-gray-500 text-sm">
-            Availability: <span class="text-green-600"><%= product.quantity > 0 ? 'In Stock' : 'Out of stock' %></span>
+            Availability: <span class="text-green-600"><%= product.stock > 0 ? 'In Stock' : 'Out of stock' %></span>
           </p>
         </div>
         <div class="item-<%= product.productId %> item-price text-primary text-lg font-semibold">$<%= product.currentPrice %></div>

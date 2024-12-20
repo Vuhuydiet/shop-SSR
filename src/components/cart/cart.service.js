@@ -6,7 +6,7 @@ class CartService {
   static async addCartItem(userId, { productId, quantity }) {
     await ProductService.getProductById(productId);
 
-    quantity = quantity || 1;
+    quantity ||= 1;
 
     try {
       return await prisma.cartItem.update({
@@ -54,7 +54,7 @@ class CartService {
   }
 
   static async getCartItems(userId) {
-    if (!(await prisma.user.findUnique({ where: { id: userId } }))) {
+    if (!(await prisma.user.findUnique({ where: { userId: userId } }))) {
       throw new NotFoundError("Product not found");
     }
 
@@ -63,7 +63,11 @@ class CartService {
         userId: userId,
       },
       include: {
-        product: true,
+        product: {
+          include: {
+            productImages: true,
+          },
+        }
       },
       orderBy: {
         updatedAt: "desc",
