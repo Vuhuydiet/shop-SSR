@@ -43,10 +43,16 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "http://localhost:3000/auth/google/callback",
     },
-    function (accessToken, refreshToken, profile, done) {
-      // Here you can save the user profile to your database
+    async (accessToken, refreshToken, profile, done) => {
+      user = await accountService.createUser({
+        oauthId: profile.id,
+        oauthProvider: "google",
+        email: profile.emails[0].value,
+        fullname: profile.displayName,
+        // profilePicture: profile.photos[0].value,
+      });
       return done(null, profile);
     }
   )
