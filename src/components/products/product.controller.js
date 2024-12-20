@@ -77,7 +77,6 @@ module.exports = {
     const { productId } = matchedData(req);
 
     const product = await ProductService.getProductById(productId);
-    console.log(product);
 
     const { count, products } = await ProductService.getAllProducts({
       brands: [product.brandId],
