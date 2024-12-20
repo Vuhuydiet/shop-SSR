@@ -1,10 +1,8 @@
 const { connect } = require("../components");
 const prisma = require("./index");
 
-
 async function main() {
   console.log("Start seeding ...");
-  
   await prisma.productImage.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
@@ -36,7 +34,7 @@ async function main() {
     data: productBrands,
   });
 
-  const products =  [
+  const products = [
     {
       productName: "Table",
       originalPrice: 120,
@@ -53,10 +51,10 @@ async function main() {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product1.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product1.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "iOS 10.3.2, up to iPadOS 14.6",
@@ -68,7 +66,7 @@ async function main() {
       // productImageUrl: 'assets/images/products/product1.jpg',
       rating: 1.6,
       numReviews: 534,
-      category: { connect: { categoryName: "Electronics" } }
+      category: { connect: { categoryName: "Electronics" } },
     },
     {
       productName: "Android 10, Magic UI 2",
@@ -83,16 +81,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product2.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product2.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Feature phone",
@@ -107,16 +105,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product3.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product3.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Android 4.4.4, up to 6.0",
@@ -131,17 +129,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product4.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product4.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Feature phone",
@@ -156,17 +153,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-        }
-      }
-      ,
+        },
+      },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product6.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product6.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Feature phone",
@@ -181,17 +177,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product7.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product7.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Feature phone",
@@ -206,16 +201,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product8.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product8.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Android 4.4.4, Timescape UI",
@@ -230,16 +225,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product9.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product9.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Feature phone",
@@ -254,16 +249,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product10.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product10.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Android 4.4.2",
@@ -278,16 +273,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product11.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product11.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Feature phone",
@@ -302,16 +297,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product12.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product12.jpg",
+          },
+        ],
+      },
     },
     {
       productName: "Feature phone",
@@ -326,16 +321,16 @@ async function main() {
       category: {
         connect: {
           categoryName: "Electronics",
-        }
+        },
       },
       productImages: {
         create: [
           {
             publicId: "a",
-            url: "/assets/images/products/product6.jpg"
-          }
-        ]
-      }
+            url: "/assets/images/products/product6.jpg",
+          },
+        ],
+      },
     },
   ];
 

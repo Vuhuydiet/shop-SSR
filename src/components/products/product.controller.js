@@ -27,6 +27,13 @@ module.exports = {
 
   getAllProductsJSON: async (req, res) => {
     const queries = matchedData(req);
+    console.log("Before query: ", queries);
+    if (queries.categories && typeof queries.categories === "string") {
+      queries.categories = queries.categories.split(",").map(Number);
+    }
+    if (queries.brands && typeof queries.brands === "string") {
+      queries.brands = queries.brands.split(",").map(Number);
+    }
 
     const brands = await ProductService.getAllBrands();
 
@@ -70,6 +77,7 @@ module.exports = {
     const { productId } = matchedData(req);
 
     const product = await ProductService.getProductById(productId);
+    console.log(product);
 
     const { count, products } = await ProductService.getAllProducts({
       brands: [product.brandId],
