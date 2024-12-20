@@ -41,8 +41,14 @@ type ProductQueryParams = {
 
 function getCondition(queryParams) {
   return {
-    category: queryParams.category,
-    brand: queryParams.brand,
+    OR: (queryParams.categories || queryParams.brands) && [
+      {
+        categoryId: queryParams.categories && { in: queryParams.categories },
+      },
+      {
+        brandId: queryParams.brands && { in: queryParams.brands },
+      },
+    ],
     stock: {
       gte: queryParams?.minQuantity,
       lte: queryParams?.maxQuantity,
@@ -63,7 +69,6 @@ function getCondition(queryParams) {
 }
 
 class ProductService {
-
   static async getBrandById(brandId) {
     return await prisma.brand.findUnique({
       where: {
@@ -95,7 +100,8 @@ class ProductService {
       },
       include: {
         category: true,
-        brand: true
+        brand: true,
+        productImages: true,
       },
     });
 
@@ -123,12 +129,13 @@ class ProductService {
 
         include: {
           category: true,
+          brand: true,
+          productImages: true,
         },
       }),
     ]);
     return { count, products };
   }
-
 }
 
 module.exports = ProductService;

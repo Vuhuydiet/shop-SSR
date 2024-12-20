@@ -2,10 +2,9 @@
 migrations
 
 .ignored/
-
 .vscode
+.ignored
 .idea
-
 
 # Logs
 logs

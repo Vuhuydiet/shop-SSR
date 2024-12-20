@@ -11,7 +11,7 @@
 <!-- ./breadcrumb -->
 
 <!-- shop wrapper -->
-<form id="searchForm" action="/products" method="GET"
+<form id="searchForm" method="GET"
   class="container grid md:grid-cols-4 grid-cols-2 gap-6 pt-4 pb-16 items-start">
   <!-- sidebar -->
   <!-- drawer init and toggle -->
@@ -49,27 +49,27 @@
       <div class="pt-4">
         <h3 class="text-xl text-gray-800 mb-3 uppercase font-medium">Brands</h3>
         <div class="space-y-2">
-          <% locals.brands.forEach((brand, idx)=> { %>
+          <% locals.brands.forEach((brand, idx) => { %>
             <div class="flex items-center">
-              <input type="checkbox" name="brands" value="<%= brand %>" id="<%= `brand-${idx}` %>" <%=locals.query &&
-                locals.query.brands?.includes(brand) ? 'checked' : '' %>
-              class="text-primary focus:ring-0 rounded-sm cursor-pointer" />
+              <input type="checkbox" name="brands" value="<%= brand.brandId %>" id="<%= `brand-${idx}` %>"
+                      <%= locals.query && locals.query.brands?.includes(brand.brandName) ? 'checked' : '' %>
+                     class="text-primary focus:ring-0 rounded-sm cursor-pointer" />
               <label for="<%= `brand-${idx}` %>" class="text-gray-600 ml-3 cursor-pointer">
-                <%= brand %>
+                <%= brand.brandName %>
               </label>
             </div>
-            <% }) %>
+          <% }) %>
         </div>
       </div>
 
       <div class="pt-4">
         <h3 class="text-xl text-gray-800 mb-3 uppercase font-medium">Price</h3>
         <div class="mt-4 flex items-center">
-          <input type="text" name="minPrice" id="min" value="<%= locals.query && locals.query.minPrice || undefined %>"
+          <input type="text" name="minPrice" id="min" value=""
             class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
             placeholder="min" />
           <span class="mx-3 text-gray-500">-</span>
-          <input type="text" name="maxPrice" id="max" value="<%= locals.query && locals.query.maxPrice || undefined %>"
+          <input type="text" name="maxPrice" id="max" value=""
             class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
             placeholder="max" />
         </div>
@@ -86,12 +86,12 @@
           <input type="number" name="maxRating" min="0" max="5" step="0.1" />
         -->
           <input type="number" name="minRating" id="minRating" min="1" max="5" step="0.1"
-            value="<%= locals.query && locals.query.minRating || undefined %>"
+            value=""
             class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
             placeholder="min" />
           <span class="mx-3 text-gray-500">-</span>
           <input type="number" name="maxRating" id="maxRating" min="1" max="5" step="0.1"
-            value="<%= locals.query && locals.query.maxRating || undefined %>"
+            value=""
             class="w-full border-gray-300 focus:border-primary rounded focus:ring-0 px-3 py-1 text-gray-600 shadow-sm"
             placeholder="max" />
         </div>
@@ -114,31 +114,28 @@
     <div class="flex items-center mb-4">
       <select name="sortBy" id="sort" form="searchForm"
         class="w-44 text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-primary focus:border-primary">
-        <option value="" <%=locals.query && locals.query.sortBy==='' ? 'selected' : '' %>>Default sorting</option>
-        <option value="currentPrice-asc" <%=locals.query && locals.query.sortBy==='currentPrice' &&
-          locals.query.order==='asc' ? 'selected' : '' %>>Price low to high</option>
-        <option value="currentPrice-desc" <%=locals.query && locals.query.sortBy==='currentPrice' &&
-          locals.query.order==='desc' ? 'selected' : '' %>>Price high to low</option>
-        <option value="publishedAt-desc" <%=locals.query && locals.query.sortBy==='publishedAt' &&
-          locals.query.order==='desc' ? 'selected' : '' %>>Latest product</option>
+        <option value="">Default</option>
+        <option value="currentPrice-asc">Price low to high</option>
+        <option value="currentPrice-desc">Price high to low</option>
+        <option value="publishedAt-desc">Latest</option>
       </select>
     </div>
 
-    <div class="grid md:grid-cols-3 grid-cols-2 gap-6">
+    <div class="product-container grid md:grid-cols-3 grid-cols-2 gap-6">
       <% locals.products.forEach(product=> { %>
         <div class="bg-white shadow rounded overflow-hidden group">
           <div class="relative">
             <a href="/products/<%= product.productId %>">
-              <img src="<%= product.productImageUrl %>" alt="<%= product.productName %>" class="w-full" />
+              <img src="<%= product.productImages[0]?.url %>" alt="<%= product.productName %>" class="w-full" />
               <div
-                class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                      class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
               </div>
             </a>
           </div>
           <div class="pt-4 pb-3 px-4 w-full">
             <a href="/products/<%= product.productId %>">
               <h4
-                class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition truncate whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+                      class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition truncate whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
                 <%= product.productName %>
               </h4>
             </a>
@@ -154,40 +151,20 @@
               <div class="flex gap-1 text-sm text-yellow-400">
                 <span><i class="fa-solid fa-star"></i></span>
                 <span>
-                  <%= product.rating %>
+                  <%= product.stars %>
                 </span>
               </div>
             </div>
           </div>
         </div>
-        <% }) %>
+      <% }) %>
     </div>
   </div>
 
 
 </form>
 <!-- Pagination Controls -->
-<div class="flex justify-center items-center space-x-2 mt-6">
-  <% if (currentPage> 1) { %>
-    <a href="?<%= `page=${currentPage - 1}&limit=${query.limit || 9}` %>"
-      class="px-4 py-2 bg-gray-300 text-gray-800 rounded">
-      Previous
-    </a>
-    <% } %>
-
-      <% for (let i=1; i <=totalPages; i++) { %>
-        <a href="?<%= `page=${i}&limit=${query.limit || 9}` %>"
-          class="px-4 py-2 rounded <%= currentPage === i ? 'bg-primary text-white' : 'bg-gray-300 text-gray-800' %>">
-          <%= i %>
-        </a>
-        <% } %>
-
-          <% if (currentPage < totalPages) { %>
-            <a href="?<%= `page=${currentPage + 1}&limit=${query.limit || 9}` %>"
-              class="px-4 py-2 bg-gray-300 text-gray-800 rounded">
-              Next
-            </a>
-            <% } %>
+<div class="pagination-container flex justify-center items-center space-x-2 mt-6">
 </div>
 
 <!-- ./products -->
@@ -195,59 +172,4 @@
 
 <!-- ./shop wrapper -->
 
-
-<script>
-  const form = document.getElementById('searchForm');
-  form.addEventListener('submit', async (e) => {
-    const minRating = parseFloat(document.getElementById('minRating').value);
-    const maxRating = parseFloat(document.getElementById('maxRating').value);
-
-    if (minRating > maxRating) {
-      e.preventDefault();
-      alert('Min rating is less than or equal to Max rating.');
-    }
-    else {
-      e.preventDefault();
-      const formData = new FormData(form);
-      console.log(formData);
-      const searchParams = new URLSearchParams();
-      if (formData.get('categories')) {
-        formData.getAll('categories').forEach(category => {
-          searchParams.append('categories', category);
-        });
-      }
-      if (formData.get('brands')) {
-        formData.getAll('brands').forEach(brand => {
-          searchParams.append('brands', brand);
-        });
-      }
-      if (formData.get('minPrice')) {
-        searchParams.append('minPrice', formData.get('minPrice'));
-      }
-      if (formData.get('maxPrice')) {
-        searchParams.append('maxPrice', formData.get('maxPrice'));
-      }
-      if (formData.get('minRating')) {
-        searchParams.append('minRating', formData.get('minRating'));
-      }
-      if (formData.get('maxRating')) {
-        searchParams.append('maxRating', formData.get('maxRating'));
-      }
-
-      if (formData.get('sortBy')) {
-        const [sortBy, order] = formData.get('sortBy').split('-');
-        searchParams.append('sortBy', sortBy);
-        searchParams.append('order', order);
-      }
-
-      if (formData.get('order')) {
-        searchParams.append('order', formData.get('order'));
-      }
-
-      const search = searchParams.toString();
-      console.log(search)
-      window.location.href = `/products?${search}`;
-    }
-  });
-
-</script>
+<script src="/scripts/products.js"></script>

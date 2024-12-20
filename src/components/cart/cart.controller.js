@@ -30,7 +30,6 @@ module.exports = {
           product,
           quantity: Quantity[i],
         }));
-        console.log(ProductId, Quantity);
       }
     }
     res.render("pages/cart", { cartItems });
