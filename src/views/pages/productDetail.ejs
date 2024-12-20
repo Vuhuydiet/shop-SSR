@@ -178,6 +178,9 @@
   </div>
 </div>
 
+<!-- review section -->
+<%- include('../components/review') %>
+
 <!-- error popup -->
 <%- include('../components/popup') %>
 
@@ -214,7 +217,6 @@
 
 
 <div class="isAuthenticated" style="display: none;"><%= (user ? 'true' : 'false') %></div>
-<div class="productId" style="display: none;"><%= product.productId %></div>
 
 <script src="/scripts/requests.js"></script>
 <script src="/scripts/handleAddToCart.js"></script>
@@ -227,8 +229,8 @@
 	const popupHeader = document.querySelector('#popup .popup-header');
 	const popupContent = document.querySelector('#popup .popup-content');
 
-	const isAuthenticated = document.querySelector('.isAuthenticated').textContent == 'true';
-	const productId = +document.querySelector('.productId').textContent;
+	const isAuthenticated = !!"<%= (user ? 'true' : 'false') %>";
+  const productId = +"<%= product.productId %>";
 
 	subQuantity.addEventListener('click', () => {
 		if (quantity.textContent > 1) {
@@ -259,3 +261,5 @@
 
 
 </script>
+
+

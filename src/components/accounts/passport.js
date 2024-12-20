@@ -2,7 +2,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const accountService = require("./account.service");
-const { validatePassword } = require("./password");
+const { validatePassword, getHashedPassword } = require("./password");
+const bcrypt = require("bcryptjs");
 
 passport.use(
   new LocalStrategy(
@@ -15,18 +16,20 @@ passport.use(
             message: "Email or password is invalid.",
           });
         }
-        const isMatch = validatePassword(password, user.password);
+        const isMatch = validatePassword(password, user.hashedPassword);
         if (!isMatch) {
           return done(null, false, {
             message: "Email or password is invalid.",
           });
         }
-        if (!user.confirmedAt) {
-          return done(null, false, {
-            message: `We've sent a confirmation email to ${email}. Please check your inbox.`,
-            redirectUrl: `/users/confirm?email=${(email)}`,
-          });
-        }
+        // if (!user.confirmed) {
+        //   return done(null, false, {
+        //     message: `We've sent a confirmation email to ${email}. Please check your inbox.`,
+        //     redirectUrl: `/users/confirm?email=${email}`,
+        //   });
+        // }
+
+        await accountService.updateLastLogin(user.userId);
         return done(null, user);
       } catch (err) {
         return done(err);
@@ -54,7 +57,7 @@ passport.use(
 // );
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.userId);
 });
 
 passport.deserializeUser(async (id, done) => {

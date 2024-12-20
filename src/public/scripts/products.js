@@ -53,21 +53,25 @@ function generateSearchParams(config = {}) {
 }
 
 async function fetchProducts(page = 1, query = {}) {
-    try {
-        const searchParams = new URLSearchParams({ ...query, page, limit: PAGE_SIZE });
-        const response = await fetch(`/products/api?${searchParams.toString()}`,{
-            headers: { 'Accept': 'application/json' },
-        });
-        const data = await response.json();
-        console.log("Search para:", searchParams.toString());
-        updateURL(searchParams.toString());
-        renderProducts(data.products);
-        renderPagination(data.currentPage, data.totalPages, query);
-        //renderFilter(query);
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        alert('Failed to fetch products. Please try again.');
-    }
+  try {
+    const searchParams = new URLSearchParams({
+      ...query,
+      page,
+      limit: PAGE_SIZE,
+    });
+    const response = await fetch(`/products/api?${searchParams.toString()}`, {
+      headers: { Accept: "application/json" },
+    });
+    const data = await response.json();
+    console.log("Search para:", searchParams.toString());
+    updateURL(searchParams.toString());
+    renderProducts(data.products);
+    renderPagination(data.currentPage, data.totalPages, query);
+    //renderFilter(query);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    alert("Failed to fetch products. Please try again.");
+  }
 }
 
 const form = document.getElementById("searchForm");
@@ -143,7 +147,10 @@ function renderProducts(products) {
 			<div class="bg-white shadow rounded overflow-hidden group">
 				<div class="relative">
 					<a href="/products/${product.productId}">
-						<img src="${product.productImages[0].url || '/assets/images/products/product1.jpg'}" alt="${product.productName}" class="w-full" />
+						<img src="${
+              product.productImages[0]?.url ||
+              "/assets/images/products/product1.jpg"
+            }" alt="${product.productName}" class="w-full" />
 					</a>
 				</div>
 				<div class="pt-4 pb-3 px-4 w-full">
@@ -188,10 +195,10 @@ function renderPagination(currentPage, totalPages, query) {
     paginationContainer.innerHTML += `
 			<a href="?${queryParams.toString()}"
 					class="pagination-link px-4 py-2 rounded ${
-						currentPage === i
-							? "bg-primary text-white"
-							: "bg-gray-300 text-gray-800"
-					}">${i}
+            currentPage === i
+              ? "bg-primary text-white"
+              : "bg-gray-300 text-gray-800"
+          }">${i}
 			</a>
 		`;
   }
@@ -215,7 +222,9 @@ function setupPaginationListeners(query) {
       //const params = Object.fromEntries(url.searchParams.entries());
       //console.log("Pagination Params:", params);
       updateURL(url);
-      const page = parseInt(Object.fromEntries(url.searchParams.entries()).page);
+      const page = parseInt(
+        Object.fromEntries(url.searchParams.entries()).page
+      );
       await fetchProducts(page, Object.fromEntries(url.searchParams.entries()));
     });
   });

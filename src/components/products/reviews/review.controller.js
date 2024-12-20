@@ -26,11 +26,11 @@ module.exports = {
   },
 
   getReviews: async (req, res) => {
-    const { productId, limit, offset, rating, sortBy, order } = matchedData(req);
+    const { productId, limit, page, rating, sortBy, order } = matchedData(req);
 
     const { count, reviews } = await ReviewService.getReviewsByProductId(productId, {
+      offset: (page - 1) * limit,
       limit,
-      offset,
       rating,
       sortBy,
       order,

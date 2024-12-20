@@ -41,13 +41,13 @@ type ProductQueryParams = {
 
 function getCondition(queryParams) {
   return {
-    OR: (queryParams.categories || queryParams.brands)  && [
+    OR: (queryParams.categories || queryParams.brands) && [
       {
         categoryId: queryParams.categories && { in: queryParams.categories },
       },
       {
         brandId: queryParams.brands && { in: queryParams.brands },
-      }
+      },
     ],
     stock: {
       gte: queryParams?.minQuantity,
@@ -101,7 +101,7 @@ class ProductService {
       include: {
         category: true,
         brand: true,
-        productImages: true
+        productImages: true,
       },
     });
 
@@ -130,7 +130,7 @@ class ProductService {
         include: {
           category: true,
           brand: true,
-          productImages: true
+          productImages: true,
         },
       }),
     ]);

@@ -6,7 +6,9 @@ model ShippingAddress {
   district String?
   ward String?
   detailAddress String?
-
+  phoneNumber String
+  recipientName String
+  
   user User @relation(fields: [userId], references: [userId], onDelete: Restrict)
 }
 

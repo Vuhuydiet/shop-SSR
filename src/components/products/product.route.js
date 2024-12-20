@@ -74,6 +74,7 @@ router.get(
   query('limit').optional().isInt().toInt(),
   query('rating').optional().isInt().toInt(),
   query('sortBy').optional().isIn(['createdAt']),
+  query('order').optional().isIn(['asc', 'desc']),
   handleValidationErrors,
 
   reviewController.getReviews

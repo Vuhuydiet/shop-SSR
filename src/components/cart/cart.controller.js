@@ -4,37 +4,35 @@ const { OKResponse } = require("../../core/SuccessResponse");
 const ProductService = require("../products/product.service");
 
 module.exports = {
-
   getCartPage: async (req, res) => {
     let cartItems = [];
     if (req.isAuthenticated()) {
       const { id } = req.user;
       cartItems = await CartService.getCartItems(id);
-    }
-    else {
+    } else {
       const { productIds, quantity } = req.query;
       let ProductId;
       let Quantity;
       if (productIds && quantity) {
-        if (typeof productIds === 'string')
-          ProductId = [+productIds];
+        if (typeof productIds === "string") ProductId = [+productIds];
         else {
-          ProductId = productIds.map(id => +id);
+          ProductId = productIds.map((id) => +id);
         }
-        if (typeof quantity === 'string')
-          Quantity = [+quantity];
+        if (typeof quantity === "string") Quantity = [+quantity];
         else {
-          Quantity = quantity.map(q => +q);
+          Quantity = quantity.map((q) => +q);
         }
 
-        const products = await Promise.all(ProductId.map(id => ProductService.getProductById(id)));
+        const products = await Promise.all(
+          ProductId.map((id) => ProductService.getProductById(id))
+        );
         cartItems = products.map((product, i) => ({
           product,
           quantity: Quantity[i],
         }));
       }
     }
-    res.render('pages/cart', { cartItems });
+    res.render("pages/cart", { cartItems });
   },
 
   addCartItem: async (req, res) => {
@@ -49,10 +47,13 @@ module.exports = {
     const { id } = req.user;
     const { productId, quantity } = matchedData(req);
 
-    const cartItem = await CartService.updateCartItemQuantity(id, { productId, quantity });
+    const cartItem = await CartService.updateCartItemQuantity(id, {
+      productId,
+      quantity,
+    });
     new OKResponse("Cart item updated", { cartItem }).send(res);
   },
-  
+
   deleteCartItem: async (req, res) => {
     const { id } = req.user;
     const { productId } = req.params;
@@ -60,5 +61,4 @@ module.exports = {
     await CartService.deleteCartItem(id, productId);
     new OKResponse("Cart item deleted").send(res);
   },
-
-}
+};

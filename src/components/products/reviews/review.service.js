@@ -7,6 +7,7 @@ type ReviewData = {
 
 */
 
+const { use } = require("express/lib/router");
 const { NotFoundError, UnauthorizedError } = require("../../../core/ErrorResponse");
 const prisma = require("../../../models");
 
@@ -30,8 +31,23 @@ class ReviewService {
     });
   }
 
+  static async getReviewCountByProductId(productId) {
+    return await prisma.review.count({ where: { productId } });
+  }
+
   static async getReviewById(reviewId) {
-    return await prisma.review.findUnique({ where: { reviewId } });
+    return await prisma.review.findUnique({ 
+      where: { reviewId },
+      include: {
+        user: {
+          select: { 
+            avatarUrl: true,
+            email: true,
+            fullname: true
+          }
+        }
+      } 
+    });
   }
 
   static async getReviewsByProductId(productId, { limit, offset, rating, sortBy, order }) {
@@ -49,6 +65,15 @@ class ReviewService {
         orderBy: sortBy && {
           [sortBy]: order,
         },
+        include: {
+          user: {
+            select: { 
+              avatarUrl: true,
+              email: true,
+              fullname: true
+            }
+          }
+        }
       })
     ]);
     return { count, reviews };
