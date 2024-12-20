@@ -67,7 +67,7 @@ class CartService {
           include: {
             productImages: true,
           },
-        }
+        },
       },
       orderBy: {
         updatedAt: "desc",

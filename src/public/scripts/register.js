@@ -46,7 +46,6 @@ const handleRegisterSubmit = async (event) => {
       body: JSON.stringify({ email, password }),
     });
     const data = await response.json();
-
     if (response.ok) {
       successDiv.textContent = data.message;
       successDiv.classList.remove("hidden");

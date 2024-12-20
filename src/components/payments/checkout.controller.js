@@ -10,7 +10,6 @@ module.exports = {
     res.redirect(`/checkout`);
   },
 
-
   getCheckoutPage: async (req, res) => {
     const { products } = req.session;
 
@@ -18,6 +17,6 @@ module.exports = {
 
     const { total, subtotal } = CheckoutService.calculateTotal(productInfos);
 
-    res.render('pages/checkout', { products: productInfos, total, subtotal });
-  }
-}
+    res.render("pages/checkout", { products: productInfos, total, subtotal });
+  },
+};

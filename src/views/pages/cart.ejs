@@ -21,9 +21,15 @@
       </div>
 
       <% cartItems.forEach(({ product, quantity }) => { %>
-        
-      <div class="item-<%= product.productId %> item-detail-container flex items-center justify-between border gap-6 p-4 border-gray-200 rounded">
-        <input type="checkbox" class="item-<%= product.productId %> chosen-item" name="<%= product.productId %>">
+
+      <div
+        class="item-<%= product.productId %> item-detail-container flex items-center justify-between border mt-2 gap-4 p-4 border-gray-200 rounded"
+      >
+        <input
+          type="checkbox"
+          class="item-<%= product.productId %> chosen-item"
+          name="<%= product.productId %>"
+        />
 
         <div class="w-28">
           <img
@@ -33,40 +39,56 @@
           />
         </div>
         <div class="w-1/3">
-          <h2 class="text-gray-800 text-xl font-medium uppercase">
+          <h2 class="text-gray-800 text-base font-medium uppercase">
             <%= product.productName %>
           </h2>
           <p class="text-gray-500 text-sm">
-            Availability: <span class="text-green-600"><%= product.stock > 0 ? 'In Stock' : 'Out of stock' %></span>
+            Availability:
+            <span class="text-green-600"
+              ><%= product.stock > 0 ? 'In Stock' : 'Out of stock' %></span
+            >
           </p>
         </div>
-        <div class="item-<%= product.productId %> item-price text-primary text-lg font-semibold">$<%= product.currentPrice %></div>
+        <div
+          class="item-<%= product.productId %> item-price text-primary text-lg font-semibold"
+        >
+          $<%= product.currentPrice %>
+        </div>
         <div class="flex items-center">
-          <button class="item-<%= product.productId %> sub-quantity text-gray-600 hover:text-primary px-2 mr-2">
+          <button
+            class="item-<%= product.productId %> sub-quantity text-gray-600 hover:text-primary px-2 mr-2"
+          >
             <i class="fa-solid fa-minus"></i>
           </button>
           <input
             type="number"
             min="1"
             value="<%= quantity %>"
-            class="item-<%= product.productId %> item-quantity text-center border border-gray-300 rounded-md mx-2"
+            class="item-<%= product.productId %> item-quantity text-center border border-gray-300 rounded-md mx-2 w-12 no-spinner"
           />
-          <button class="item-<%= product.productId %> add-quantity text-gray-600 hover:text-primary px-2 ml-2">
-            <i class="fa-plus"></i>
+          <button
+            class="item-<%= product.productId %> add-quantity text-gray-600 hover:text-primary px-2 ml-2"
+          >
+            <i class="fa-solid fa-plus"></i>
           </button>
         </div>
-        <div class="item-<%= product.productId %> total-each text-primary text-lg font-semibold">$<%= product.currentPrice * quantity %></div>
-        <button class="item-<%= product.productId %> delete-item text-gray-600 cursor-pointer hover:text-primary">
+        <div
+          class="item-<%= product.productId %> total-each text-primary text-lg font-semibold"
+        >
+          $<%= product.currentPrice * quantity %>
+        </div>
+        <button
+          class="item-<%= product.productId %> delete-item text-gray-600 cursor-pointer hover:text-primary"
+        >
           <i class="fa-solid fa-trash"></i>
         </button>
       </div>
 
       <% }) %>
-
-      <!-- repeat cart items as needed -->
     </div>
     <div class="flex justify-between mt-4">
-      <a href="./products"
+      <a
+        href="./products"
         class="text-primary hover:text-white hover:bg-primary border border-primary px-4 py-2 rounded-md transition"
         >Continue Shopping
       </a>
@@ -96,22 +118,26 @@
       </div>
       <button
         class="checkout block mt-4 bg-primary text-white text-center py-2 rounded-md hover:bg-transparent hover:text-primary border border-primary transition"
-        >Checkout
+      >
+        Checkout
       </button>
     </div>
   </div>
-  
+
   <%- include('../components/popup') %>
 </div>
 <!-- ./cart wrapper -->
 
-<div class="isAuthenticated" style="display: none;"><%= (user ? 'true' : 'false') %></div>
+<div class="isAuthenticated" style="display: none">
+  <%= (user ? 'true' : 'false') %>
+</div>
 
 <script src="/scripts/requests.js"></script>
 <script src="/scripts/handleAddToCart.js"></script>
 
 <script>
-  const isAuthenticated = document.querySelector(".isAuthenticated").innerText === "true";
+  const isAuthenticated =
+    document.querySelector(".isAuthenticated").innerText === "true";
   const subtotal = document.querySelector(".subtotal");
   const total = document.querySelector(".total");
 
@@ -124,16 +150,17 @@
   addQuantity.forEach((button) => {
     button.addEventListener("click", async function () {
       const productId = +button.classList[0].split("-")[1];
-      const quantityInput = document.querySelector(`.item-quantity.item-${productId}`);
+      const quantityInput = document.querySelector(
+        `.item-quantity.item-${productId}`
+      );
       const quantity = +quantityInput.value + 1;
-      
+
       try {
         await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
         quantityInput.value = quantity;
         updateTotalEach(productId);
         updateOrderSummary();
-      }
-      catch(error) {
+      } catch (error) {
         console.error(error);
       }
     });
@@ -142,16 +169,17 @@
   subQuantity.forEach((button) => {
     button.addEventListener("click", async function () {
       const productId = +button.classList[0].split("-")[1];
-      const quantityInput = document.querySelector(`.item-quantity.item-${productId}`);
+      const quantityInput = document.querySelector(
+        `.item-quantity.item-${productId}`
+      );
       const quantity = +quantityInput.value - 1;
-      
+
       try {
         await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
         quantityInput.value = quantity;
         updateTotalEach(productId);
         updateOrderSummary();
-      }
-      catch(error) {
+      } catch (error) {
         console.error(error);
       }
     });
@@ -160,15 +188,16 @@
   itemQuantity.forEach((input) => {
     input.addEventListener("change", async function () {
       const productId = +input.classList[0].split("-")[1];
-      const quantityInput = document.querySelector(`.item-quantity.item-${productId}`);
+      const quantityInput = document.querySelector(
+        `.item-quantity.item-${productId}`
+      );
       const quantity = +quantityInput.value;
 
       try {
         await handleAlterCartItemQuantity(productId, quantity, isAuthenticated);
         updateTotalEach(productId);
         updateOrderSummary();
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error);
       }
     });
@@ -180,27 +209,30 @@
     });
   });
 
-
   deleteItem.forEach((button) => {
     button.addEventListener("click", async function () {
       const productId = +button.classList[0].split("-")[1];
       console.log(`.item-${productId}.item-detail-container`);
-      const item = document.querySelector(`.item-${productId}.item-detail-container`);
-      
+      const item = document.querySelector(
+        `.item-${productId}.item-detail-container`
+      );
+
       try {
         await handleDeleteCartItem(productId, isAuthenticated);
         updateOrderSummary();
         item.remove();
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error);
       }
     });
-  })
+  });
 
   function updateTotalEach(productId) {
-    const quantity = +document.querySelector(`.item-quantity.item-${productId}`).value;
-    const price = +document.querySelector(`.item-price.item-${productId}`).innerText.slice(1);
+    const quantity = +document.querySelector(`.item-quantity.item-${productId}`)
+      .value;
+    const price = +document
+      .querySelector(`.item-price.item-${productId}`)
+      .innerText.slice(1);
     const totalEach = document.querySelector(`.total-each.item-${productId}`);
     totalEach.innerText = `$${quantity * price}`;
   }
@@ -209,19 +241,19 @@
     const checkedBoxes = document.querySelectorAll(".chosen-item:checked");
 
     let subtotalAmount = 0;
-    checkedBoxes.forEach(box => {
+    checkedBoxes.forEach((box) => {
       const productId = +box.name;
-      const totalEach = +document.querySelector(`.total-each.item-${productId}`).innerText.slice(1);
+      const totalEach = +document
+        .querySelector(`.total-each.item-${productId}`)
+        .innerText.slice(1);
       subtotalAmount += totalEach;
-    })
+    });
     const totalAmount = subtotalAmount;
 
     subtotal.innerText = `$${subtotalAmount}`;
     total.innerText = `$${totalAmount}`;
   }
-
 </script>
-
 
 <!-- src="https://code.jquery.com/jquery-3.6.4.min.js" -->
 <script>
@@ -235,9 +267,10 @@
 
   checkout.addEventListener("click", async function () {
     const checkedBoxes = document.querySelectorAll(".chosen-item:checked");
-    const products = Array.from(checkedBoxes).map(box => ({ 
-      productId: +box.name, 
-      quantity: +document.querySelector(`.item-quantity.item-${ box.name }`).value 
+    const products = Array.from(checkedBoxes).map((box) => ({
+      productId: +box.name,
+      quantity: +document.querySelector(`.item-quantity.item-${box.name}`)
+        .value,
     }));
 
     if (products.length === 0) {
@@ -246,8 +279,5 @@
     }
 
     await handleSendCheckout(products, isAuthenticated);
-
   });
-
-
 </script>
