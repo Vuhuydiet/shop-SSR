@@ -4,7 +4,6 @@ const { OKResponse } = require("../../core/SuccessResponse");
 const ProductService = require("../products/product.service");
 
 module.exports = {
-  
   getCartPage: async (req, res) => {
     let cartItems = [];
     if (req.isAuthenticated()) {
@@ -40,7 +39,10 @@ module.exports = {
     const { userId } = req.user;
     const { productId, quantity } = matchedData(req);
 
-    const cartItem = await CartService.addCartItem(userId, { productId, quantity });
+    const cartItem = await CartService.addCartItem(userId, {
+      productId,
+      quantity,
+    });
     new OKResponse("Cart item added", { cartItem }).send(res);
   },
 

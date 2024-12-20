@@ -1,0 +1,11 @@
+model CartItem {
+  userId     Int
+  productId  Int
+  quantity   Int @default(1)
+  updatedAt  DateTime @updatedAt
+
+  @@id([userId, productId])
+
+  product Product @relation(fields: [productId], references: [productId], onDelete: Restrict)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+}
