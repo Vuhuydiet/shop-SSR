@@ -65,13 +65,14 @@ const accountService = {
   },
 
   createUser: async (user) => {
-    const { email, fullname, oauthId, oauthProvider } = user;
+    const { email, fullname, oauthId, oauthProvider, hashedPassword } = user;
     const newUser = await prisma.user.create({
       data: {
         email,
         fullname,
         oauthId,
         oauthProvider,
+        hashedPassword,
       },
     });
   },

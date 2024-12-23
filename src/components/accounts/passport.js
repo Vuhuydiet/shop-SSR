@@ -3,7 +3,6 @@ const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const accountService = require("./account.service");
 const { validatePassword, getHashedPassword } = require("./password");
-const bcrypt = require("bcryptjs");
 
 passport.use(
   new LocalStrategy(
@@ -43,17 +42,22 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      callbackURL: "http://localhost:3000/users/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
-      user = await accountService.createUser({
-        oauthId: profile.id,
-        oauthProvider: "google",
-        email: profile.emails[0].value,
-        fullname: profile.displayName,
-        // profilePicture: profile.photos[0].value,
-      });
-      return done(null, profile);
+      let user = await accountService.findUserByEmail(profile.emails[0].value);
+        
+      if (!user) {
+          user = await accountService.createUser({
+            oauthId: profile.id,
+            oauthProvider: "google",
+            email: profile.emails[0].value,
+            fullname: profile.displayName,
+            hashedPassword: getHashedPassword('thisisasecretpassword%#&!(theymaynotguessed!@#!@3becauseIam!@#!@toolazytohandlethis'),
+            // profilePicture: profile.photos[0].value,
+          });
+      } 
+      return done(null, user);
     }
   )
 );

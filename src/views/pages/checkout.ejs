@@ -76,13 +76,13 @@
     </h4>
     <div class="space-y-2">
       <% products.forEach(product => { %>
-        <div class="flex justify-between">
-          <div>
-            <h5 class="text-gray-800 font-medium"><%= product.productName %></h5>
-          </div>
-          <p class="text-gray-600">x<%= product.buyQuantity %></p>
-          <p class="text-gray-800 font-medium">$<%= product.currentPrice %></p>
+      <div class="flex justify-between">
+        <div>
+          <h5 class="text-gray-800 font-medium"><%= product.productName %></h5>
         </div>
+        <p class="text-gray-600">x<%= product.buyQuantity %></p>
+        <p class="text-gray-800 font-medium">$<%= product.currentPrice %></p>
+      </div>
       <% }) %>
     </div>
 
@@ -126,8 +126,3 @@
   </div>
 </div>
 <!-- ./wrapper -->
-
-
-<script>
-
-</script>
