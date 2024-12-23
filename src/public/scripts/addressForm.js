@@ -113,11 +113,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const districtName =
       districtSelect.options[districtSelect.selectedIndex].text;
     const wardName = wardSelect.options[wardSelect.selectedIndex].text;
+    
+    const countryElement = document.getElementById("country");
+    countryElement.disabled = false;
+    const countryName = document.getElementById("country").value;
+    countryElement.disabled = true;
 
     const formData = new FormData(addressForm);
-    formData.set("province", provinceName);
+    formData.set("city", provinceName);
     formData.set("district", districtName);
     formData.set("ward", wardName);
+    formData.set("country", countryName);
 
     const data = Object.fromEntries(formData.entries());
 
@@ -127,14 +133,20 @@ document.addEventListener("DOMContentLoaded", () => {
         : "/profile/api/address/add";
       const method = addressId ? "PUT" : "POST";
 
-      const response = await fetch(url, {
+      if (!data?.addressId || data.addressId == "") {
+        delete data.addressId;
+      }
+
+      var request = {
         method: method,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      });
-
+      };
+      const response = await fetch(url, request);
+      console.log(request); 
+      
       const result = await response.json();
 
       if (response.ok) {

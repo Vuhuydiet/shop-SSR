@@ -59,7 +59,7 @@ router.get(
   addressController.getAddAddressPage
 );
 router.get(
-  "/address/edit/:addressId",
+  "/address/:addressId",
   isAuthenticated,
   addressController.getUpdateAddressPage
 );
@@ -72,7 +72,7 @@ router.post(
 );
 
 router.put(
-  "/address/:addressId",
+  "/address/edit/:addressId",
   isAuthenticated,
   validateAddressId,
   validateAddress,
