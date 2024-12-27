@@ -114,6 +114,7 @@
       </div>
       <button
         class="checkout block p-8 mt-4 bg-primary text-white text-center py-2 rounded-md hover:bg-transparent hover:text-primary border border-primary transition"
+        id="checkout-button"
       >
         Checkout
       </button>
@@ -132,8 +133,9 @@
 <script src="/scripts/handleAddToCart.js"></script>
 
 <script>
-  const isAuthenticated =
-    document.querySelector(".isAuthenticated").innerText === "true";
+  const isAuthenticated = document
+    .querySelector(".isAuthenticated")
+    .innerText.includes("true");
   const subtotal = document.querySelector(".subtotal");
   const total = document.querySelector(".total");
 

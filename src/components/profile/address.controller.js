@@ -82,6 +82,16 @@ class AddressController {
     await this.addressService.deleteAddress(parseInt(req.params.addressId));
     return new NoContentResponse("Deleted").send(res);
   };
+
+  /**
+   * @description Get address by id
+   */
+  getAddressById = async (req, res, next) => {
+    const address = await this.addressService.getAddressById(
+      parseInt(req.params.addressId)
+    );
+    return new OKResponse(" Address retrieved", { address }).send(res);
+  };
 }
 
 const addressController = new AddressController(AddressService);

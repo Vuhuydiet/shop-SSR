@@ -52,6 +52,11 @@ const validateAddressId = async (req, res, next) => {
 
 router.get("/", isAuthenticated, userController.getUserProfile);
 router.get("/address", isAuthenticated, addressController.renderAddressPage);
+router.get(
+  "/api/address/:addressId",
+  isAuthenticated,
+  addressController.getAddressById
+);
 router.get("/api/address", isAuthenticated, addressController.getUserAddresses);
 router.get(
   "/address/add",
