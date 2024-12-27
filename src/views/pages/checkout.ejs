@@ -183,7 +183,7 @@
   id="address-popup"
   class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
 >
-  <div class="bg-white p-6 rounded-lg w-2/3">
+  <div class="bg-white p-6 rounded-lg w-2/3 border-2 border-gray-300 shadow-lg">
     <h3 class="text-lg font-medium mb-4">Select Address</h3>
     <div id="saved-addresses" class="space-y-4">
       <% addresses.forEach(address => { %>
@@ -246,11 +246,17 @@
           document.getElementById("recipientName").value =
             address.recipientName;
           document.getElementById("phoneNumber").value = address.phoneNumber;
-          document.getElementById("city").value = address.city;
-          document.getElementById("district").value = address.district;
-          document.getElementById("ward").value = address.ward;
           document.getElementById("detailAddress").value =
             address.detailAddress;
+          const citySelect = document.getElementById("city");
+          const districtSelect = document.getElementById("district");
+          const wardSelect = document.getElementById("ward");
+
+          citySelect.add(new Option(address.city, address.city, true, true));
+          districtSelect.add(
+            new Option(address.district, address.district, true, true)
+          );
+          wardSelect.add(new Option(address.ward, address.ward, true, true));
 
           addressPopup.classList.add("hidden");
         });
