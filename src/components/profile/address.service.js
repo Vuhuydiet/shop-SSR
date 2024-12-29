@@ -13,6 +13,12 @@ class AddressService {
     });
   }
 
+  static async getAddressByUserId(userId) {
+    return await prisma.shippingAddress.findMany({
+      where: { userId },
+    });
+  }
+
   static async addAddress(userId, addressData) {
     return await prisma.shippingAddress.create({
       data: {

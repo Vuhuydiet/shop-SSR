@@ -1,4 +1,3 @@
-
 async function sendAddCartItemReq(productId, quantity) {
   const response = await fetch("/cart", {
     method: "POST",
@@ -47,23 +46,22 @@ async function sendDeleteItemReq(productId) {
 }
 
 async function sendCheckoutReq(products) {
-  fetch('/checkout/submit-order', {
-    method: 'POST',
+  fetch("/checkout/submit-order", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       products,
     }),
   })
-  .then(response => {
-    if (response.redirected) {
-      // Redirect the client to the new page
-      window.location.href = response.url;
-    }
-  })
-  .catch(error => {
-    throw new Error("Failed to checkout");
-  });
-
+    .then((response) => {
+      if (response.redirected) {
+        // Redirect the client to the new page
+        window.location.href = response.url;
+      }
+    })
+    .catch((error) => {
+      throw new Error("Failed to checkout");
+    });
 }

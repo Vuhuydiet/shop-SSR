@@ -8,64 +8,115 @@
   </span>
   <p class="text-gray-600 font-medium">Checkout</p>
 </div>
-<!-- ./breadcrumb -->
+<!-- ./breadcr  umb -->
 
 <!-- wrapper -->
 <div class="container grid grid-cols-12 items-start pb-16 pt-4 gap-6">
   <div class="col-span-8 border border-gray-200 p-4 rounded">
     <h3 class="text-lg font-medium capitalize mb-4">Checkout</h3>
     <div class="space-y-4">
+      <button
+        id="select-address"
+        class="bg-primary text-white py-2 px-4 rounded"
+      >
+        Select Address
+      </button>
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="first-name" class="text-gray-600"
-            >First Name <span class="text-primary">*</span></label
+          <label for="recipientName" class="text-gray-600"
+            >Name<span class="text-primary">*</span></label
           >
           <input
             type="text"
-            name="first-name"
-            id="first-name"
+            name="recipientName"
+            id="recipientName"
             class="input-box"
+            required
           />
         </div>
         <div>
-          <label for="last-name" class="text-gray-600"
-            >Last Name <span class="text-primary">*</span></label
+          <label for="phoneNumber" class="text-gray-600"
+            >Phone number <span class="text-primary">*</span></label
           >
           <input
-            type="text"
-            name="last-name"
-            id="last-name"
+            type="tel"
+            name="phoneNumber"
+            id="phoneNumber"
+            pattern="[+]*[0-9]{10,11}"
             class="input-box"
+            required
           />
         </div>
       </div>
       <div>
-        <label for="company" class="text-gray-600">Company</label>
-        <input type="text" name="company" id="company" class="input-box" />
+        <label for="country" class="text-gray-600">Country/Region</label>
+        <input
+          class="bg-gray-100 input-box"
+          type="text"
+          name="country"
+          id="country"
+          value="Việt Nam"
+          disabled
+        />
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label for="city" class="text-gray-600">Province/City</label>
+          <select id="city" name="city" class="input-box" required>
+            <option value="">Select Province/City</option>
+          </select>
+        </div>
+        <div>
+          <label for="district" class="text-gray-600">District</label>
+          <select
+            id="district"
+            name="district"
+            class="input-box"
+            disabled
+            required
+          >
+            <option value="">Select District</option>
+          </select>
+        </div>
+        <div>
+          <label for="ward" class="text-gray-600">Ward</label>
+          <select id="ward" name="ward" class="input-box" disabled required>
+            <option value="">Select Ward</option>
+          </select>
+        </div>
       </div>
       <div>
-        <label for="region" class="text-gray-600">Country/Region</label>
-        <input type="text" name="region" id="region" class="input-box" />
+        <label for="detailAddress" class="text-gray-600">Detail Address</label>
+        <input
+          type="text"
+          name="detailAddress"
+          id="detailAddress"
+          class="input-box"
+          required
+        />
+      </div>
+    </div>
+    <div class="mt-4">
+      <h4 class="text-lg font-medium capitalize mb-4">Payment Method</h4>
+      <div>
+        <input
+          type="radio"
+          name="payment-method"
+          id="cod"
+          value="COD"
+          class="mr-2"
+        />
+        <label for="cod" class="text-gray-600">Cash on Delivery (COD)</label>
       </div>
       <div>
-        <label for="address" class="text-gray-600">Street address</label>
-        <input type="text" name="address" id="address" class="input-box" />
-      </div>
-      <div>
-        <label for="city" class="text-gray-600">City</label>
-        <input type="text" name="city" id="city" class="input-box" />
-      </div>
-      <div>
-        <label for="phone" class="text-gray-600">Phone number</label>
-        <input type="text" name="phone" id="phone" class="input-box" />
-      </div>
-      <div>
-        <label for="email" class="text-gray-600">Email address</label>
-        <input type="email" name="email" id="email" class="input-box" />
-      </div>
-      <div>
-        <label for="company" class="text-gray-600">Company</label>
-        <input type="text" name="company" id="company" class="input-box" />
+        <input
+          type="radio"
+          name="payment-method"
+          id="vnpay"
+          value="VNPAY"
+          class="mr-2"
+        />
+        <label for="vnpay" class="text-gray-600">VNPAY</label>
       </div>
     </div>
   </div>
@@ -76,31 +127,31 @@
     </h4>
     <div class="space-y-2">
       <% products.forEach(product => { %>
-        <div class="flex justify-between">
-          <div>
-            <h5 class="text-gray-800 font-medium"><%= product.productName %></h5>
-          </div>
-          <p class="text-gray-600">x<%= product.buyQuantity %></p>
-          <p class="text-gray-800 font-medium">$<%= product.currentPrice %></p>
+      <div class="flex justify-between">
+        <div>
+          <h5 class="text-gray-800 font-medium"><%= product.productName %></h5>
         </div>
+        <p class="text-gray-600">x<%= product.buyQuantity %></p>
+        <p class="text-gray-800 font-medium">$<%= product.currentPrice %></p>
+      </div>
       <% }) %>
     </div>
 
     <div
-      class="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercas"
+      class="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercase"
     >
       <p>subtotal</p>
       <p>$<%= locals.subtotal %></p>
     </div>
 
     <div
-      class="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercas"
+      class="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercase"
     >
       <p>shipping</p>
       <p>Free</p>
     </div>
 
-    <div class="flex justify-between text-gray-800 font-medium py-3 uppercas">
+    <div class="flex justify-between text-gray-800 font-medium py-3 uppercase">
       <p class="font-semibold">Total</p>
       <p>$<%= total %></p>
     </div>
@@ -108,11 +159,11 @@
     <div class="flex items-center mb-4 mt-2">
       <input
         type="checkbox"
-        name="aggrement"
-        id="aggrement"
+        name="agreement"
+        id="agreement"
         class="text-primary focus:ring-0 rounded-sm cursor-pointer w-3 h-3"
       />
-      <label for="aggrement" class="text-gray-600 ml-3 cursor-pointer text-sm"
+      <label for="agreement" class="text-gray-600 ml-3 cursor-pointer text-sm"
         >I agree to the
         <a href="#" class="text-primary">terms & conditions</a></label
       >
@@ -127,7 +178,90 @@
 </div>
 <!-- ./wrapper -->
 
+<!-- Address Selection Popup -->
+<div
+  id="address-popup"
+  class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
+>
+  <div class="bg-white p-6 rounded-lg w-2/3 border-2 border-gray-300 shadow-lg">
+    <h3 class="text-lg font-medium mb-4">Select Address</h3>
+    <div id="saved-addresses" class="space-y-4">
+      <% addresses.forEach(address => { %>
+      <div class="flex items-center p-4 border rounded hover:border-primary">
+        <input
+          type="radio"
+          name="saved-address"
+          id="address-<%= address.id %>"
+          value="<%= address.id %>"
+          class="mr-4"
+        />
+        <label for="address-<%= address.id %>" class="w-full">
+          <div class="flex justify-between items-center border-b pb-2 mb-2">
+            <span class="font-medium"><%= address.recipientName %></span>
+            <span class="text-gray-600"><%= address.phoneNumber %></span>
+          </div>
+          <div class="text-gray-600">
+            <%= `${address.detailAddress}, ${address.ward}, ${address.district},
+            ${address.city}` %>
+          </div>
+        </label>
+      </div>
+      <% }) %>
+    </div>
+    <div class="mt-4 flex justify-end border-t pt-4">
+      <button
+        id="close-popup"
+        class="bg-primary text-white py-2 px-6 rounded hover:bg-gray-600 transition-colors"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+<!-- ./Address Selection Popup -->
 
 <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const addressPopup = document.getElementById("address-popup");
 
+    document.getElementById("select-address").addEventListener("click", () => {
+      addressPopup.classList.remove("hidden");
+    });
+
+    document.getElementById("close-popup").addEventListener("click", () => {
+      addressPopup.classList.add("hidden");
+    });
+
+    document
+      .querySelectorAll('input[name="saved-address"]')
+      .forEach((radio) => {
+        radio.addEventListener("change", async (e) => {
+          const addressId = e.target.value;
+          const response = await fetch(`/profile/api/address/${addressId}`);
+          const result = await response.json();
+
+          const address = result.data.addresses.at(0);
+
+          // Autofill form
+          document.getElementById("recipientName").value =
+            address.recipientName;
+          document.getElementById("phoneNumber").value = address.phoneNumber;
+          document.getElementById("detailAddress").value =
+            address.detailAddress;
+          const citySelect = document.getElementById("city");
+          const districtSelect = document.getElementById("district");
+          const wardSelect = document.getElementById("ward");
+
+          citySelect.add(new Option(address.city, address.city, true, true));
+          districtSelect.add(
+            new Option(address.district, address.district, true, true)
+          );
+          wardSelect.add(new Option(address.ward, address.ward, true, true));
+
+          addressPopup.classList.add("hidden");
+        });
+      });
+  });
 </script>
+
+<script src="/scripts/checkout.js"></script>

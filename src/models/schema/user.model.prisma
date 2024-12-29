@@ -21,7 +21,6 @@ model User {
 
   oauthProvider String?
   oauthId       String? @unique
-  oauthToken    String?
 
   shippingAddresses ShippingAddress[]
   cartItems         CartItem[]

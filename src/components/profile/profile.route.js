@@ -52,6 +52,11 @@ const validateAddressId = async (req, res, next) => {
 
 router.get("/", isAuthenticated, userController.getUserProfile);
 router.get("/address", isAuthenticated, addressController.renderAddressPage);
+router.get(
+  "/api/address/:addressId",
+  isAuthenticated,
+  addressController.getAddressById
+);
 router.get("/api/address", isAuthenticated, addressController.getUserAddresses);
 router.get(
   "/address/add",
@@ -59,7 +64,7 @@ router.get(
   addressController.getAddAddressPage
 );
 router.get(
-  "/address/edit/:addressId",
+  "/address/:addressId",
   isAuthenticated,
   addressController.getUpdateAddressPage
 );
@@ -72,7 +77,7 @@ router.post(
 );
 
 router.put(
-  "/address/:addressId",
+  "/address/edit/:addressId",
   isAuthenticated,
   validateAddressId,
   validateAddress,

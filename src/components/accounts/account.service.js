@@ -64,6 +64,19 @@ const accountService = {
     return user;
   },
 
+  createUser: async (user) => {
+    const { email, fullname, oauthId, oauthProvider, hashedPassword } = user;
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        fullname,
+        oauthId,
+        oauthProvider,
+        hashedPassword,
+      },
+    });
+  },
+
   confirmUser: async (email, confirmationCode) => {
     const user = await prisma.user.findUnique({ where: { email } });
 

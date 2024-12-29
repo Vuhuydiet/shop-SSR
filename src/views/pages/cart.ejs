@@ -92,10 +92,6 @@
         class="text-primary hover:text-white hover:bg-primary border border-primary px-4 py-2 rounded-md transition"
         >Continue Shopping
       </a>
-      <!-- <a href="./checkout"
-        class="bg-primary text-white px-4 py-2 rounded-md hover:bg-transparent hover:text-primary border border-primary transition"
-        >Proceed to Checkout
-      </a> -->
     </div>
   </div>
   <!-- order summary -->
@@ -117,7 +113,8 @@
         </div>
       </div>
       <button
-        class="checkout block mt-4 bg-primary text-white text-center py-2 rounded-md hover:bg-transparent hover:text-primary border border-primary transition"
+        class="checkout block p-8 mt-4 bg-primary text-white text-center py-2 rounded-md hover:bg-transparent hover:text-primary border border-primary transition"
+        id="checkout-button"
       >
         Checkout
       </button>
@@ -136,8 +133,9 @@
 <script src="/scripts/handleAddToCart.js"></script>
 
 <script>
-  const isAuthenticated =
-    document.querySelector(".isAuthenticated").innerText === "true";
+  const isAuthenticated = document
+    .querySelector(".isAuthenticated")
+    .innerText.includes("true");
   const subtotal = document.querySelector(".subtotal");
   const total = document.querySelector(".total");
 

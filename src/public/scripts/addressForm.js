@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fetchProvinces = async () => {
     try {
-      const response = await fetch("https://vapi.vnappmob.com/api/province/");
+      const response = await fetch(
+        "https://vapi.vnappmob.com/api/v2/province/"
+      );
       const data = await response.json();
       data.results.forEach((province) => {
         const option = document.createElement("option");
@@ -23,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fetchDistricts = async (provinceId) => {
     try {
       const response = await fetch(
-        `https://vapi.vnappmob.com/api/province/district/${provinceId}`
+        `https://vapi.vnappmob.com/api/v2/province/district/${provinceId}`
       );
       const data = await response.json();
       data.results.forEach((district) => {
@@ -41,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fetchWards = async (districtId) => {
     try {
       const response = await fetch(
-        `https://vapi.vnappmob.com/api/province/ward/${districtId}`
+        `https://vapi.vnappmob.com/api/v2/province/ward/${districtId}`
       );
       const data = await response.json();
       data.results.forEach((ward) => {
@@ -111,28 +113,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const districtName =
       districtSelect.options[districtSelect.selectedIndex].text;
     const wardName = wardSelect.options[wardSelect.selectedIndex].text;
+    
+    const countryElement = document.getElementById("country");
+    countryElement.disabled = false;
+    const countryName = document.getElementById("country").value;
+    countryElement.disabled = true;
 
     const formData = new FormData(addressForm);
-    formData.set("province", provinceName);
+    formData.set("city", provinceName);
     formData.set("district", districtName);
     formData.set("ward", wardName);
+    formData.set("country", countryName);
 
     const data = Object.fromEntries(formData.entries());
 
     try {
       const url = addressId
-        ? `/api/profile/address/${addressId}`
-        : "/api/profile/address/add";
+        ? `/profile/api/address/${addressId}`
+        : "/profile/api/address/add";
       const method = addressId ? "PUT" : "POST";
 
-      const response = await fetch(url, {
+      if (!data?.addressId || data.addressId == "") {
+        delete data.addressId;
+      }
+
+      var request = {
         method: method,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      });
-
+      };
+      const response = await fetch(url, request);
+      console.log(request); 
+      
       const result = await response.json();
 
       if (response.ok) {
