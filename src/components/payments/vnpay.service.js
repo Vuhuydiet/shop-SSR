@@ -38,7 +38,7 @@ class VNPayService {
         }
       });
 
-    const signData = querystring.stringify(sortedParams, { encode: false });
+    const signData = querystring.stringify(sortedParams, { encode: true });
     const hmac = crypto.createHmac("sha512", secretKey);
     const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
