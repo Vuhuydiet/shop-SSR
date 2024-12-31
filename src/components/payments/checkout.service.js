@@ -2,15 +2,14 @@ const prisma = require("../../models");
 const ProductService = require("../products/product.service");
 
 class CheckoutService {
-  static async calculateTotal(products) {
-    const subtotal = await products.reduce(async (sum, item) => {
-      const product = await prisma.product.findUnique({
-        where: { productId: item.productId },
-      });
-      return (await sum) + product.price * item.quantity;
-    }, Promise.resolve(0));
+  static calculateTotal(products) {
+    const subtotal = products.reduce(
+      (acc, p) => acc + p.currentPrice * p.buyQuantity,
+      0
+    );
 
     const shippingFee = 0;
+
     return { subtotal, total: subtotal + shippingFee };
   }
 
@@ -59,8 +58,8 @@ class CheckoutService {
                 }
                 return {
                   productId: item.productId,
-                  quantity: item.quantity,
-                  priceAtPurchase: product.price,
+                  quantity: item.buyQuantity,
+                  priceAtPurchase: product.currentPrice,
                 };
               })
             ),
@@ -71,16 +70,17 @@ class CheckoutService {
         },
       });
 
-      await Promise.all(
-        products.map((item) =>
-          tx.product.update({
-            where: { productId: item.productId },
-            data: {
-              stock: { decrement: item.quantity },
-            },
-          })
-        )
-      );
+      // stock management
+      // await Promise.all(
+      //   products.map((item) =>
+      //     tx.product.update({
+      //       where: { productId: item.productId },
+      //       data: {
+      //         stock: { decrement: item.quantity },
+      //       },
+      //     })
+      //   )
+      // );
 
       return order;
     });

@@ -7,15 +7,15 @@ module.exports = {
   submitOrder: async (req, res) => {
     const { products } = matchedData(req);
 
-    const productDetails = await CheckoutService.getProductInfos(products);
-    req.session.checkoutProducts = productDetails;
+    req.session.products = products;
 
     res.redirect(`/checkout`);
   },
 
   createOrder: async (req, res) => {
     try {
-      const { products, shippingAddress, paymentMethod } = matchedData(req);
+      const { shippingAddress, paymentMethod } = matchedData(req);
+      const products = req.session.checkoutProducts;
 
       console.log(products);
 
@@ -53,18 +53,20 @@ module.exports = {
   },
 
   getCheckoutPage: async (req, res) => {
-    const products = req.session.checkoutProducts;
+    const { products } = req.session;
+
     if (!products || !products.length) {
       return res.redirect("/cart");
     }
+
     const productInfos = await CheckoutService.getProductInfos(products);
 
-    const { total, subtotal } = CheckoutService.calculateTotal(productInfos);
+    const { total, subtotal } = await CheckoutService.calculateTotal(
+      productInfos
+    );
 
     const addresses = await AddressService.getAddressByUserId(req.user.id);
-    console.log(addresses);
-
-    req.session.products = products;
+    req.session.checkoutProducts = productInfos;
 
     res.render("pages/checkout", {
       products: productInfos,
@@ -116,3 +118,4 @@ module.exports = {
     }
   },
 };
+//
