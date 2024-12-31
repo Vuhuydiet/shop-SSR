@@ -1,17 +1,23 @@
 
 enum OrderStatus {
   PENDING
+  PAID
   CANCELLED
   CONFIRMED
   SHIPPING
   DELIVERED
 }
 
+enum PaymentMethod {
+  COD
+  VNPAY
+}                                     
 
 model Order {
   orderId Int @id @default(autoincrement())
   userId Int
   totalAmount Float
+  paymentMethod PaymentMethod
   orderStatus OrderStatus @default(PENDING)
   createdAt DateTime @default(now())
 

@@ -14,7 +14,7 @@
 <div class="container grid grid-cols-12 items-start pb-16 pt-4 gap-6">
   <div class="col-span-8 border border-gray-200 p-4 rounded">
     <h3 class="text-lg font-medium capitalize mb-4">Checkout</h3>
-    <div class="space-y-4">
+    <form class="space-y-4" id="form">
       <button
         id="select-address"
         class="bg-primary text-white py-2 px-4 rounded"
@@ -95,7 +95,7 @@
           required
         />
       </div>
-    </div>
+    </fo>
     <div class="mt-4">
       <h4 class="text-lg font-medium capitalize mb-4">Payment Method</h4>
       <div>
@@ -171,6 +171,7 @@
 
     <a
       href="#"
+      id="place-order"
       class="block w-full py-3 px-4 text-center text-white bg-primary border border-primary rounded-md hover:bg-transparent hover:text-primary transition font-medium"
       >Place order</a
     >
@@ -261,6 +262,80 @@
           addressPopup.classList.add("hidden");
         });
       });
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    const agreement = document.getElementById("agreement");
+    const placeOrderBtn = document.getElementById("place-order");
+
+    placeOrderBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      if (!agreement.checked) {
+        alert("Please agree to the terms and conditions");
+        return;
+      }
+
+      const paymentMethod = document.querySelector(
+        'input[name="payment-method"]:checked'
+      )?.value;
+      if (!paymentMethod) {
+        alert("Please select a payment method");
+        return;
+      }
+
+      const countryForm = document.getElementById("country");
+      countryForm.disabled = false;
+
+      const shippingAddress = {
+        recipientName: form.querySelector('[name="recipientName"]').value,
+        phoneNumber: form.querySelector('[name="phoneNumber"]').value,
+        country: countryForm.value,
+        city: form.querySelector('[name="city"]').value,
+        district: form.querySelector('[name="district"]').value,
+        ward: form.querySelector('[name="ward"]').value,
+        detailAddress: form.querySelector('[name="detailAddress"]').value,
+      };
+
+      
+      countryForm.disabled = true;
+      const products = Array.from(document.querySelectorAll(".cart-item")).map(
+        (item) => ({
+          productId: parseInt(item.dataset.productId),
+          quantity: parseInt(item.querySelector(".quantity").value),
+        })
+      );
+
+      try {
+        const response = await fetch("/checkout/place-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            products,
+            shippingAddress,
+            paymentMethod,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.message);
+        }
+
+        if (result.paymentUrl) {
+          window.location.href = result.paymentUrl;
+        } else if (result.redirectUrl) {
+          window.location.href = result.redirectUrl;
+        }
+      } catch (error) {
+        console.error("Checkout error:", error);
+        alert("Failed to process order. Please try again.");
+      }
+    });
   });
 </script>
 
