@@ -27,14 +27,12 @@ module.exports = {
         status: "PENDING",
       });
 
-      console.log(order);
-
       if (paymentMethod === "VNPAY") {
-        const paymentUrl = await VNPayService.generatePaymentUrl({
-          orderId: order.orderId,
-          amount: order.totalAmount,
-          orderInfo: `Payment for order #${order.orderId}`,
-        });
+        const paymentUrl = await VNPayService.generatePaymentUrl(
+          order.orderId,
+          order.totalAmount,
+          `Payment for order #${order.orderId}`
+        );
         return res.json({ success: true, paymentUrl });
       }
 
@@ -77,12 +75,12 @@ module.exports = {
   },
 
   processPayment: async (req, res) => {
-    const { paymentMethod, amount, orderId } = req.body;
+    const { paymentMethod, total, orderId } = req.body;
 
     if (paymentMethod === "VNPAY") {
       const paymentUrl = VNPayService.generatePaymentUrl(
         orderId,
-        amount,
+        total,
         `Payment for order #${orderId}`
       );
       res.json({ paymentUrl });
