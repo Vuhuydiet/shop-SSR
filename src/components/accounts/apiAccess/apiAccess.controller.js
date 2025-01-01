@@ -1,7 +1,7 @@
 const { BadRequestError } = require("../../../core/ErrorResponse");
 const { OKResponse } = require("../../../core/SuccessResponse");
 const accountService = require("../account.service");
-const { default: JWT } = require("./JWT");
+const JWT = require("./JWT");
 const { validatePassword } = require("../password");
 
 
@@ -13,7 +13,7 @@ module.exports = {
     if (!admin) {
       throw new BadRequestError({message: "Invalid username or password"});
     }
-    const passwordMatch = validatePassword(password, admin.password);
+    const passwordMatch = validatePassword(password, admin.hashedPassword);
     if (!passwordMatch) {
       throw new BadRequestError({message: "Invalid username or password"});
     }

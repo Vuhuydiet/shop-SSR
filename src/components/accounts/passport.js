@@ -91,7 +91,7 @@ passport.use(
         const { userId, role } = jwt_payload.sub;
         const user = role === 'USER' ? 
           await accountService.findUserById(userId) :
-          await accountService.findAdminById(userId);
+          await accountService.findAdminByAdminId(userId);
         return done(null, { userId, role });
       } catch (err) {
         return done(err, false);

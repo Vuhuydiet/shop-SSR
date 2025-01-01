@@ -1,13 +1,15 @@
 const express = require('express');
+const router = express.Router();
 const { query, param } = require('express-validator');
 const { handleValidationErrors } = require('../../../libraries/validator/validator');
 const accountManagementController = require('./accountManagement.controller');
 const { isAuthenicatedReturnsErrror, authorize } = require('../account.middleware');
-const router = express.Router();
+
+const passport = require('../passport');
 
 router.get(
   '/api',
-  isAuthenicatedReturnsErrror,
+  passport.authenticate('jwt', { session: false }),
   authorize(['ADMIN']),
 
   query('fullname').optional().isString(),
