@@ -5,6 +5,7 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
 const accountService = require("./account.service");
 const { validatePassword, getHashedPassword } = require("./password");
+const env = require("../../config/env");
 
 passport.use(
   new LocalStrategy(
@@ -82,7 +83,7 @@ passport.use(
   new JwtStrategy(
     {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: keyConfig.JWT_PUBLIC_KEY,
+      secretOrKey: env.JWT_PUBLIC_KEY,
       algorithms: ['RS256'],
     },
     async (jwt_payload, done) => {

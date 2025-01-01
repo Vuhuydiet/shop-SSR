@@ -19,4 +19,6 @@ module.exports = {
 
   JWT_PRIVATE_KEY: process.env.JWT_PRIVATE_KEY,
   JWT_PUBLIC_KEY: process.env.JWT_PUBLIC_KEY,
+
+  JWT_EXPIRATION_DAYS: process.env.JWT_EXPIRATION_DAYS || 1,
 }

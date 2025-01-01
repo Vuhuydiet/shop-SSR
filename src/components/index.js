@@ -11,11 +11,13 @@ const cartRouter = require("./cart/cart.route");
 const checkoutRouter = require("./payments/checkout.route");
 
 const apiAccessRouter = require('./accounts/apiAccess/apiAccess.route');
+const accountManagementRouter = require('./accounts/management/accountManagement.route');
 
 router.use("/", categoryMiddleware.getCategories);
 
 router.use("/", homeRouter);
 router.use("/users", userRouter);
+router.use("users", accountManagementRouter);
 router.use("/products", productRouter);
 router.use("/reviews", reviewRouter);
 router.use("/profile", profileRouter);
