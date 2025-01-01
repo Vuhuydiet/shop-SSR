@@ -17,7 +17,7 @@ router.use("/", categoryMiddleware.getCategories);
 
 router.use("/", homeRouter);
 router.use("/users", userRouter);
-router.use("users", accountManagementRouter);
+router.use("/users", accountManagementRouter);
 router.use("/products", productRouter);
 router.use("/reviews", reviewRouter);
 router.use("/profile", profileRouter);
