@@ -10,6 +10,8 @@ const profileRouter = require("./profile/profile.route");
 const cartRouter = require("./cart/cart.route");
 const checkoutRouter = require("./payments/checkout.route");
 
+const apiAccessRouter = require('./accounts/apiAccess/apiAccess.route');
+
 router.use("/", categoryMiddleware.getCategories);
 
 router.use("/", homeRouter);
@@ -19,5 +21,7 @@ router.use("/reviews", reviewRouter);
 router.use("/profile", profileRouter);
 router.use("/cart", cartRouter);
 router.use("/checkout", checkoutRouter);
+
+router.use("/api/access", apiAccessRouter);
 
 module.exports = router;

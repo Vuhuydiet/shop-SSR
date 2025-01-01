@@ -1,6 +1,8 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const { ExtractJwt } = require('passport-jwt');
 const accountService = require("./account.service");
 const { validatePassword, getHashedPassword } = require("./password");
 
@@ -74,5 +76,28 @@ passport.deserializeUser(async (id, done) => {
     done(err, false);
   }
 });
+
+
+passport.use(
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: keyConfig.JWT_PUBLIC_KEY,
+      algorithms: ['RS256'],
+    },
+    async (jwt_payload, done) => {
+      try {
+        const { userId, role } = jwt_payload.sub;
+        const user = role === 'USER' ? 
+          await accountService.findUserById(userId) :
+          await accountService.findAdminById(userId);
+        return done(null, { userId, role });
+      } catch (err) {
+        return done(err, false);
+      }
+    },
+  ),
+);
+
 
 module.exports = passport;

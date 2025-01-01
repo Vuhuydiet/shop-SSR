@@ -1,10 +1,10 @@
-import { v2 as cloudinary } from 'cloudinary';
+const cloudinary = require('cloudinary').v2;
 
-import keyConfig from '../../configs/key.config';
-import { InternalServerError } from '../../core/ErrorResponse';
+const env = require('../../config/env');
+const { InternalServerError } = require('../../core/ErrorResponse');
 
 cloudinary.config({
-  cloudinary_url: keyConfig.CLOUDINARY_URL
+  cloudinary_url: env.CLOUDINARY_URL
 });
 
 class CloudService {
