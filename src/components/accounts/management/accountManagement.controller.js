@@ -17,7 +17,7 @@ module.exports = {
   getUser: async (req, res) => {
     const { userId } = matchedData(req);
 
-    const user = await accountService.getUser(userId);
+    const user = await accountService.findUserById(userId);
 
     new OKResponse({
       message: "User fetched successfully",
