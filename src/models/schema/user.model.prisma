@@ -1,29 +1,24 @@
-enum UserStatus {
-  ACTIVE
-  BLOCK
-}
-
 model User {
-  userId Int        @id @default(autoincrement())
-  status UserStatus @default(ACTIVE)
-
-  email          String @unique
-  hashedPassword String
-
-  confirmed Boolean @default(false)
-  createdAt   DateTime  @default(now())
-  lastLogin   DateTime?
-  phoneNumber String?
-  fullname    String?
-
-  avatarUrl   String?
-  publicImgId String?
-
-  oauthProvider String?
-  oauthId       String? @unique
-
-  shippingAddresses ShippingAddress[]
+  userId            Int               @id @default(autoincrement())
+  status            UserStatus        @default(ACTIVE)
+  email             String            @unique
+  hashedPassword    String
+  confirmed         Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  lastLogin         DateTime?
+  phoneNumber       String?
+  fullname          String?
+  avatarUrl         String?
+  publicImgId       String?
+  oauthProvider     String?
+  oauthId           String?           @unique
   cartItems         CartItem[]
   orders            Order[]
   reviews           Review[]
+  shippingAddresses ShippingAddress[]
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCK
 }

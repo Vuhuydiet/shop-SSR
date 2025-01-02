@@ -1,8 +1,9 @@
-
 model Admin {
-  adminId Int @id @default(autoincrement())
-  fullname String
-  
-  username String
+  adminId        Int       @id @default(autoincrement())
+  fullname       String
+  username       String @unique
   hashedPassword String
+  doB            DateTime? @db.Date
+  email          String?   @unique
+  gender         String?
 }

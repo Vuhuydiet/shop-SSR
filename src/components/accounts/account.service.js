@@ -171,6 +171,46 @@ const accountService = {
     }
   },
 
+  /**
+   *
+   * @param {{
+   * fullname?: string,
+   * email?: string,
+   * confirmed?: boolean,
+   * status?: 'ACTIVE' | 'BLOCK'
+   * orderBy?: 'createdAt' | 'fullname' | 'email',
+   * order?: 'asc' | 'desc',
+   * limit?: number,
+   * offset?: number
+   * }} query
+   */
+  getUsers: async (query) => {
+    const condition = {
+      fullname: { contains: query.fullname },
+      email: { contains: query.email },
+      confirmed: query.confirmed,
+    };
+
+    const [count, users] = await prisma.$transaction([
+      prisma.user.count({ where: condition }),
+      prisma.user.findMany({
+        where: condition,
+        orderBy: { [query.orderBy]: query.order },
+        take: query.limit,
+        skip: query.offset,
+      }),
+    ]);
+
+    return { count, users };
+  },
+
+  updateAccountStatus: async (userId, status) => {
+    return await prisma.user.update({
+      where: { userId },
+      data: { status },
+    });
+  },
+
   updateLastLogin: async (userId) => {
     try {
       return await prisma.user.update({
@@ -181,6 +221,16 @@ const accountService = {
       logger.error(`Error updating last login: ${error.message}`);
       throw new InternalServerError({ error: error });
     }
+  },
+
+  findAdminByAdminId: async (adminId) => {
+    const admin = await prisma.admin.findUnique({ where: { adminId } });
+    return admin;
+  },
+
+  findAdminByUsername: async (username) => {
+    const admin = await prisma.admin.findUnique({ where: { username } });
+    return admin;
   },
 };
 

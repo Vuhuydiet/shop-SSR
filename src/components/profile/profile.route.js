@@ -4,6 +4,9 @@ const addressController = require("./address.controller");
 const userController = require("./profile.controller");
 const { isAuthenticated } = require("../accounts/account.middleware");
 const { z } = require("zod");
+const profileController = require("./profile.controller");
+const { param, body } = require("express-validator");
+const { handleValidationErrors } = require("../../libraries/validator/validator");
 
 const addressSchema = z.object({
   recipientName: z
@@ -89,6 +92,26 @@ router.delete(
   isAuthenticated,
   validateAddressId,
   addressController.deleteAddress
+);
+
+router.get(
+  '/api/:adminId',
+
+  param('adminId').isNumeric().withMessage('Admin ID must be numeric').toInt(),
+  handleValidationErrors,
+
+  profileController.getAdminProfile
+);
+
+router.patch(
+  '/api/admin',
+  body('dob').optional().isISO8601().toDate(),
+  body('email').optional().isEmail(),
+  body('fullname').optional().isString(),
+  body('gender').optional().isIn(['male', 'female']),
+  handleValidationErrors,
+
+  profileController.updateAdminProfile
 );
 
 module.exports = router;

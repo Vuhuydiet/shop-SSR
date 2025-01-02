@@ -1,15 +1,12 @@
 model ShippingAddress {
-  addressId Int @id @default(autoincrement())
-  userId Int
-  country String?
-  city String?
-  district String?
-  ward String?
+  addressId     Int     @id @default(autoincrement())
+  userId        Int
+  country       String?
+  city          String?
+  district      String?
+  ward          String?
   detailAddress String?
-  phoneNumber String
+  phoneNumber   String
   recipientName String
-  
-  user User @relation(fields: [userId], references: [userId], onDelete: Restrict)
+  user          User    @relation(fields: [userId], references: [userId])
 }
-
-
