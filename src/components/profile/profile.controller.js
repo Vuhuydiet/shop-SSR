@@ -13,10 +13,10 @@ module.exports = {
     const { adminId } = matchedData(req);
 
     const profile = await ProfileService.getAdminProfile(adminId);
-    
+
     new OKResponse({
       message: "Admin profile retrieved",
-      metadata: profile,
+      metadata: { profile },
     }).send(res);
   },
 
@@ -31,7 +31,7 @@ module.exports = {
 
     new OKResponse({
       message: "Admin profile updated",
-      metadata: updatedProfile,
+      metadata: { profile: updatedProfile },
     }).send(res);
   },
 };

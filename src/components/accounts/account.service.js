@@ -188,6 +188,7 @@ const accountService = {
     const condition = {
       fullname: { contains: query.fullname },
       email: { contains: query.email },
+      status: query.status,
       confirmed: query.confirmed,
     };
 
