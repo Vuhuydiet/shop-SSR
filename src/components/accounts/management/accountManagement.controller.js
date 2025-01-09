@@ -6,8 +6,17 @@ module.exports = {
   getUsers: async (req, res) => {
     const query = matchedData(req);
 
+    if (query.admin) {
+      const { count, admins } = await accountService.getAdmins(query);
+      return new OKResponse({
+        message: "Get admins successfully",
+        metadata: { count, admins },
+      }).send(res);
+    }
+
     const { count, users } = await accountService.getUsers(query);
 
+    console.log(users)
     new OKResponse({
       message: "Users fetched successfully",
       metadata: { count, users },

@@ -174,11 +174,12 @@ const accountService = {
   /**
    *
    * @param {{
+   * key?: string,
    * fullname?: string,
    * email?: string,
    * confirmed?: boolean,
    * status?: 'ACTIVE' | 'BLOCK'
-   * orderBy?: 'createdAt' | 'fullname' | 'email',
+   * sortBy?: 'createdAt' | 'fullname' | 'email',
    * order?: 'asc' | 'desc',
    * limit?: number,
    * offset?: number
@@ -186,17 +187,27 @@ const accountService = {
    */
   getUsers: async (query) => {
     const condition = {
-      fullname: { contains: query.fullname },
-      email: { contains: query.email },
+      OR: query.key ? [
+        { fullname: { contains: query.key } },
+        { email: { contains: query.key } },
+      ] : undefined,
+      fullname: query.fullname ? { contains: query.fullname } : undefined,
+      email: query.email ? { contains: query.email } : undefined,
       status: query.status,
       confirmed: query.confirmed,
     };
+    console.log({
+      where: condition,
+      orderBy: query.sortBy ? { [query.sortBy]: query.order } : undefined,
+      take: query.limit,
+      skip: query.offset,
+    });
 
     const [count, users] = await prisma.$transaction([
       prisma.user.count({ where: condition }),
       prisma.user.findMany({
         where: condition,
-        orderBy: { [query.orderBy]: query.order },
+        orderBy: query.sortBy ? { [query.sortBy]: query.order } : undefined,
         take: query.limit,
         skip: query.offset,
       }),
@@ -232,6 +243,39 @@ const accountService = {
   findAdminByUsername: async (username) => {
     const admin = await prisma.admin.findUnique({ where: { username } });
     return admin;
+  },
+
+  /**
+   *
+   * @param {{
+   * key?: string,
+   * sortBy?: string,
+   * order?: 'ASC' | 'DESC',
+   * limit?: number,
+   * offset?: number
+   * }} query
+   */
+  getAdmins: async (query) => {
+    const count = await prisma.admin.count({
+      where: query.key ? {
+        OR: [
+          { fullname: { contains: query.key } },
+          { email: { contains: query.key } },
+        ],
+      } : undefined
+    });
+    const admins = await prisma.admin.findMany({
+      where: query.key ? {
+        OR: [
+          { fullname: { contains: query.key } },
+          { email: { contains: query.key } },
+        ],
+      } : undefined,
+      orderBy: query.sortBy ? { [query.sortBy]: query.order ?? 'ASC' } : undefined,
+      take: query.limit,
+      skip: query.offset,
+    });
+    return { count, admins };
   },
 };
 

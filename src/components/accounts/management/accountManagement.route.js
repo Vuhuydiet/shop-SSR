@@ -16,10 +16,12 @@ router.get(
   query('email').optional().isEmail(),
   query('confirmed').optional().isBoolean().toBoolean(),
   query('status').optional().isIn(['ACTIVE', 'BLOCK']),
-  query('orderBy').optional().isIn(['createdAt', 'fullname', 'email']),
+  query('sortBy').optional().isIn(['createdAt', 'fullname', 'email']),
   query('order').optional().isIn(['asc', 'desc']),
   query('limit').optional().isInt().toInt(),
   query('offset').optional().isInt().toInt(),
+  query('admin').optional().isBoolean().toBoolean(),
+  query('key').optional().isString(),
   handleValidationErrors,
 
   accountManagementController.getUsers
