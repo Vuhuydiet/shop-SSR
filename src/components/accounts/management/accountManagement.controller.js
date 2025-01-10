@@ -6,18 +6,27 @@ module.exports = {
   getUsers: async (req, res) => {
     const query = matchedData(req);
 
-    const users = await accountService.getUsers(query);
+    if (query.admin) {
+      const { count, admins } = await accountService.getAdmins(query);
+      return new OKResponse({
+        message: "Get admins successfully",
+        metadata: { count, admins },
+      }).send(res);
+    }
 
+    const { count, users } = await accountService.getUsers(query);
+
+    console.log(users)
     new OKResponse({
       message: "Users fetched successfully",
-      metadata: { users },
+      metadata: { count, users },
     }).send(res);
   },
 
   getUser: async (req, res) => {
     const { userId } = matchedData(req);
 
-    const user = await accountService.getUser(userId);
+    const user = await accountService.findUserById(userId);
 
     new OKResponse({
       message: "User fetched successfully",
@@ -28,7 +37,7 @@ module.exports = {
   updateUserStatus: async (req, res) => {
     const { userId, status } = matchedData(req);
 
-    await accountService.updateUserStatus(userId, status);
+    await accountService.updateAccountStatus(userId, status);
 
     new OKResponse({
       message: "User status updated successfully",

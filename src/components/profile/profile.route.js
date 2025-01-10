@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const addressController = require("./address.controller");
 const userController = require("./profile.controller");
-const { isAuthenticated } = require("../accounts/account.middleware");
+const { isAuthenticated, authorize } = require("../accounts/account.middleware");
 const { z } = require("zod");
 const profileController = require("./profile.controller");
 const { param, body } = require("express-validator");
 const { handleValidationErrors } = require("../../libraries/validator/validator");
+const passport = require("../accounts/passport");
 
 const addressSchema = z.object({
   recipientName: z
@@ -95,7 +96,7 @@ router.delete(
 );
 
 router.get(
-  '/api/:adminId',
+  '/api/admin/:adminId',
 
   param('adminId').isNumeric().withMessage('Admin ID must be numeric').toInt(),
   handleValidationErrors,
@@ -105,10 +106,15 @@ router.get(
 
 router.patch(
   '/api/admin',
+  passport.authenticate('jwt', { session: false }),
+  authorize(['ADMIN']),
+
   body('dob').optional().isISO8601().toDate(),
   body('email').optional().isEmail(),
   body('fullname').optional().isString(),
   body('gender').optional().isIn(['male', 'female']),
+  body('phoneNumber').optional().isString().isLength({ min: 10, max: 11 }),
+  body('address').optional().isString(),
   handleValidationErrors,
 
   profileController.updateAdminProfile

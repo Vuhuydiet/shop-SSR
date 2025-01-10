@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 router.post(
-  '/admin/login', 
+  '/api/admin/login', 
   body('username').isString().isLength({ min: 3, max: 20 }),
   body('password').isString().isLength({ min: 6, max: 20 }),
   apiAccessController.postLoginAdmin

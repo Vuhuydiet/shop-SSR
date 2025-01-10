@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { query, param } = require('express-validator');
+const { query, param, body } = require('express-validator');
 const { handleValidationErrors } = require('../../../libraries/validator/validator');
 const accountManagementController = require('./accountManagement.controller');
-const { isAuthenicatedReturnsErrror, authorize } = require('../account.middleware');
 
 const passport = require('../passport');
+const { authorize } = require('../account.middleware');
 
 router.get(
   '/api',
@@ -16,10 +16,12 @@ router.get(
   query('email').optional().isEmail(),
   query('confirmed').optional().isBoolean().toBoolean(),
   query('status').optional().isIn(['ACTIVE', 'BLOCK']),
-  query('orderBy').optional().isIn(['createdAt', 'fullname', 'email']),
+  query('sortBy').optional().isIn(['createdAt', 'fullname', 'email']),
   query('order').optional().isIn(['asc', 'desc']),
   query('limit').optional().isInt().toInt(),
   query('offset').optional().isInt().toInt(),
+  query('admin').optional().isBoolean().toBoolean(),
+  query('key').optional().isString(),
   handleValidationErrors,
 
   accountManagementController.getUsers
@@ -27,7 +29,7 @@ router.get(
 
 router.get(
   '/api/:userId',
-  isAuthenicatedReturnsErrror,
+  passport.authenticate('jwt', { session: false }),
   authorize(['ADMIN']),
 
   param('userId').isInt().toInt(),
@@ -39,10 +41,11 @@ router.get(
 
 router.patch(
   '/api/:userId',
-  isAuthenicatedReturnsErrror,
+  passport.authenticate('jwt', { session: false }),
   authorize(['ADMIN']),
 
-  query('status').isIn(['ACTIVE', 'BLOCK']),
+  param('userId').isInt().toInt(),
+  body('status').isIn(['ACTIVE', 'BLOCK']),
   handleValidationErrors,
 
   accountManagementController.updateUserStatus
