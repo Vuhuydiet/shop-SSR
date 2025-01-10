@@ -98,6 +98,17 @@ const accountService = {
     return false;
   },
 
+  updateUser: async (email, fullName, numberPhone) => {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (user) {
+      await prisma.user.update({
+        where: { email },
+        data: { fullname: fullName, phoneNumber: numberPhone },
+      });
+      return true;
+    }
+  },
+
   resetPassword: async (email) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
@@ -116,6 +127,36 @@ const accountService = {
         `Please reset your password using the following token: ${resetPasswordToken}`
       );
     }
+  },
+
+  updateAvatar: async (email, publicImgId, avatarUrl) => {
+    const user = await prisma.user.findUnique({where: {email}});
+    if (user) {
+      await prisma.user.update({
+        where: {email},
+        data: {publicImgId: publicImgId, avatarUrl: avatarUrl},
+      });
+      return true
+    }
+    return false;
+  },
+
+  changePassword: async (email, oldPassword, newPassword) => {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (user) {
+
+      console.log("User password", user.hashedPassword);
+
+      if (user.hashedPassword === getHashedPassword(oldPassword)) {
+        const hashedPassword = getHashedPassword(newPassword);
+        await prisma.user.update({
+          where: { email },
+          data: { hashedPassword: hashedPassword },
+        });
+        return true;
+      }
+    }
+    return false;
   },
 
   updatePassword: async (email, resetPasswordToken, newPassword) => {

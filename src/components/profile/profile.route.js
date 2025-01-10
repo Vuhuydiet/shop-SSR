@@ -2,12 +2,13 @@ const express = require("express");
 const router = express.Router();
 const addressController = require("./address.controller");
 const userController = require("./profile.controller");
-const { isAuthenticated, authorize } = require("../accounts/account.middleware");
+const { isAuthenticated, authorize, isNotAuthenticated} = require("../accounts/account.middleware");
 const { z } = require("zod");
 const profileController = require("./profile.controller");
 const { param, body } = require("express-validator");
 const { handleValidationErrors } = require("../../libraries/validator/validator");
 const passport = require("../accounts/passport");
+const authController = require("../accounts/authController");
 
 const addressSchema = z.object({
   recipientName: z
@@ -55,6 +56,35 @@ const validateAddressId = async (req, res, next) => {
 };
 
 router.get("/", isAuthenticated, userController.getUserProfile);
+router.get(
+  "/information",
+    isAuthenticated,
+    userController.getUserProfileInformation
+)
+
+router.get(
+    "/changepassword",
+    isAuthenticated,
+    userController.getUserProfileChangePassword
+)
+
+router.post(
+    "/updateprofile",
+    isAuthenticated,
+    userController.updateProfile
+);
+
+router.post(
+    "/updatepassword",
+    isAuthenticated,
+    userController.changePassword
+)
+
+router.post(
+    "/updateavatar",
+    isAuthenticated,
+    userController.updateAvatar
+)
 router.get("/address", isAuthenticated, addressController.renderAddressPage);
 router.get(
   "/api/address/:addressId",
