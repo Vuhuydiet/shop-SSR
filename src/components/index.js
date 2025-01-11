@@ -10,11 +10,13 @@ const profileRouter = require("./profile/profile.route");
 const cartRouter = require("./cart/cart.route");
 const checkoutRouter = require("./payments/checkout.route");
 
-const apiAccessRouter = require('./accounts/apiAccess/apiAccess.route');
-const accountManagementRouter = require('./accounts/management/accountManagement.route');
+const apiAccessRouter = require("./accounts/apiAccess/apiAccess.route");
+const accountManagementRouter = require("./accounts/management/accountManagement.route");
+const productManagementRouter = require("./products/management/productManagement.route");
 
 router.use("/users", accountManagementRouter);
 router.use("/access", apiAccessRouter);
+router.use("/products", productManagementRouter);
 
 router.use("/", categoryMiddleware.getCategories);
 
@@ -25,6 +27,5 @@ router.use("/reviews", reviewRouter);
 router.use("/profile", profileRouter);
 router.use("/cart", cartRouter);
 router.use("/checkout", checkoutRouter);
-
 
 module.exports = router;
