@@ -163,29 +163,56 @@ class ProductService {
           create: productImages,
         },
       },
-      select: productSelect,
-    });
-  }
-
-  static async updateProduct(productId, updateData) {
-    const { productImages, ...data } = updateData;
-
-    return prisma.product.update({
-      where: { productId },
-      data: {
-        ...data,
-        ...(productImages && {
-          productImages: {
-            deleteMany: {},
-            create: productImages,
-          },
-        }),
+      include: {
+        productImages: true,
+        brand: true,
+        category: true,
       },
       select: productSelect,
     });
   }
 
-  static async deleteProduct(productId) {
+  async updateProduct(productId, data) {
+    const { productImages, ...updateData } = data;
+
+    // new images provided
+    if (productImages) {
+      await prisma.productImage.deleteMany({
+        where: { productId },
+      });
+
+      return prisma.product.update({
+        where: { productId },
+        data: {
+          ...updateData,
+          productImages: {
+            create: productImages,
+          },
+        },
+        include: {
+          productImages: true,
+          brand: true,
+          category: true,
+        },
+      });
+    }
+
+    return prisma.product.update({
+      where: { productId },
+      data: updateData,
+      include: {
+        productImages: true,
+        brand: true,
+        category: true,
+      },
+    });
+  }
+
+  async deleteProduct(productId) {
+    await prisma.productImage.deleteMany({
+      where: { productId },
+    });
+
     return prisma.product.delete({
       where: { productId },
     });

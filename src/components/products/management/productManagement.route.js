@@ -8,6 +8,9 @@ const productManagementController = require("./productManagement.controller");
 const passport = require("../passport");
 const { authorize } = require("../account.middleware");
 
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
+
 // Get products list
 router.get(
   "/api",
@@ -48,6 +51,7 @@ router.post(
   "/api",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
+  upload.array("images", 5),
 
   body("productName").isString().notEmpty(),
   body("productDescription").optional().isString(),
@@ -70,6 +74,7 @@ router.patch(
   "/api/:productId",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
+  upload.array("images", 5),
 
   param("productId").isInt().toInt(),
   body("productName").optional().isString(),
