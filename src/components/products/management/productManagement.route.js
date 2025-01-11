@@ -5,8 +5,8 @@ const {
   handleValidationErrors,
 } = require("../../../libraries/validator/validator");
 const productManagementController = require("./productManagement.controller");
-const passport = require("../passport");
-const { authorize } = require("../account.middleware");
+const passport = require("./../../accounts/passport");
+const { authorize } = require("./../../accounts/account.middleware");
 
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });

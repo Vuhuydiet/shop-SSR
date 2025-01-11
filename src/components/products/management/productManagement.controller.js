@@ -1,7 +1,7 @@
 const { matchedData } = require("express-validator");
 const { OKResponse } = require("../../../core/SuccessResponse");
-const productService = require("./productManagement.service");
-const CloudService = require("../../services/cloud.service");
+const productService = require("./../product.service");
+const CloudService = require("../../clouds/cloud.service");
 
 module.exports = {
   getProducts: async (req, res) => {
