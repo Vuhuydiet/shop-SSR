@@ -150,6 +150,46 @@ class ProductService {
     ]);
     return { count, products };
   }
+
+  // Admin routes
+
+  static async createProduct(productData) {
+    const { productImages, ...data } = productData;
+
+    return prisma.product.create({
+      data: {
+        ...data,
+        productImages: {
+          create: productImages,
+        },
+      },
+      select: productSelect,
+    });
+  }
+
+  static async updateProduct(productId, updateData) {
+    const { productImages, ...data } = updateData;
+
+    return prisma.product.update({
+      where: { productId },
+      data: {
+        ...data,
+        ...(productImages && {
+          productImages: {
+            deleteMany: {},
+            create: productImages,
+          },
+        }),
+      },
+      select: productSelect,
+    });
+  }
+
+  static async deleteProduct(productId) {
+    return prisma.product.delete({
+      where: { productId },
+    });
+  }
 }
 
 module.exports = ProductService;
