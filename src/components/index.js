@@ -28,6 +28,6 @@ router.use("/reviews", reviewRouter);
 router.use("/profile", profileRouter);
 router.use("/cart", cartRouter);
 router.use("/checkout", checkoutRouter);
-router.use("/order", orderRouter);
+router.use("/orders", orderRouter);
 
 module.exports = router;

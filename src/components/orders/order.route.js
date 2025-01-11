@@ -6,14 +6,6 @@ const {
 } = require("../../libraries/validator/validator");
 const orderController = require("./order.controller");
 
-// Authentication middleware
-const requireAuth = (req, res, next) => {
-  if (!req.session.userId) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  next();
-};
-
 const queryValidator = () => {
   return [
     query("page").optional().isNumeric().toInt(),
@@ -60,7 +52,6 @@ const createOrderValidator = () => {
 
 router.get(
   "/",
-  requireAuth,
   queryValidator(),
   handleValidationErrors,
   orderController.getUserOrders
@@ -68,7 +59,6 @@ router.get(
 
 router.post(
   "/",
-  requireAuth,
   createOrderValidator(),
   handleValidationErrors,
   orderController.createOrder
@@ -76,7 +66,6 @@ router.post(
 
 router.get(
   "/:orderId",
-  requireAuth,
   param("orderId").isInt().toInt(),
   handleValidationErrors,
   orderController.getOrderById
@@ -84,7 +73,6 @@ router.get(
 
 router.patch(
   "/:orderId/status",
-  requireAuth,
   param("orderId").isInt().toInt(),
   body("status").isIn(["CONFIRMED", "SHIPPING", "DELIVERED", "PAID"]),
   handleValidationErrors,
@@ -93,7 +81,6 @@ router.patch(
 
 router.post(
   "/:orderId/cancel",
-  requireAuth,
   param("orderId").isInt().toInt(),
   handleValidationErrors,
   orderController.cancelOrder
@@ -101,7 +88,6 @@ router.post(
 
 router.get(
   "/:orderId/details",
-  requireAuth,
   param("orderId").isInt().toInt(),
   handleValidationErrors,
   orderController.getOrderDetails
