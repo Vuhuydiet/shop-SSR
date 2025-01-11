@@ -9,7 +9,7 @@ const reviewRouter = require("./products/reviews/review.route");
 const profileRouter = require("./profile/profile.route");
 const cartRouter = require("./cart/cart.route");
 const checkoutRouter = require("./payments/checkout.route");
-const checkoutRouter = require("./order/order.route");
+const orderRouter = require("./orders/order.route");
 
 const apiAccessRouter = require("./accounts/apiAccess/apiAccess.route");
 const accountManagementRouter = require("./accounts/management/accountManagement.route");

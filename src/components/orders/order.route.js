@@ -46,7 +46,15 @@ const createOrderValidator = () => {
     body("paymentMethod").isIn(["COD", "VNPAY"]),
     body("details").isArray(),
     body("details.*.productId").isInt(),
-    body("details.*.quantity").isInt().min(1),
+    body("details.*.quantity")
+      .isNumeric()
+      .toInt()
+      .custom((value) => {
+        if (value < 1) {
+          throw new Error("Quantity must be at least 1");
+        }
+        return true;
+      }),
   ];
 };
 
