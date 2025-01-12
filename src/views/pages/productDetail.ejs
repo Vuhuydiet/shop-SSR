@@ -18,16 +18,17 @@
 <!-- product-detail -->
 <div class="container grid grid-cols-2 gap-6">
   <div>
+    <img src="<%= product.productImages[0]?.url %>" alt="product" class="w-full" />
     <div class="grid grid-cols-5 gap-4 mt-4">
       <img
-        src="<%= product.productImages[0]?.url %>"
-        alt="<%= product.productName %>"
-        class="w-full cursor-pointer border border-primary"
+              src="<%= product.productImages[0]?.url %>"
+              alt="<%= product.productName %>"
+              class="w-full cursor-pointer border border-primary"
       />
       <img
-        src="<%= product.productImages[0]?.url %>"
-        alt="<%= product.productName %>"
-        class="w-full cursor-pointer border"
+              src="<%= product.productImages[0]?.url %>"
+              alt="<%= product.productName %>"
+              class="w-full cursor-pointer border"
       />
     </div>
   </div>
@@ -49,9 +50,7 @@
     <div class="space-y-2">
       <p class="text-gray-800 font-semibold space-x-2">
         <span>Availability: </span>
-        <span class="text-green-600"
-          ><%= (product.stock > 0 ? 'In Stock' : 'Out of Stock') %></span
-        >
+        <span class="text-green-600"><%= (product.stock > 0 ? 'In Stock' : 'Out of Stock') %></span>
       </p>
       <p class="space-x-2">
         <span class="text-gray-800 font-semibold">Brand: </span>
@@ -59,7 +58,9 @@
       </p>
       <p class="space-x-2">
         <span class="text-gray-800 font-semibold">Category: </span>
-        <span class="text-gray-600"> <%=product.category.categoryName%> </span>
+        <span class="text-gray-600">
+          <%=product.category.categoryName%>
+        </span>
       </p>
       <!-- <p class="space-x-2">
         <span class="text-gray-800 font-semibold">SKU: </span>
@@ -79,51 +80,41 @@
 
     <div class="mt-4">
       <h3 class="text-sm text-gray-800 uppercase mb-1">Quantity</h3>
-      <div
-        class="flex border border-gray-300 text-gray-600 divide-x divide-gray-300 w-max"
-      >
-        <button
-          class="sub-quantity w-8 text-xl flex items-center justify-center cursor-pointer select-none"
-        >
+      <div class="flex border border-gray-300 text-gray-600 divide-x divide-gray-300 w-max">
+        <button class="sub-quantity  w-8 text-xl flex items-center justify-center cursor-pointer select-none">
           -
         </button>
 
-        <div class="quantity w-8 text-base flex items-center justify-center">
-          1
-        </div>
+        <div class=" quantity w-8 text-base flex items-center justify-center">1</div>
 
-        <button
-          class="add-quantity h-8 w-8 text-xl flex items-center justify-center cursor-pointer select-none"
-        >
+        <button class="add-quantity h-8 w-8 text-xl flex items-center justify-center cursor-pointer select-none">
           +
         </button>
       </div>
     </div>
 
     <div class="mt-6 flex gap-3 border-b border-gray-200 pb-5 pt-5">
-      <button
-        class="add-to-cart bg-primary border border-primary text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-primary transition"
-      >
+      <button class="add-to-cart bg-primary border border-primary text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-primary transition">
         <i class="fa-solid fa-bag-shopping"></i> Add to cart
       </button>
     </div>
 
     <div class="flex gap-3 mt-4">
       <a
-        href="#"
-        class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
+              href="#"
+              class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
       >
         <i class="fa-brands fa-facebook-f"></i>
       </a>
       <a
-        href="#"
-        class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
+              href="#"
+              class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
       >
         <i class="fa-brands fa-twitter"></i>
       </a>
       <a
-        href="#"
-        class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
+              href="#"
+              class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center"
       >
         <i class="fa-brands fa-instagram"></i>
       </a>
@@ -134,9 +125,7 @@
 
 <!-- description -->
 <div class="container pb-16">
-  <h3
-    class="border-b border-gray-200 mt-12 font-roboto text-gray-800 pb-3 text-2xl"
-  >
+  <h3 class="border-b border-gray-200 mt-12 font-roboto text-gray-800 pb-3 text-2xl">
     Product details
   </h3>
   <div class="w-3/5 pt-6">
@@ -155,70 +144,63 @@
   <div class="swiper related-products-slider">
     <div class="swiper-wrapper">
       <% locals.products.forEach(product=> { %>
-      <div class="swiper-slide">
-        <div class="bg-white shadow rounded overflow-hidden group">
-          <img
-            src="../<%= product.productImages[0]?.url %>"
-            alt="<%= product.productName %>"
-            class="w-full"
-          />
-          <div class="pt-4 pb-3 px-4">
-            <a href="/products/<%= product.productId %>">
-              <h4
-                class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition"
-              >
-                <%= product.productName %>
-              </h4>
-            </a>
-            <div class="flex items-baseline mb-1 space-x-2">
-              <p class="text-xl text-primary font-semibold">
-                <%= product.currentPrice %>
-              </p>
-              <p class="text-sm text-gray-400 line-through">
-                <%= product.originalPrice %>
-              </p>
+        <div class="swiper-slide">
+          <div class="bg-white shadow rounded overflow-hidden group">
+            <img
+                    src="../<%= product.productImages[0]?.url %>"
+                    alt="<%= product.productName %>"
+                    class="w-full"
+            />
+            <div class="pt-4 pb-3 px-4">
+              <a href="/products/<%= product.productId %>">
+                <h4
+                        class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition"
+                >
+                  <%= product.productName %>
+                </h4>
+              </a>
+              <div class="flex items-baseline mb-1 space-x-2">
+                <p class="text-xl text-primary font-semibold">
+                  <%= product.currentPrice %>
+                </p>
+                <p class="text-sm text-gray-400 line-through">
+                  <%= product.originalPrice %>
+                </p>
+              </div>
             </div>
           </div>
         </div>
-        <% }) %>
-      </div>
-      <!-- Swiper Navigation Buttons -->
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
+      <% }) %>
     </div>
+    <!-- Swiper Navigation Buttons -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
   </div>
+</div>
 
-  <!-- review section -->
-  <%- include('../components/review') %>
+<!-- error popup -->
+<%- include('../components/popup') %>
 
-  <!-- error popup -->
-  <%- include('../components/popup') %>
+<!-- end -->
 
-  <!-- end -->
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const swiper = new Swiper(".related-products-slider", {
-        loop: true,
-        slidesPerView: 2,
-        spaceBetween: 20,
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const swiper = new Swiper(".related-products-slider", {
+      loop: true,
+      slidesPerView: 2,
+      spaceBetween: 20,
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 3,
+          spaceBetween: 10,
         },
-        breakpoints: {
-          640: {
-            slidesPerView: 3,
-            spaceBetween: 10,
-          },
-          768: {
-            slidesPerView: 3,
-            spaceBetween: 15,
-          },
-          1024: {
-            slidesPerView: 4,
-            spaceBetween: 20,
-          },
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 15,
         },
         1024: {
           slidesPerView: 4,
@@ -226,49 +208,54 @@
         },
       },
     });
-  </script>
+  });
 
-  <div class="isAuthenticated" style="display: none">
-    <%= (user ? 'true' : 'false') %>
-  </div>
+</script>
 
-  <script src="/scripts/requests.js"></script>
-  <script src="/scripts/handleAddToCart.js"></script>
-  <script>
-    const subQuantity = document.querySelector(".sub-quantity");
-    const addQuantity = document.querySelector(".add-quantity");
-    const quantity = document.querySelector(".quantity");
-    const popup = document.querySelector("#popup");
-    const addToCart = document.querySelector(".add-to-cart");
-    const popupHeader = document.querySelector("#popup .popup-header");
-    const popupContent = document.querySelector("#popup .popup-content");
 
-    const isAuthenticated = !!"<%= (user ? 'true' : 'false') %>";
-    const productId = +"<%= product.productId %>";
+<div class="isAuthenticated" style="display: none;"><%= (user ? 'true' : 'false') %></div>
+<div class="productId" style="display: none;"><%= product.productId %></div>
 
-    subQuantity.addEventListener("click", () => {
-      if (quantity.textContent > 1) {
-        quantity.textContent = parseInt(quantity.textContent) - 1;
-      }
-    });
+<script src="/scripts/requests.js"></script>
+<script src="/scripts/handleAddToCart.js"></script>
+<script>
+  const subQuantity = document.querySelector('.sub-quantity');
+  const addQuantity = document.querySelector('.add-quantity');
+  const quantity = document.querySelector('.quantity');
+  const popup = document.querySelector('#popup');
+  const addToCart = document.querySelector('.add-to-cart');
+  const popupHeader = document.querySelector('#popup .popup-header');
+  const popupContent = document.querySelector('#popup .popup-content');
 
-    addQuantity.addEventListener("click", () => {
-      quantity.textContent = parseInt(quantity.textContent) + 1;
-    });
+  const isAuthenticated = document.querySelector('.isAuthenticated').textContent == 'true';
+  const productId = +document.querySelector('.productId').textContent;
 
-    addToCart.addEventListener("click", async () => {
-      const quantityNumber = parseInt(quantity.textContent);
+  subQuantity.addEventListener('click', () => {
+    if (quantity.textContent > 1) {
+      quantity.textContent = parseInt(quantity.textContent) - 1;
+    }
+  });
 
-      try {
-        await handleAddToCart(productId, quantityNumber, isAuthenticated);
-        popupHeader.textContent = "Success";
-        popupContent.textContent = "Product added to cart";
-      } catch (error) {
-        popupHeader.textContent = "Error";
-        popupContent.textContent = error.message;
-        return;
-      }
-      popup.classList.remove("hidden");
-    });
-  </script>
-</div>
+  addQuantity.addEventListener('click', () => {
+    quantity.textContent = parseInt(quantity.textContent) + 1;
+  });
+
+  addToCart.addEventListener('click', async () => {
+    const quantityNumber = parseInt(quantity.textContent);
+
+    try {
+      await handleAddToCart(productId, quantityNumber, isAuthenticated);
+      popupHeader.textContent = 'Success';
+      popupContent.textContent = 'Product added to cart';
+    }
+    catch (error) {
+      popupHeader.textContent = 'Error';
+      popupContent.textContent = error.message;
+      return;
+    }
+    popup.classList.remove('hidden');
+
+  });
+
+
+</script>
