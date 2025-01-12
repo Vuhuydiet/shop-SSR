@@ -14,10 +14,12 @@ const orderRouter = require("./orders/order.route");
 const apiAccessRouter = require("./accounts/apiAccess/apiAccess.route");
 const accountManagementRouter = require("./accounts/management/accountManagement.route");
 const productManagementRouter = require("./products/management/productManagement.route");
+const orderManagementRouter = require("./orders/management/orderManagement.route");
 
 router.use("/users", accountManagementRouter);
 router.use("/access", apiAccessRouter);
 router.use("/products", productManagementRouter);
+router.use("/orders", orderManagementRouter);
 
 router.use("/", categoryMiddleware.getCategories);
 
