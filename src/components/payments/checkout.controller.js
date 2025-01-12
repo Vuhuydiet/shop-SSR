@@ -95,13 +95,14 @@ module.exports = {
     const isValidSignature = VNPayService.verifyReturnUrl(vnpParams);
 
     if (isValidSignature) {
-      const orderId = vnpParams.vnp_TxnRef;
+      const orderId = parseInt(vnpParams.vnp_TxnRef);
       const responseCode = vnpParams.vnp_ResponseCode;
 
       if (responseCode === "00") {
-        res.render("pages/paymentSuccess", {
-          orderId,
-          amount: vnpParams.vnp_Amount / 100,
+        await CheckoutService.updateOrderStatus(orderId, "PAID");
+        return res.json({
+          success: true,
+          redirectUrl: `/orders/${orderId}/success`,
         });
       } else {
         res.render("pages/paymentFailed", {
