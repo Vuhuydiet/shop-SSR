@@ -57,26 +57,11 @@ router.get(
   orderController.getUserOrders
 );
 
-router.post(
-  "/",
-  createOrderValidator(),
-  handleValidationErrors,
-  orderController.createOrder
-);
-
 router.get(
   "/:orderId",
   param("orderId").isInt().toInt(),
   handleValidationErrors,
-  orderController.getOrderById
-);
-
-router.patch(
-  "/:orderId/status",
-  param("orderId").isInt().toInt(),
-  body("status").isIn(["CONFIRMED", "SHIPPING", "DELIVERED", "PAID"]),
-  handleValidationErrors,
-  orderController.updateOrderStatus
+  orderController.getOrderDetails
 );
 
 router.post(
