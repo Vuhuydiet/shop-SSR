@@ -288,13 +288,18 @@
       const countryForm = document.getElementById("country");
       countryForm.disabled = false;
 
+      const getSelectedText = (name) => {
+        const select = form.querySelector(`[name="${name}"]`);
+        return select.options[select.selectedIndex]?.text || '';
+    };
+
       const shippingAddress = {
         recipientName: form.querySelector('[name="recipientName"]').value,
         phoneNumber: form.querySelector('[name="phoneNumber"]').value,
         country: countryForm.value,
-        city: form.querySelector('[name="city"]').value,
-        district: form.querySelector('[name="district"]').value,
-        ward: form.querySelector('[name="ward"]').value,
+        city: getSelectedText("city"),
+        district: getSelectedText("district"),
+        ward: getSelectedText("ward"),    
         detailAddress: form.querySelector('[name="detailAddress"]').value,
       };
 
