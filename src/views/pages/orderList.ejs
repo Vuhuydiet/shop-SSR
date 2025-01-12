@@ -140,33 +140,79 @@
   </div>
 
   <!-- Pagination -->
+  <% const startPage = Math.max(currentPage - 2, 1); const endPage =
+  Math.min(currentPage + 2, totalPages) %>
   <div class="mt-4 flex items-center justify-between">
-    <div class="flex-1 flex justify-between sm:hidden">
-      <% if (currentPage > 1) { %>
-      <a href="?page=<%= currentPage - 1 %>" class="btn-primary">Previous</a>
-      <% } %> <% if (currentPage < totalPages) { %>
-      <a href="?page=<%= currentPage + 1 %>" class="btn-primary">Next</a>
-      <% } %>
-    </div>
-    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+    <div class="sm:flex-1 sm:flex sm:items-center sm:justify-between">
       <div>
         <p class="text-sm text-gray-700">
           Showing page <span class="font-medium"><%= currentPage %></span> of
           <span class="font-medium"><%= totalPages %></span>
         </p>
       </div>
-      <div>
-        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-          <% for(let i = 1; i <= totalPages; i++) { %>
-          <a
-            href="?page=<%= i %>"
-            class="relative inline-flex items-center px-4 py-2 border text-sm font-medium <%= currentPage === i ? 'bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white text-gray-500 hover:bg-gray-50' %>"
-          >
-            <%= i %>
-          </a>
-          <% } %>
-        </nav>
-      </div>
+      <nav
+        class="relative z-0 inline-flex items-center space-x-2"
+        aria-label="Pagination"
+      >
+        <!-- Previous Button -->
+        <% if (currentPage > 1) { %>
+        <a
+          href="?page=<%= currentPage - 1 %>"
+          class="w-10 justify-center relative inline-flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+        >
+          <i class="fas fa-chevron-left"></i>
+        </a>
+        <% } %>
+
+        <!-- First Page -->
+        <% if (startPage > 1) { %>
+        <a
+          href="?page=1"
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+          >1</a
+        >
+
+        <% if (startPage > 2) { %>
+        <span
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700"
+          >...</span
+        >
+        <% } %> <% } %>
+
+        <!-- Page Numbers -->
+        <% for(let i = startPage; i <= endPage; i++) { %>
+        <a
+          href="?page=<%= i %>"
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 rounded-md border text-sm font-medium transition-colors <%= currentPage === i ? 'bg-primary border-primary text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50' %>"
+        >
+          <%= i %>
+        </a>
+        <% } %>
+
+        <!-- Last Pages -->
+        <% if (endPage < totalPages) { %> <% if (endPage < totalPages - 1) { %>
+        <span
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700"
+          >...</span
+        >
+        <% } %>
+        <a
+          href="?page=<%= totalPages %>"
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+          ><%= totalPages %></a
+        >
+        <% } %>
+
+        <!-- Next Button -->
+        <% if (currentPage < totalPages) { %>
+        <a
+          href="?page=<%= currentPage + 1 %>"
+          class="w-10 justify-center relative inline-flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+        >
+          <i class="fas fa-chevron-right"></i>
+        </a>
+        <% } %>
+      </nav>
     </div>
   </div>
 </div>
