@@ -3,8 +3,6 @@ const errorDiv = document.getElementById("errorMessage");
 const successDiv = document.getElementById("successMessage");
 const submitButton = document.getElementById("submitButton");
 
-console.log("changePassword.js loaded");
-
 const handleChangePasswordSubmit = async (event) => {
     event.preventDefault();
     const oldPassword = document.getElementById("old-password");

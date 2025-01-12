@@ -2,12 +2,15 @@
 const errorDiv = document.getElementById("errorMessage");
 const successDiv = document.getElementById("successMessage");
 const submitButton = document.getElementById("submitButton");
+const avatarInput = document.getElementById("avatarInput");
+const avatarPreview = document.getElementById("avatarPreview");
 
 const handleRegisterSubmit = async (event) => {
     event.preventDefault();
     const fullName = document.getElementById("full-name");
     const phone = document.getElementById("phone");
 
+    console.log(fullName.value);
 
     errorDiv.textContent = "";
     successDiv.textContent = "";
@@ -48,7 +51,6 @@ const handleRegisterSubmit = async (event) => {
     submitButton.textContent = "Submitting...";
 
     try {
-
         const response = await fetch("/profile/updateprofile", {
             method: "POST",
             headers: {
@@ -73,56 +75,63 @@ const handleRegisterSubmit = async (event) => {
     }
 };
 
-updateForm.addEventListener("submit", handleRegisterSubmit);
-
-
-document.getElementById("upload-button").addEventListener("click", function() {
-    document.getElementById("file-input").click();
-});
-
-document.getElementById("file-input").addEventListener("change", function() {
-    const fileInput = document.getElementById("file-input");
-    const errorDiv = document.getElementById("errorMessage");
-    const file = fileInput.files[0];
+const handleAvatarChange = async (event) => {
+    const file = event.target.files[0];
     const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
     const maxFileSize = 2 * 1024 * 1024; // 2MB
-
+    const statusDiv = document.getElementById("status-text");
     errorDiv.textContent = "";
     errorDiv.classList.add("hidden");
+
+    if (!file) {
+        errorDiv.textContent = "No file selected!";
+        errorDiv.classList.remove("hidden");
+        return;
+    }
 
     if (!allowedTypes.includes(file.type)) {
         errorDiv.textContent = "Invalid file type. Only JPEG, PNG, and GIF are allowed.";
         errorDiv.classList.remove("hidden");
-        fileInput.value = "";
         return;
     }
 
     if (file.size > maxFileSize) {
         errorDiv.textContent = "File size exceeds 2MB.";
         errorDiv.classList.remove("hidden");
-        fileInput.value = "";
         return;
     }
 
-    const form = document.getElementById("upload-form");
-    const formData = new FormData(form);
+    statusDiv.textContent = "Uploading...";
 
-    fetch("/uploadAvatar", {
-        method: "POST",
-        body: formData,
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("File uploaded successfully!");
-            } else {
-                alert("File upload failed!");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
+    // Preview the selected avatar
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        avatarPreview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    const formData = new FormData();
+    formData.append("avatar", file);
+    try {
+        const response = await fetch("/profile/uploadAvatar", {
+            method: "POST",
+            body: formData,
         });
-});
+        const data = await response.json();
+        if (response.ok) {
+            successDiv.textContent = data.message;
+            successDiv.classList.remove("hidden");
+        } else {
+            errorDiv.textContent = data.message || "Failed to upload avatar.";
+            errorDiv.classList.remove("hidden");
+        }
+    } catch (error) {
+        console.error("Error uploading avatar:", error);
+        errorDiv.textContent = "An error occurred while uploading the avatar. Please try again.";
+        errorDiv.classList.remove("hidden");
+    }
+    statusDiv.textContent = "Click on avatar to change";
+};
 
 
+updateForm.addEventListener("submit", handleRegisterSubmit);
+avatarInput.addEventListener("change", handleAvatarChange);

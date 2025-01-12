@@ -45,4 +45,4 @@ class CloudService {
 
 }
 
-export default CloudService;
+module.exports = CloudService;

@@ -75,6 +75,12 @@ router.post(
 );
 
 router.post(
+    "/uploadAvatar",
+    isAuthenticated,
+    userController.updateAvatar
+)
+
+router.post(
     "/updatepassword",
     isAuthenticated,
     userController.changePassword

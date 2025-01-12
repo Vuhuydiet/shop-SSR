@@ -2,7 +2,7 @@ const prisma = require("../../models");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const logger = require("../../libraries/logger");
-const { getHashedPassword } = require("./password");
+const { getHashedPassword, validatePassword} = require("./password");
 const env = require("../../config/env");
 const { InternalServerError } = require("../../core/ErrorResponse");
 
@@ -144,10 +144,7 @@ const accountService = {
   changePassword: async (email, oldPassword, newPassword) => {
     const user = await prisma.user.findUnique({ where: { email } });
     if (user) {
-
-      console.log("User password", user.hashedPassword);
-
-      if (user.hashedPassword === getHashedPassword(oldPassword)) {
+      if (validatePassword(oldPassword, user.hashedPassword)) {
         const hashedPassword = getHashedPassword(newPassword);
         await prisma.user.update({
           where: { email },
