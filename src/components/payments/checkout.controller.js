@@ -17,8 +17,6 @@ module.exports = {
       const { shippingAddress, paymentMethod } = matchedData(req);
       const products = req.session.checkoutProducts;
 
-      console.log(products);
-
       const order = await CheckoutService.createOrder({
         userId: req.user.userId,
         products,
