@@ -1,0 +1,59 @@
+<!-- <%- include('../partials/head') %> -->
+
+<div class="container mx-auto px-4 py-8">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <!-- Order Header -->
+    <div class="border-b pb-4 mb-4">
+      <h1 class="text-2xl font-bold">Order #<%= order.orderId %></h1>
+      <p class="text-gray-600">
+        Placed on <%= order.createdAt.toLocaleDateString() %>
+      </p>
+      <span
+        class="px-3 py-1 rounded-full text-sm <%= order.orderStatus === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : order.orderStatus === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' : order.orderStatus === 'SHIPPING' ? 'bg-purple-100 text-purple-800' : order.orderStatus === 'DELIVERED' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>"
+      >
+        <%= order.orderStatus %>
+      </span>
+    </div>
+
+    <!-- Shipping Address -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">Shipping Address</h2>
+      <p><%= order.addressDetail %></p>
+      <p><%= order.ward %>, <%= order.district %></p>
+      <p><%= order.city %>, <%= order.country %></p>
+      <p>Phone: <%= order.phoneNumber %></p>
+    </div>
+
+    <!-- Order Items -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-4">Order Items</h2>
+      <div class="space-y-4">
+        <% order.details.forEach(item => { %>
+        <div class="flex items-center border-b pb-4">
+          <img
+            src="<%= item.product.images[0] %>"
+            alt="<%= item.product.name %>"
+            class="w-20 h-20 object-cover rounded"
+          />
+          <div class="ml-4 flex-grow">
+            <h3 class="font-medium"><%= item.product.name %></h3>
+            <p class="text-gray-600">Quantity: <%= item.quantity %></p>
+            <p class="text-gray-600">Price: $<%= item.priceAtPurchase %></p>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="border-t pt-4">
+      <div class="flex justify-between text-xl font-bold">
+        <span>Total Amount:</span>
+        <span>$<%= order.totalAmount %></span>
+      </div>
+      <p class="text-gray-600">Payment Method: <%= order.paymentMethod %></p>
+    </div>
+  </div>
+</div>
+
+<!-- <%- include('../partials/footer') %> -->
