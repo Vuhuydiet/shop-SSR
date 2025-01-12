@@ -1,65 +1,59 @@
-const OrderService = require("./order.service");
-const { SuccessResponse } = require("../../core/SuccessResponse");
-const { ErrorResponse } = require("../../core/ErrorResponse");
+const { matchedData } = require("express-validator");
+const { OKResponse } = require("../../../core/SuccessResponse");
+const OrderService = require("./../order.service");
 
-class OrderManagementController {
-  static async getOrderDetail(req, res, next) {
+module.exports = {
+  getOrders: async (req, res, next) => {
     try {
-      const { userId } = req.session;
-      const { orderId } = req.params;
+      const query = matchedData(req);
+      const { page = 1, limit = 10, status, startDate, endDate } = query;
 
-      const order = await OrderService.getOrderById(parseInt(orderId), userId);
+      const orders = await OrderService.getOrders({
+        page,
+        limit,
+        status,
+        startDate,
+        endDate,
+      });
 
-      return new SuccessResponse({
+      new OKResponse({
+        message: "Orders fetched successfully",
+        metadata: orders,
+      }).send(res);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  getOrderDetail: async (req, res, next) => {
+    try {
+      const { orderId } = matchedData(req);
+      const order = await OrderService.getOrderById(parseInt(orderId));
+
+      new OKResponse({
         message: "Order retrieved successfully",
-        metadata: order,
+        metadata: { order },
       }).send(res);
     } catch (error) {
       next(error);
     }
-  }
+  },
 
-  static async updateOrderStatus(req, res, next) {
+  updateOrderStatus: async (req, res, next) => {
     try {
-      const { userId } = req.session;
-      const { orderId } = req.params;
-      const { status } = req.body;
+      const { orderId, status } = matchedData(req);
 
       const order = await OrderService.updateOrderStatus(
         parseInt(orderId),
-        userId,
         status
       );
 
-      return new SuccessResponse({
+      new OKResponse({
         message: "Order status updated successfully",
-        metadata: order,
+        metadata: { order },
       }).send(res);
     } catch (error) {
       next(error);
     }
-  }
-
-  static async updateOrderStatus(req, res, next) {
-    try {
-      const { userId } = req.session;
-      const { orderId } = req.params;
-      const { status } = req.body;
-
-      const order = await OrderService.updateOrderStatus(
-        parseInt(orderId),
-        userId,
-        status
-      );
-
-      return new SuccessResponse({
-        message: "Order status updated successfully",
-        metadata: order,
-      }).send(res);
-    } catch (error) {
-      next(error);
-    }
-  }
-}
-
-module.exports = OrderManagementController;
+  },
+};
