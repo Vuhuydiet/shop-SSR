@@ -20,6 +20,18 @@ const handleChangePasswordSubmit = async (event) => {
         return;
     }
 
+    if (password.value.length < 8) {
+        errorDiv.textContent = "Password must be at least 8 characters!";
+        errorDiv.classList.remove("hidden");
+        return;
+    }
+
+    if (!password.value.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)) {
+        errorDiv.textContent = "Password must contain at least one number, one uppercase letter, one lowercase letter, and one special character!";
+        errorDiv.classList.remove("hidden");
+        return;
+    }
+
     if (oldPassword.value === confirmPassword.value) {
         errorDiv.textContent = "Hmmm, new and old password are too similar !";
         errorDiv.classList.remove("hidden");
