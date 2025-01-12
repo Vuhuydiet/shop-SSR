@@ -71,13 +71,6 @@ router.post(
   orderController.cancelOrder
 );
 
-router.get(
-  "/:orderId/details",
-  param("orderId").isInt().toInt(),
-  handleValidationErrors,
-  orderController.getOrderDetails
-);
-
 router.get("/:orderId/success", orderController.getSuccessPage);
 
 module.exports = router;
