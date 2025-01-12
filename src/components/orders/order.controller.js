@@ -70,6 +70,11 @@ class OrderController {
       next(error);
     }
   }
+
+  static async getSuccessPage(req, res) {
+    const { orderId } = req.params;
+    res.render("pages/orderSuccess", { orderId });
+  }
 }
 
 module.exports = OrderController;
