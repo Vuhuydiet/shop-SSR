@@ -100,10 +100,7 @@ module.exports = {
 
       if (responseCode === "00") {
         await CheckoutService.updateOrderStatus(orderId, "PAID");
-        return res.json({
-          success: true,
-          redirectUrl: `/orders/${orderId}/success`,
-        });
+        return res.redirect(`/orders/${orderId}/success`);
       } else {
         res.render("pages/paymentFailed", {
           orderId,
