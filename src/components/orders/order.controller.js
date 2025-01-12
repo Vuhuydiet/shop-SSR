@@ -55,19 +55,38 @@ class OrderController {
     }
   }
 
-  static async getOrderDetails(req, res, next) {
+  // static async getOrderDetails(req, res, next) {
+  //   try {
+  //     const { userId } = req.session;
+  //     const { orderId } = req.params;
+
+  //     const order = await OrderService.getOrderById(parseInt(orderId), userId);
+
+  //     return new SuccessResponse({
+  //       message: "Order details retrieved successfully",
+  //       metadata: order.details,
+  //     }).send(res);
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
+  static async getOrderDetails(req, res) {
     try {
-      const { userId } = req.session;
       const { orderId } = req.params;
+      const order = await OrderService.getOrderById(
+        parseInt(orderId),
+        req.user.userId
+      );
 
-      const order = await OrderService.getOrderById(parseInt(orderId), userId);
+      if (!order) {
+        return res.redirect("/orders?error=not_found");
+      }
 
-      return new SuccessResponse({
-        message: "Order details retrieved successfully",
-        metadata: order.details,
-      }).send(res);
+      res.render("pages/orderDetails", { order });
     } catch (error) {
-      next(error);
+      console.error("Error fetching order:", error);
+      res.redirect("/orders?error=fetch_failed");
     }
   }
 
