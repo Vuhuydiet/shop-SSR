@@ -72,6 +72,17 @@ const resetPassword = async (req, res) => {
   new OKResponse({ message: "Password reset email sent" }).send(res);
 };
 
+const getForgotPassword = async (req, res) => {
+    res.render("pages/forgotPasswordEmail");
+}
+
+const getResetPassword = async (req, res) => {
+    //const { email, resetPasswordToken } = req.query;
+    console.log(req.query.email);
+    res.render("pages/forgotPassword", {
+        email: req.query.email,
+    });
+}
 const updatePasswordWithToken = async (req, res) => {
   const { email, resetPasswordToken, newPassword } = req.body;
 
@@ -95,7 +106,9 @@ const accountController = {
   getConfirmUser,
   confirmUser,
   resetPassword,
+  getForgotPassword,
   updatePasswordWithToken,
+  getResetPassword
 };
 
 module.exports = {

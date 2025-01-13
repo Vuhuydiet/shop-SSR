@@ -5,10 +5,11 @@ const userController = require("./profile.controller");
 const { isAuthenticated, authorize, isNotAuthenticated} = require("../accounts/account.middleware");
 const { z } = require("zod");
 const profileController = require("./profile.controller");
-const { param, body } = require("express-validator");
+const { param, body, query} = require("express-validator");
 const { handleValidationErrors } = require("../../libraries/validator/validator");
 const passport = require("../accounts/passport");
 const authController = require("../accounts/authController");
+const reviewController = require("../products/reviews/review.controller");
 
 const addressSchema = z.object({
   recipientName: z
@@ -73,6 +74,25 @@ router.post(
     isAuthenticated,
     userController.updateProfile
 );
+
+router.get(
+    "/reviews",
+    isAuthenticated,
+    userController.getUserReviews
+)
+
+router.get(
+    "/getReviews",
+    query("page").optional().isInt().toInt(),
+    query("limit").optional().isInt().toInt(),
+    query("rating").optional().isInt().toInt(),
+    query("sortBy").optional().isIn(["createdAt"]),
+    query("order").optional().isIn(["asc", "desc"]),
+    isAuthenticated,
+    reviewController.getReviewsByUserId
+)
+
+
 
 router.post(
     "/uploadAvatar",

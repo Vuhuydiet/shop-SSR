@@ -54,6 +54,12 @@ module.exports = {
 
   },
 
+  getUserReviews: async (req, res) => {
+    res.render("pages/profileReviews", {
+        user: req.user
+    })
+  },
+
   updateAvatar: async (req, res) => {
     const user=req.user;
     const oldImgID = user.publicImgId;
