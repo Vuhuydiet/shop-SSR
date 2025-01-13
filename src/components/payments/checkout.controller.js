@@ -17,8 +17,6 @@ module.exports = {
       const { shippingAddress, paymentMethod } = matchedData(req);
       const products = req.session.checkoutProducts;
 
-      console.log(products);
-
       const order = await CheckoutService.createOrder({
         userId: req.user.userId,
         products,
@@ -95,14 +93,12 @@ module.exports = {
     const isValidSignature = VNPayService.verifyReturnUrl(vnpParams);
 
     if (isValidSignature) {
-      const orderId = vnpParams.vnp_TxnRef;
+      const orderId = parseInt(vnpParams.vnp_TxnRef);
       const responseCode = vnpParams.vnp_ResponseCode;
 
       if (responseCode === "00") {
-        res.render("pages/paymentSuccess", {
-          orderId,
-          amount: vnpParams.vnp_Amount / 100,
-        });
+        await CheckoutService.updateOrderStatus(orderId, "PAID");
+        return res.redirect(`/orders/${orderId}/success`);
       } else {
         res.render("pages/paymentFailed", {
           orderId,

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Order Success</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <style>
+      .success-container {
+        text-align: center;
+        padding: 40px;
+        margin-top: 100px;
+      }
+      .success-icon {
+        color: #4caf50;
+        font-size: 80px;
+        margin-bottom: 20px;
+      }
+      .success-message {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .redirect-message {
+        color: #666;
+        margin-bottom: 20px;
+      }
+      .home-button {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        text-decoration: none;
+      }
+      .home-button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="success-container">
+      <i class="fas fa-check-circle success-icon"></i>
+      <h1 class="success-message">Order Completed Successfully!</h1>
+      <p class="redirect-message">
+        You will be redirected to homepage in
+        <span id="countdown">5</span> seconds
+      </p>
+      <a href="/" class="home-button">Return to Homepage</a>
+    </div>
+
+    <script>
+      // Countdown and redirect
+      let timeLeft = 5;
+      const countdownElement = document.getElementById("countdown");
+
+      const countdown = setInterval(() => {
+        timeLeft--;
+        countdownElement.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          window.location.href = "/";
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>

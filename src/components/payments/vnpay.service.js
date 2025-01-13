@@ -79,6 +79,19 @@ class VNPayService {
 
     return sanitized;
   }
+
+  static sortObject(obj) {
+    let sorted = {};
+    let keys = Object.keys(obj).sort();
+
+    keys.forEach((key) => {
+      if (obj[key]) {
+        sorted[key] = obj[key];
+      }
+    });
+
+    return sorted;
+  }
 }
 
 module.exports = VNPayService;
