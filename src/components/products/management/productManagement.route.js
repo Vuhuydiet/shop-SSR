@@ -13,7 +13,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Get products list
 router.get(
-  "/api",
+  "/",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 
@@ -36,7 +36,7 @@ router.get(
 
 // Get single product
 router.get(
-  "/api/:productId",
+  "/:productId",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 
@@ -48,7 +48,7 @@ router.get(
 
 // Create product
 router.post(
-  "/api",
+  "/",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
   upload.array("images", 5),
@@ -71,7 +71,7 @@ router.post(
 
 // Update product
 router.patch(
-  "/api/:productId",
+  "/:productId",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
   upload.array("images", 5),
@@ -95,7 +95,7 @@ router.patch(
 
 // Delete product
 router.delete(
-  "/api/:productId",
+  "/:productId",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 

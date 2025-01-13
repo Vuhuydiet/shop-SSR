@@ -45,6 +45,7 @@ const queryValidator = () => {
     query("maxRating").optional().isNumeric().toFloat(),
     query("minQuantity").optional().isNumeric().toInt(),
     query("maxQuantity").optional().isNumeric().toInt(),
+    query("status").optional().isString().isIn(["PUBLISHED", "UNPUBLISHED", "DELETED"]),
     query("sortBy")
       .optional()
       .isString()

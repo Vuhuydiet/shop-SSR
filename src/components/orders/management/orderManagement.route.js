@@ -11,7 +11,7 @@ const { order } = require("../../../models");
 
 // Get orders list
 router.get(
-  "/api",
+  "/",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 
@@ -41,7 +41,7 @@ router.get(
 );
 
 router.get(
-  "/api/:orderId",
+  "/:orderId",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 
@@ -52,7 +52,7 @@ router.get(
 );
 
 router.patch(
-  "/api/:orderId/status",
+  "/:orderId/status",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 

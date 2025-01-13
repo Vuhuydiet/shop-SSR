@@ -10,7 +10,7 @@ const passport = require("../passport");
 const { authorize } = require("../account.middleware");
 
 router.get(
-  "/api",
+  "/",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 
@@ -30,7 +30,7 @@ router.get(
 );
 
 router.get(
-  "/api/:userId",
+  "/:userId",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 
@@ -41,7 +41,7 @@ router.get(
 );
 
 router.patch(
-  "/api/:userId",
+  "/:userId",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 
