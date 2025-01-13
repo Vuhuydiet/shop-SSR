@@ -60,6 +60,30 @@ module.exports = {
     })
   },
 
+  getUserReports: async (req, res) => {
+    res.render("pages/report", {
+        user: req.user
+    })
+  },
+
+  getRevenueReport : async (req, res) => {
+    const {startDate, endDate, page = 1, pageSize = 10, sortBy = 'createdAt', order = 'desc', timeRange='day'} = req.query;
+    try {
+      const {
+        totalRevenue,
+        totalCount,
+        revenue
+      } = await ProfileService.getRevenueReport(startDate, endDate, page, pageSize, sortBy, order, timeRange);
+      new OKResponse({
+        message: "Revenue report retrieved",
+        metadata: {totalRevenue, totalCount, revenue},
+      }).send(res);
+    } catch (error) {
+      console.error("Error getting revenue report:", error);
+      new BadRequestError({message: "Failed to get revenue report"}).send(res);
+    }
+  },
+
   updateAvatar: async (req, res) => {
     const user=req.user;
     const oldImgID = user.publicImgId;

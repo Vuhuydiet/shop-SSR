@@ -2348,3 +2348,25 @@ input[type="number"] {
   background-color: #303030;
   opacity: 8%;
 }
+
+#revenue-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 18px;
+  text-align: left;
+}
+
+#revenue-table th, #revenue-table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+#revenue-table th {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+#revenue-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
