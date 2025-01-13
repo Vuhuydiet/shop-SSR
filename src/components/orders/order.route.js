@@ -42,7 +42,7 @@ router.get(
 );
 
 router.post(
-  "api/:orderId/cancel",
+  "/:orderId/cancel",
   param("orderId").isInt().toInt(),
   handleValidationErrors,
   orderController.cancelOrder

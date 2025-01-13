@@ -110,7 +110,7 @@
               >
               <% if (order.orderStatus === 'PENDING') { %>
               <form
-                action="/orders/api/<%= order.orderId %>/cancel"
+                action="/orders/<%= order.orderId %>/cancel"
                 method="POST"
                 class="inline"
               >
