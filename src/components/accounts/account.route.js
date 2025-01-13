@@ -20,7 +20,9 @@ router.post(
 );
 router.get("/confirm", accountController.getConfirmUser);
 router.post("/confirm", accountController.confirmUser);
-router.post("/reset-password", accountController.resetPassword);
+router.get("/forgot-password", accountController.getForgotPassword);
+router.get("/reset-password", accountController.getResetPassword);
+router.post("/reset-password-token", accountController.resetPassword);
 router.post(
   "/update-password-with-token",
   accountController.updatePasswordWithToken

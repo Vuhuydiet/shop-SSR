@@ -158,7 +158,7 @@ const accountService = {
 
   updatePassword: async (email, resetPasswordToken, newPassword) => {
     const user = await prisma.user.findUnique({ where: { email } });
-
+    console.log(validatePassword("Thuong@123456", user.hashedPassword));
     if (user) {
       const otpData = otpMap.get(user.userId);
       if (
@@ -169,7 +169,7 @@ const accountService = {
         const hashedPassword = getHashedPassword(newPassword);
         await prisma.user.update({
           where: { email },
-          data: { password: hashedPassword },
+          data: { hashedPassword: hashedPassword },
         });
         otpMap.delete(user.userId);
         return true;
