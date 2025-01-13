@@ -265,7 +265,7 @@
   });
 
   document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("form");
+    const form = document.querySelector("#form");
     const agreement = document.getElementById("agreement");
     const placeOrderBtn = document.getElementById("place-order");
 
@@ -291,8 +291,9 @@
       const getSelectedText = (name) => {
         const select = form.querySelector(`[name="${name}"]`);
         return select.options[select.selectedIndex]?.text || '';
-    };
+      };
 
+      console.log(form);
       const shippingAddress = {
         recipientName: form.querySelector('[name="recipientName"]').value,
         phoneNumber: form.querySelector('[name="phoneNumber"]').value,

@@ -55,6 +55,7 @@ function getCondition(queryParams) {
   console.log("Brands:", brands);
 
   return {
+    status: queryParams.status,
     OR: (queryParams.categories || queryParams.brands) && [
       {
         categoryId: queryParams.categories && { in: queryParams.categories },

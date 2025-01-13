@@ -5,10 +5,10 @@ function getOrderConditions(queryParams, userId) {
   return {
     userId,
     orderStatus: queryParams.status || undefined,
-    createdAt: {
+    createdAt: queryParams.startDate || queryParams.endDate ? {
       gte: queryParams?.startDate || undefined,
       lte: queryParams?.endDate || undefined,
-    },
+    } : undefined,
   };
 }
 
@@ -28,6 +28,7 @@ class OrderService {
           ? { [queryParams.sortBy]: queryParams?.order || "desc" }
           : { createdAt: "desc" },
         include: {
+          user: true,
           details: {
             include: {
               product: {
@@ -51,6 +52,7 @@ class OrderService {
         userId,
       },
       include: {
+        user: true,
         details: {
           include: {
             product: {

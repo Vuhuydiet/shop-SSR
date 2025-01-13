@@ -1,4 +1,5 @@
 async function handleAddToCart(productId, quantity, isAuthenticated) {
+  console.log(productId, quantity, isAuthenticated)
   if (isAuthenticated) {
     await sendAddCartItemReq(productId, quantity, isAuthenticated);
   } else {
