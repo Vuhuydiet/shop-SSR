@@ -5,6 +5,15 @@
 
     <!-- Filters -->
     <div class="flex gap-4">
+      <button
+        id="resetFilters"
+        type="button"
+        class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 flex items-center gap-2"
+      >
+        <i class="fas fa-times"></i>
+        Clear Filters
+      </button>
+      
       <select id="statusFilter" name="status" class="form-select" value="<%= locals.query?.status || '' %>"
         >
         <option value="">All Status</option>
@@ -228,6 +237,7 @@
     const statusFilter = document.getElementById("statusFilter");
     const startDate = document.getElementById("startDate");
     const endDate = document.getElementById("endDate");
+    const resetFilters = document.getElementById("resetFilters");
 
     const params = new URLSearchParams(window.location.search);
     statusFilter.value = params.get("status") || "";
@@ -254,5 +264,11 @@
     statusFilter.addEventListener("change", updateFilters);
     startDate.addEventListener("change", updateFilters);
     endDate.addEventListener("change", updateFilters);
+    
+    if (resetFilters) {
+      resetFilters.addEventListener("click", () => {
+        window.location.href = window.location.pathname;
+      });
+    }
   });
 </script>
