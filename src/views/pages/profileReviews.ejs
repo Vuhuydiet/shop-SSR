@@ -1,0 +1,167 @@
+﻿<div class="container py-4 flex items-center gap-3">
+    <a href="/" class="text-primary text-base">
+        <i class="fa-solid fa-house"></i>
+    </a>
+    <span class="text-sm text-gray-400">
+    <i class="fa-solid fa-chevron-right"></i>
+  </span>
+    <p class="text-gray-600 font-medium">Account</p>
+</div>
+
+<!-- account wrapper -->
+<div class="container grid grid-cols-12 items-start gap-6 pt-4 pb-16">
+    <!-- sidebar -->
+    <div class="col-span-3">
+        <div class="px-4 py-3 shadow flex items-center gap-4">
+            <div class="flex-shrink-0">
+                <img src="<%= user.avatarUrl || '/assets/images/avatar.png' %>"
+                     alt="profile"
+                     class="rounded-full w-14 h-14 border border-gray-200 p-1 object-cover"
+                />
+            </div>
+            <div class="flex-grow">
+                <p class="text-gray-600">Hello,</p>
+                <h4 class="text-gray-800 font-medium"><%= user.fullname || user.email %></h4>
+            </div>
+        </div>
+
+        <div
+                class="mt-6 bg-white shadow rounded p-4 divide-y divide-gray-200 space-y-4 text-gray-600"
+        >
+            <div class="space-y-1 pl-8">
+                <a
+                        href="/profile"
+                        class="relative hover:text-primary block capitalize transition"
+                >
+              <span class="absolute -left-8 top-0 text-base">
+                <i class="fa-regular fa-address-card"></i>
+              </span>
+                    Manage account
+                </a>
+                <a
+                        href="/profile/information"
+                        class="relative hover:text-primary block capitalize transition"
+                >
+                    Profile information
+                </a>
+                <a
+                        href="/profile/address"
+                        class="relative hover:text-primary block capitalize transition"
+                >
+                    Manage addresses
+                </a>
+                <a
+                        href="/profile/changepassword"
+                        class="relative hover:text-primary block capitalize transition"
+                >
+                    Change password
+                </a>
+            </div>
+
+            <div class="space-y-1 pl-8 pt-4">
+                <a
+                        href="/profile/reviews"
+                        class="relative text-primary block font-medium capitalize transition"
+                >
+                    My reviews
+                </a>
+            </div>
+
+            <div class="space-y-1 pl-8 pt-4">
+                <a
+                        href="/users/logout"
+                        class="relative hover:text-primary block font-medium capitalize transition"
+                >
+              <span class="absolute -left-8 top-0 text-base">
+                <i class="fa-solid fa-right-from-bracket"></i>
+              </span>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- info -->
+    <div class="col-span-9 shadow rounded px-6 pt-5 pb-7">
+        <h1 class="text-2xl uppercase font-medium mb-1">My reviews</h1>
+    <div class="max-w-3xl mx-auto p-6 bg-white shadow rounded">
+        <div id="reviews-container" class="space-y-4">
+            <!-- Reviews will be loaded here dynamically -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination-container" class="flex justify-center items-center mt-4 space-x-2">
+            <!-- Pagination buttons will be dynamically added here -->
+        </div>
+    </div>
+        <!-- ./info -->
+</div>
+</div>
+<!-- ./account wrapper -->
+    <script>
+        const PAGE_SIZE = 5;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchReviewsByUserId();
+        });
+
+        async function fetchReviewsByUserId(page = 1) {
+            try {
+                const response = await fetch(`/profile/getReviews?page=${page}&limit=${PAGE_SIZE}&sortBy=createdAt&order=desc`);
+                const data = await response.json();
+
+                const reviewsContainer = document.getElementById("reviews-container");
+                const paginationContainer = document.getElementById("pagination-container");
+                reviewsContainer.innerHTML = "";
+                paginationContainer.innerHTML = "";
+
+                data.metadata.reviews.forEach((review) => {
+                    const reviewElement = document.createElement("div");
+                    reviewElement.classList.add("p-4", "border", "rounded");
+                    // Render stars based on the review rating
+                    const starsHTML = [...Array(5)].map((_, i) => {
+                        return `<span class="${
+                            i < review.rating ? 'text-yellow-400' : 'text-gray-400'
+                        }">&#9733;</span>`;
+                    }).join('');
+
+                    const createdAt = new Date(review.createdAt).toLocaleDateString();
+                    reviewElement.innerHTML = `
+        <div class="flex justify-between items-center">
+          <div>
+            <img style="display: inline" src="${review.user.avatarUrl || '/assets/images/default-avatar.png'}" alt="Avatar" class="w-10 h-10 rounded-full mr-4">
+            <h3 class="font-semibold" style="display: inline">${review.user.fullname || review.user.email}</h3>
+          </div>
+            <span class="text-sm text-gray-500">
+<a href="/products/${review.productId}" class="text-blue-500">View product</a>
+</span>
+            <span class="text-sm text-gray-500">${createdAt}</span>
+          </div>
+          <div class="flex items-center space-x-1 mt-1">
+            ${starsHTML}
+          </div>
+          <p class="mt-2 text-gray-700">${review.reviewContent}</p>
+        `;
+
+                    reviewsContainer.appendChild(reviewElement);
+                });
+
+                for (let i = 1; i <= Math.ceil(data.metadata.count / PAGE_SIZE); i++) {
+                    const button = document.createElement("button");
+                    const  style = [
+                        "px-3", "py-1",
+                        i === page ? "bg-blue-600" : "bg-gray-200",
+                        i === page ? "text-red-600" : "text-black",
+                        "rounded", "hover:bg-gray-300"
+                    ];
+                    button.classList.add(...style);
+                    button.textContent = i;
+                    button.disabled = i === page;
+                    button.addEventListener("click", () => fetchReviews(i));
+                    paginationContainer.appendChild(button);
+                }
+            } catch (error) {
+                console.error("Error fetching reviews:", error);
+            }
+        }
+    </script>
