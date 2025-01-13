@@ -14,14 +14,18 @@ module.exports = {
 
     queries.limit = limit;
     queries.offset = offset;
+    queries.searchTerm = queries.searchTerm || "";
 
-    const { products, count } = await ProductService.getAllProducts(queries);
+      const { products, count } = await ProductService.getAllProducts(queries);
     const totalPages = Math.ceil(count / limit);
 
-    //console.log('Query passed to frontend:', products);
-
     res.render("pages/products", {
-      brands: brands,
+      products,
+      count,
+      brands,
+      totalPages,
+      currentPage: page,
+      query: queries,
     });
   },
 
@@ -43,10 +47,9 @@ module.exports = {
 
     queries.limit = limit;
     queries.offset = offset;
+    queries.searchTerm = queries.searchTerm || "";
 
     const { products, count } = await ProductService.getAllProducts(queries);
-
-    console.log(products[0].productImages);
 
     const totalPages = Math.ceil(count / limit);
     console.log("Before Entered JSON");

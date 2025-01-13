@@ -126,7 +126,29 @@ class ProductService {
 
   static async getAllProducts(queryParams = {}) {
     const condition = getCondition(queryParams);
-    console.log("Condition:", condition);
+
+    if (queryParams.searchTerm) {
+      condition.AND = [
+        ...(condition.AND || []),
+        {
+          OR: [
+            {
+              productName: {
+                contains: queryParams.searchTerm,
+                mode: "insensitive",
+              },
+            },
+            {
+              productDescription: {
+                contains: queryParams.searchTerm,
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
+      ];
+    }
+    console.log("Condition:", condition); // TODO: Removetodo
     const [count, products] = await Promise.all([
       prisma.product.count({
         where: condition,
