@@ -11,24 +11,65 @@ const { authorize } = require("./../../accounts/account.middleware");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 
+const queryValidator = () => {
+  return [
+    query("page").optional().isNumeric().toInt(),
+    query("limit").optional().isNumeric().toInt(),
+    query("keyword").optional().isString(),
+    query("categories")
+      .optional()
+      .customSanitizer((value) => {
+        const values = Array.isArray(value) ? value : [value];
+        return values.map((value) => parseInt(value));
+      })
+      .custom((values) => {
+        return !values.some((value) => {
+          return isNaN(value);
+        });
+      }),
+    query("brands")
+      .optional()
+      .customSanitizer((value) => {
+        const values = Array.isArray(value) ? value : [value];
+        return values.map((value) => parseInt(value));
+      })
+      .custom((values) => {
+        // console.log(values);
+        return !values.some((value) => {
+          return isNaN(value);
+        });
+      })
+      .withMessage("failed"),
+    query("postedAfter").optional().isISO8601().toDate(),
+    query("postedBefore").optional().isISO8601().toDate(),
+    query("minPrice").optional().isNumeric().toFloat(),
+    query("maxPrice").optional().isNumeric().toFloat(),
+    query("minRating").optional().isNumeric().toFloat(),
+    query("maxRating").optional().isNumeric().toFloat(),
+    query("minQuantity").optional().isNumeric().toInt(),
+    query("maxQuantity").optional().isNumeric().toInt(),
+    query("status")
+      .optional()
+      .isString()
+      .isIn(["PUBLISHED", "UNPUBLISHED", "DELETED"]),
+    query("sortBy")
+      .optional()
+      .isString()
+      .isIn(["currentPrice", "quantity", "publishedAt"]),
+    query("order").optional().isString().isIn(["asc", "desc"]),
+    query("offset").optional().isNumeric().toInt(),
+    query("limit").optional().isNumeric().toInt(),
+    query("searchTerm").optional().isString(),
+  ];
+};
+
 // Get products list
 router.get(
   "/",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
 
-  query("productName").optional().isString(),
-  query("status").optional().isIn(["PUBLISHED", "UNPUBLISHED", "DELETED"]),
-  query("brandId").optional().isInt().toInt(),
-  query("categoryId").optional().isInt().toInt(),
-  query("minPrice").optional().isInt().toInt(),
-  query("maxPrice").optional().isInt().toInt(),
-  query("sortBy")
-    .optional()
-    .isIn(["productName", "currentPrice", "publishedAt", "stock"]),
-  query("order").optional().isIn(["asc", "desc"]),
-  query("limit").optional().isInt().toInt(),
-  query("offset").optional().isInt().toInt(),
+  queryValidator(),
   handleValidationErrors,
 
   productManagementController.getProducts
