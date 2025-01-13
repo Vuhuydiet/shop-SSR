@@ -1,55 +1,54 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { query, param, body } = require("express-validator");
-const {
-  handleValidationErrors,
-} = require("../../../libraries/validator/validator");
-const accountManagementController = require("./accountManagement.controller");
+const { query, param, body } = require('express-validator');
+const { handleValidationErrors } = require('../../../libraries/validator/validator');
+const accountManagementController = require('./accountManagement.controller');
 
-const passport = require("../passport");
-const { authorize } = require("../account.middleware");
+const passport = require('../passport');
+const { authorize } = require('../account.middleware');
 
 router.get(
-  "/api",
-  passport.authenticate("jwt", { session: false }),
-  authorize(["ADMIN"]),
+  '/api',
+  passport.authenticate('jwt', { session: false }),
+  authorize(['ADMIN']),
 
-  query("fullname").optional().isString(),
-  query("email").optional().isEmail(),
-  query("confirmed").optional().isBoolean().toBoolean(),
-  query("status").optional().isIn(["ACTIVE", "BLOCK"]),
-  query("sortBy").optional().isIn(["createdAt", "fullname", "email"]),
-  query("order").optional().isIn(["asc", "desc"]),
-  query("limit").optional().isInt().toInt(),
-  query("offset").optional().isInt().toInt(),
-  query("admin").optional().isBoolean().toBoolean(),
-  query("key").optional().isString(),
+  query('fullname').optional().isString(),
+  query('email').optional().isEmail(),
+  query('confirmed').optional().isBoolean().toBoolean(),
+  query('status').optional().isIn(['ACTIVE', 'BLOCK']),
+  query('sortBy').optional().isIn(['createdAt', 'fullname', 'email']),
+  query('order').optional().isIn(['asc', 'desc']),
+  query('limit').optional().isInt().toInt(),
+  query('offset').optional().isInt().toInt(),
+  query('admin').optional().isBoolean().toBoolean(),
+  query('key').optional().isString(),
   handleValidationErrors,
 
   accountManagementController.getUsers
 );
 
 router.get(
-  "/api/:userId",
-  passport.authenticate("jwt", { session: false }),
-  authorize(["ADMIN"]),
+  '/api/:userId',
+  passport.authenticate('jwt', { session: false }),
+  authorize(['ADMIN']),
 
-  param("userId").isInt().toInt(),
+  param('userId').isInt().toInt(),
   handleValidationErrors,
 
+
   accountManagementController.getUser
-);
+)
 
 router.patch(
-  "/api/:userId",
-  passport.authenticate("jwt", { session: false }),
-  authorize(["ADMIN"]),
+  '/api/:userId',
+  passport.authenticate('jwt', { session: false }),
+  authorize(['ADMIN']),
 
-  param("userId").isInt().toInt(),
-  body("status").isIn(["ACTIVE", "BLOCK"]),
+  param('userId').isInt().toInt(),
+  body('status').isIn(['ACTIVE', 'BLOCK']),
   handleValidationErrors,
 
   accountManagementController.updateUserStatus
-);
+)
 
 module.exports = router;
