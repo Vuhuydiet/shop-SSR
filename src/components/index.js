@@ -16,10 +16,10 @@ const accountManagementRouter = require("./accounts/management/accountManagement
 const productManagementRouter = require("./products/management/productManagement.route");
 const orderManagementRouter = require("./orders/management/orderManagement.route");
 
-router.use("api/v1/users", accountManagementRouter);
-router.use("api/v1/access", apiAccessRouter);
-router.use("api/v1/products", productManagementRouter);
-router.use("api/v1/orders", orderManagementRouter);
+router.use("/api/v1/users", accountManagementRouter);
+router.use("/api/v1/access", apiAccessRouter);
+router.use("/api/v1/products", productManagementRouter);
+router.use("/api/v1/orders", orderManagementRouter);
 
 router.use("/", categoryMiddleware.getCategories);
 

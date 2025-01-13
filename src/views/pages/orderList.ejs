@@ -5,27 +5,41 @@
 
     <!-- Filters -->
     <div class="flex gap-4">
-      <select name="status" class="form-select">
+      <button
+        id="resetFilters"
+        type="button"
+        class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 flex items-center gap-2"
+      >
+        <i class="fas fa-times"></i>
+        Clear Filters
+      </button>
+      
+      <select id="statusFilter" name="status" class="form-select" value="<%= locals.query?.status || '' %>"
+        >
         <option value="">All Status</option>
-        <option value="PENDING">Pending</option>
-        <option value="CONFIRMED">Confirmed</option>
-        <option value="SHIPPING">Shipping</option>
-        <option value="DELIVERED">Delivered</option>
-        <option value="CANCELLED">Cancelled</option>
-        <option value="PAID">Paid</option>
+        <option value="PENDING" <%= locals.query?.status === 'PENDING' ? 'selected' : '' %>>Pending</option>
+        <option value="CONFIRMED" <%= locals.query?.status === 'CONFIRMED' ? 'selected' : '' %>>Confirmed</option>
+        <option value="SHIPPING" <%= locals.query?.status === 'SHIPPING' ? 'selected' : '' %>>Shipping</option>
+        <option value="DELIVERED" <%= locals.query?.status === 'DELIVERED' ? 'selected' : '' %>>Delivered</option>
+        <option value="CANCELLED" <%= locals.query?.status === 'CANCELLED' ? 'selected' : '' %>>Cancelled</option>
+        <option value="PAID" <%= locals.query?.status === 'PAID' ? 'selected' : '' %>>Paid</option>
       </select>
 
       <input
         type="date"
         name="startDate"
+        id="startDate"
         class="form-input"
         placeholder="From Date"
+        value="<%= locals.query?.startDate || '' %>"
       />
       <input
         type="date"
         name="endDate"
+        id="endDate"
         class="form-input"
         placeholder="To Date"
+        value="<%= locals.query?.endDate || '' %>"
       />
     </div>
   </div>
@@ -216,3 +230,45 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const filterForm = document.getElementById("filterForm");
+    const statusFilter = document.getElementById("statusFilter");
+    const startDate = document.getElementById("startDate");
+    const endDate = document.getElementById("endDate");
+    const resetFilters = document.getElementById("resetFilters");
+
+    const params = new URLSearchParams(window.location.search);
+    statusFilter.value = params.get("status") || "";
+    startDate.value = params.get("startDate") || "";
+    endDate.value = params.get("endDate") || "";
+
+    const updateFilters = () => {
+      const params = new URLSearchParams(window.location.search);
+
+      params.set("page", 1);
+
+      if (statusFilter.value) params.set("status", statusFilter.value);
+      else params.delete("status");
+
+      if (startDate.value) params.set("startDate", startDate.value);
+      else params.delete("startDate");
+
+      if (endDate.value) params.set("endDate", endDate.value);
+      else params.delete("endDate");
+
+      window.location.href = `${window.location.pathname}?${params.toString()}`;
+    };
+
+    statusFilter.addEventListener("change", updateFilters);
+    startDate.addEventListener("change", updateFilters);
+    endDate.addEventListener("change", updateFilters);
+    
+    if (resetFilters) {
+      resetFilters.addEventListener("click", () => {
+        window.location.href = window.location.pathname;
+      });
+    }
+  });
+</script>

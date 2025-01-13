@@ -16,6 +16,7 @@ const config = {
   maxPrice: {},
   minRating: {},
   maxRating: {},
+  searchTerm: {},
   sortBy: {
     customHandler: (value, searchParams) => {
       const [sortBy, order] = value.split("-");
@@ -49,16 +50,26 @@ function generateSearchParams(config = {}) {
     }
   }
 
+  const searchTerm = formData.get("searchTerm");
+  if (searchTerm) {
+    searchParams.append("searchTerm", searchTerm);
+  }
+  console.log(searchTerm);
+
   return searchParams;
 }
 
 async function fetchProducts(page = 1, query = {}) {
   try {
+    const existingParams = new URLSearchParams(window.location.search);
+
     const searchParams = new URLSearchParams({
+      ...Object.fromEntries(existingParams.entries()),
       ...query,
       page,
       limit: PAGE_SIZE,
     });
+
     const response = await fetch(`/products/api?${searchParams.toString()}`, {
       headers: { Accept: "application/json" },
     });
@@ -86,8 +97,6 @@ form.addEventListener("submit", async (e) => {
   const searchParams = generateSearchParams(config);
   const queryString = searchParams.toString();
   console.log("Query Params:", queryString);
-  //const params = Object.fromEntries(searchParams.entries());
-  //console.log("Pagination Params:", params);
   updateURL(queryString);
   await fetchProducts(1, Object.fromEntries(searchParams.entries()));
 });
