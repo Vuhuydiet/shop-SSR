@@ -6,6 +6,17 @@ const {
 } = require("../../libraries/validator/validator");
 const orderController = require("./order.controller");
 
+const isAuth = (req, res, next) => {
+  if (!req.user) {
+    return res.redirect(
+      `/users/login?returnUrl=${encodeURIComponent(req.originalUrl)}`
+    );
+  }
+  next();
+};
+
+router.use(isAuth);
+
 const queryValidator = () => {
   return [
     query("page").optional().isNumeric().toInt(),

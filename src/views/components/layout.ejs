@@ -25,59 +25,68 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
 
-  <script src="https://cdn.jsdelivr.net/npm/tailwindcss-jit@2.1.2/dist/tailwind.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss-jit@2.1.2/dist/tailwind.min.js"></script>
 
-  <% if (typeof additionalStylesheets !=='undefined' ) { %>
-    <% additionalStylesheets.forEach(stylesheet=> { %>
-      <link rel="stylesheet" href="<%= stylesheet %>">
-    <% }) %>
-  <% } %>
+    <% if (typeof additionalStylesheets !=='undefined' ) { %> <%
+    additionalStylesheets.forEach(stylesheet=> { %>
+    <link rel="stylesheet" href="<%= stylesheet %>" />
+    <% }) %> <% } %>
+  </head>
 
-</head>
+  <body>
+    <!-- header -->
 
-<body>
-  <!-- header -->
-
-  <header class="py-4 shadow-sm bg-white">
-    <div class="container flex items-center justify-between">
-      <a href="/">
-        <img src="/assets/images/logo.svg" alt="Logo" class="w-32" />
-      </a>
-
-      <div class="w-full max-w-xl relative flex">
-        <span class="absolute left-4 top-3 text-lg text-gray-400">
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </span>
-        <input type="text" name="search" id="search"
-          class="w-full border border-primary border-r-0 pl-12 py-3 pr-3 rounded-l-md hidden md:flex focus:outline-none"
-          placeholder="search" />
-        <button
-          class="bg-primary items-center border border-primary text-white px-8 rounded-r-md hover:bg-transparent hover:text-primary transition md:flex hidden">
-          Search
-        </button>
-      </div>
-
-      <div class="flex items-center space-x-4">
-        <button class="get-cart text-center text-gray-700 hover:text-primary transition relative">
-          <div class="text-2xl">
-            <i class="fa-solid fa-bag-shopping"></i>
-          </div>
-          <div class="text-xs leading-3">Cart</div>
-          <div
-            class="absolute -right-3 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
-            *
-          </div>
-        </button>
-        <a href="/profile" class="text-center text-gray-700 hover:text-primary transition relative">
-          <div class="text-2xl">
-            <i class="fa-regular fa-user"></i>
-          </div>
-          <div class="text-xs leading-3">Account</div>
+    <header class="py-4 shadow-sm bg-white">
+      <div class="container flex items-center justify-between">
+        <a href="/">
+          <img src="/assets/images/logo.svg" alt="Logo" class="w-32" />
         </a>
+
+        <div class="w-full max-w-xl relative flex">
+          <span class="absolute left-4 top-3 text-lg text-gray-400">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </span>
+          <input
+            type="text"
+            name="search"
+            id="search"
+            class="w-full border border-primary border-r-0 pl-12 py-3 pr-3 rounded-l-md hidden md:flex focus:outline-none"
+            placeholder="search"
+          />
+          <button
+            class="bg-primary items-center border border-primary text-white px-8 rounded-r-md hover:bg-transparent hover:text-primary transition md:flex hidden"
+          >
+            Search
+          </button>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <button
+            class="get-cart text-center text-gray-700 hover:text-primary transition relative"
+          >
+            <div class="text-2xl">
+              <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+            <div class="text-xs leading-3">Cart</div>
+            <div
+              class="absolute -right-3 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs"
+            >
+              *
+            </div>
+          </button>
+          <a
+            href="/profile"
+            class="text-center text-gray-700 hover:text-primary transition relative"
+          >
+            <div class="text-2xl">
+              <i class="fa-regular fa-user"></i>
+            </div>
+            <div class="text-xs leading-3">Account</div>
+          </a>
+        </div>
       </div>
-    </div>
-  </header>
-  <!-- ./header -->
+    </header>
+    <!-- ./header -->
 
     <!-- navbar -->
 
@@ -118,20 +127,15 @@
               class="text-gray-200 hover:text-white transition"
               >Shop</a
             >
-            <a
-              href="about.html"
-              class="text-gray-200 hover:text-white transition"
+            <a href="/about" class="text-gray-200 hover:text-white transition"
               >About us</a
-            >
-            <a
-              href="contact.html"
-              class="text-gray-200 hover:text-white transition"
-              >Contact us</a
             >
           </div>
           <% if (user) { %>
           <div class="flex items-center space-x-6">
-            <span class="text-gray-200">Welcome back, <%= user.fullname || user.email %></span>
+            <span class="text-gray-200"
+              >Welcome back, <%= user.fullname || user.email %></span
+            >
             <a
               href="/users/logout"
               class="text-gray-200 hover:text-white transition"
@@ -316,7 +320,10 @@
     <!-- ./copyright -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
-    <script nomodule="" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"></script>
+    <script
+      nomodule=""
+      src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"
+    ></script>
 
     <% if (typeof additionalScripts !=='undefined' ) { %> <%
     additionalScripts.forEach(script=> { %>
@@ -325,24 +332,25 @@
   </body>
 </html>
 
-
 <script>
+  const cart = document.querySelector(".get-cart");
 
-  const cart = document.querySelector('.get-cart');
+  cart.addEventListener("click", () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || {};
 
-  cart.addEventListener('click', () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || {};
-    
-    let { productIds, quantity } = Object.keys(cart).map(key => ({ productId: +key, quantity: cart[key ] }))
-    .reduce((acc, {productId, quantity}) => {
-      acc.productIds += '&productIds=' + productId;
-      acc.quantity += '&quantity=' + quantity;
-      return acc;
-    }, { productIds: "", quantity: ""});
-    
+    let { productIds, quantity } = Object.keys(cart)
+      .map((key) => ({ productId: +key, quantity: cart[key] }))
+      .reduce(
+        (acc, { productId, quantity }) => {
+          acc.productIds += "&productIds=" + productId;
+          acc.quantity += "&quantity=" + quantity;
+          return acc;
+        },
+        { productIds: "", quantity: "" }
+      );
+
     productIds = productIds.substr(1);
-    
-    window.location.href = '/cart?' + productIds + quantity;
-  });
 
+    window.location.href = "/cart?" + productIds + quantity;
+  });
 </script>
