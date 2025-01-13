@@ -92,21 +92,6 @@ router.get(
     reviewController.getReviewsByUserId
 )
 
-router.get(
-    "/reports",
-    isAuthenticated,
-    userController.getUserReports
-)
-
-router.get(
-    '/revenue-report',
-    query("page").optional().isInt().toInt(),
-    query("pageSize").optional().isInt().toInt(),
-    isAuthenticated,
-    userController.getRevenueReport
-)
-
-
 router.post(
     "/uploadAvatar",
     isAuthenticated,

@@ -15,6 +15,7 @@ const apiAccessRouter = require("./accounts/apiAccess/apiAccess.route");
 const accountManagementRouter = require("./accounts/management/accountManagement.route");
 const productManagementRouter = require("./products/management/productManagement.route");
 const orderManagementRouter = require("./orders/management/orderManagement.route");
+const revenueManagementRouter = require("./revenue/revenueManagement.route");
 
 router.use("/users", accountManagementRouter);
 router.use("/access", apiAccessRouter);
@@ -28,6 +29,7 @@ router.use("/users", userRouter);
 router.use("/products", productRouter);
 router.use("/reviews", reviewRouter);
 router.use("/profile", profileRouter);
+router.use("/revenue", revenueManagementRouter);
 router.use("/cart", cartRouter);
 router.use("/checkout", checkoutRouter);
 router.use("/orders", orderRouter);
