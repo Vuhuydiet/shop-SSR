@@ -13,6 +13,15 @@ module.exports = {
       order: "desc",
     });
 
-    res.render("pages/home", { newArrivalProducts: newArrivalProducts.products, recommendedProducts: recommendedProducts.products });
+    res.render("pages/home", {
+      newArrivalProducts: newArrivalProducts.products,
+      recommendedProducts: recommendedProducts.products,
+    });
+  },
+
+  getAboutPage: async (req, res) => {
+    res.render("pages/about", {
+      user: req.user || null,
+    });
   },
 };

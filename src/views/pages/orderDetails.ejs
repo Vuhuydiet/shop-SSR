@@ -1,0 +1,114 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <!-- Order Header -->
+    <div class="flex items-center gap-2">
+      <h1 class="text-2xl font-bold">Order #<%= order.orderId %></h1>
+      <span
+        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= order.orderStatus === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : order.orderStatus === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' : order.orderStatus === 'SHIPPING' ? 'bg-purple-100 text-purple-800' : order.orderStatus === 'DELIVERED' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>"
+      >
+        <% if (order.orderStatus === 'PENDING') { %>
+        <i class="fas fa-clock mr-2"></i>
+        <% } else if (order.orderStatus === 'CONFIRMED') { %>
+        <i class="fas fa-check mr-2"></i>
+        <% } else if (order.orderStatus === 'SHIPPING') { %>
+        <i class="fas fa-truck mr-2"></i>
+        <% } else if (order.orderStatus === 'DELIVERED') { %>
+        <i class="fas fa-box-check mr-2"></i>
+        <% } else { %>
+        <i class="fas fa-times mr-2"></i>
+        <% } %> <%= order.orderStatus %>
+      </span>
+    </div>
+    <!-- Shipping Address -->
+    <div class="mt-2 mb-6">
+      <h2 class="text-xl font-semibold mb-2">Shipping Address</h2>
+      <p>
+        <%= order.addressDetail %>, <%= order.ward %>, <%= order.district %>
+      </p>
+      <p><%= order.city %>, <%= order.country %></p>
+      <p>Phone: <%= order.phoneNumber %></p>
+    </div>
+
+    <!-- Order items list -->
+    <div class="mb-6 w-full">
+      <h2 class="text-xl font-semibold mb-4">Order Items</h2>
+      <div class="overflow-x-auto w-full">
+        <table class="w-full table-auto divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                scope="col"
+                class="w-40 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Image
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Product
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Price
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Quantity
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Subtotal
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% order.details.forEach(item => { %>
+            <tr>
+              <td class="px-6 py-4">
+                <div class="flex justify-center">
+                  <img
+                    class="h-20 w-20 rounded-md object-cover"
+                    src="<%= item.product.productImages[0]?.imageUrl %>"
+                    alt="<%= item.product.productName %>"
+                  />
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm font-medium text-gray-900">
+                  <%= item.product.productName %>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-center text-sm text-gray-500">
+                $<%= item.priceAtPurchase.toFixed(2) %>
+              </td>
+              <td class="px-6 py-4 text-center text-sm text-gray-500">
+                <%= item.quantity %>
+              </td>
+              <td
+                class="px-6 py-4 text-center text-sm font-medium text-gray-900"
+              >
+                $<%= (item.priceAtPurchase * item.quantity).toFixed(2) %>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Order Summary -->
+    <div class="border-t pt-4">
+      <div class="flex justify-between text-xl font-bold">
+        <span>Total Amount:</span>
+        <span>$<%= order.totalAmount %></span>
+      </div>
+      <p class="text-gray-600">Payment Method: <%= order.paymentMethod %></p>
+    </div>
+  </div>
+</div>
