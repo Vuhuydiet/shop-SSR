@@ -248,7 +248,7 @@
 
 <script>
   const isAuthenticated =
-    document.getElementById("isAuthenticated").textContent === "true";
+    document.getElementById("isAuthenticated").textContent.includes("true");
 
   const popup = document.getElementById("popup");
   const popupHeader = document.querySelector("#popup .popup-header");

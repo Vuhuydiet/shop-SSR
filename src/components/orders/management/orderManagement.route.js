@@ -7,7 +7,6 @@ const {
 const orderManagementController = require("./orderManagement.controller");
 const passport = require("../../accounts/passport");
 const { authorize } = require("../../accounts/account.middleware");
-const { order } = require("../../../models");
 
 // Get orders list
 router.get(

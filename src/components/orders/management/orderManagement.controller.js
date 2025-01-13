@@ -6,10 +6,10 @@ module.exports = {
   getOrders: async (req, res, next) => {
     try {
       const query = matchedData(req);
-      const { page = 1, limit = 10, status, startDate, endDate } = query;
+      const { limit = 10, offset,  status, startDate, endDate } = query;
 
-      const orders = await OrderService.getOrders({
-        page,
+      const orders = await OrderService.getUserOrders(undefined, {
+        offset,
         limit,
         status,
         startDate,
@@ -45,6 +45,7 @@ module.exports = {
 
       const order = await OrderService.updateOrderStatus(
         parseInt(orderId),
+        undefined,
         status
       );
 
