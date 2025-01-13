@@ -134,6 +134,18 @@
       reviewsContainer.innerHTML = "";
       paginationContainer.innerHTML = "";
 
+      if (!data.metadata.reviews || data.metadata.reviews.length === 0) {
+        const noReviewsElement = document.createElement("div");
+        noReviewsElement.classList.add("text-center", "py-8", "text-gray-500");
+        noReviewsElement.innerHTML = `
+        <i class="fa-regular fa-comment-dots text-4xl mb-3 mt-4"></i>
+        <p>You haven't written any reviews yet.</p>
+        <p class="mt-2">Share your thoughts about products you've purchased!</p>
+      `;
+        reviewsContainer.appendChild(noReviewsElement);
+        return;
+      }
+
       data.metadata.reviews.forEach((review) => {
         const reviewElement = document.createElement("div");
         reviewElement.classList.add("p-4", "border", "rounded");
