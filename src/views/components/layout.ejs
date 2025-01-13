@@ -131,7 +131,7 @@
           </div>
           <% if (user) { %>
           <div class="flex items-center space-x-6">
-            <span class="text-gray-200">Welcome back, <%= user.email %></span>
+            <span class="text-gray-200">Welcome back, <%= user.fullname || user.email %></span>
             <a
               href="/users/logout"
               class="text-gray-200 hover:text-white transition"
