@@ -10,7 +10,7 @@ module.exports = {
 
     new OKResponse({
       message: "Products fetched successfully",
-      metadata: { count, products },  
+      metadata: { count, products },
     }).send(res);
   },
 
