@@ -121,7 +121,23 @@ sortSelect.addEventListener("change", async (e) => {
 // Function to render products dynamically
 function renderProducts(products) {
   const productGrid = document.querySelector(".product-container");
-  productGrid.innerHTML = ""; // Clear existing products
+  const productsContainer = document.getElementById("products");
+  productGrid.innerHTML = "";
+
+  const existingEmptyMessage =
+    productsContainer.querySelector(".empty-message");
+  if (existingEmptyMessage) {
+    existingEmptyMessage.remove();
+  }
+
+  if (products.length === 0) {
+    const emptyHtml = `
+      <div class="empty-message">There is no matched product. Please try with another filter.</div>
+    `;
+    productsContainer.innerHTML += emptyHtml;
+    return;
+  }
+
   products.forEach((product) => {
     const productHTML = `
 			<div class="bg-white shadow rounded overflow-hidden group">
