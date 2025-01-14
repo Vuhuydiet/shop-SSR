@@ -12,7 +12,7 @@ class CloudService {
    *
    * @param {Express.Multer.File} file
    */
-  static async uploadImage(file) {
+static async uploadImage(file) {
     try {
       const res = await new Promise((resolve, reject) => {
         cloudinary.uploader
@@ -32,14 +32,15 @@ class CloudService {
         createdAt: res.created_at,
       };
     } catch (error) {
-      throw new InternalServerError("Failed to upload image to cloud");
+      console.log(error)
+      throw new InternalServerError("Failed to upload image to cloud: " + error.message);
     }
   }
 
   static async deleteImage(publicId) {
     const result = await cloudinary.uploader.destroy(publicId);
-    if (result.result !== "ok") {
-      throw new InternalServerError("Failed to delete image");
+    if (result.result !== "ok" && result.result !== "not found") {
+      throw new InternalServerError("Failed to delete image: " + error.message);
     }
   }
 }

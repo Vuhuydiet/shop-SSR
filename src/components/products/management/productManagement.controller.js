@@ -73,14 +73,21 @@ module.exports = {
     try {
       const { productId, ...updateData } = matchedData(req);
 
-      if (files.length > 0) {
-        const oldProduct = await productService.getProductById(productId);
+      console.log(updateData.productImages)
+      /**
+       * @type {Array<Express.Multer.File>} files
+       */
+      if (updateData.productImages) {
         await Promise.all(
-          oldProduct.productImages.map((img) =>
+          updateData.productImages.filter(image => image.publicId.length > 5).map((img) =>
             CloudService.deleteImage(img.publicId)
           )
         );
-
+        updateData.deletingImages = updateData.productImages.map((img) => img.imageId);
+        updateData.productImages = undefined;
+      }
+      const files = req.files || [];
+      if (files.length > 0) {
         const productImages = await Promise.all(
           files.map(async (file) => {
             const imageData = await CloudService.uploadImage(file);
@@ -92,6 +99,7 @@ module.exports = {
         );
         updateData.productImages = productImages;
       }
+      console.log(updateData)
 
       const product = await productService.updateProduct(productId, updateData);
 
