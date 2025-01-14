@@ -44,12 +44,22 @@ router.patch(
   "/:userId",
   passport.authenticate("jwt", { session: false }),
   authorize(["ADMIN"]),
-
   param("userId").isInt().toInt(),
   body("status").isIn(["ACTIVE", "BLOCK"]),
   handleValidationErrors,
 
   accountManagementController.updateUserStatus
 );
+
+router.get(
+    "/user-statistic",
+    passport.authenticate("jwt", { session: false }),
+    authorize(["ADMIN"]),
+
+    query("page").optional().isInt().toInt(),
+    query("pageSize").optional().isInt().toInt(),
+    handleValidationErrors,
+    accountManagementController.getUserStatistic
+)
 
 module.exports = router;
