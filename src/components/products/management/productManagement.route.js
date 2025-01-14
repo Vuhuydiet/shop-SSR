@@ -55,7 +55,7 @@ const queryValidator = () => {
     query("sortBy")
       .optional()
       .isString()
-      .isIn(["currentPrice", "quantity", "publishedAt", "totalPurchase"]),
+      .isIn(["currentPrice", "quantity", "publishedAt", "soldQuantity"]),
     query("order").optional().isString().isIn(["asc", "desc"]),
     query("offset").optional().isNumeric().toInt(),
     query("limit").optional().isNumeric().toInt(),
@@ -64,15 +64,12 @@ const queryValidator = () => {
 };
 
 router.get(
-  '/categories',
+  "/categories",
 
   productManagementController.getCategories
 );
 
-router.get(
-  '/brands',
-  productManagementController.getBrands
-);
+router.get("/brands", productManagementController.getBrands);
 
 // Get products list
 router.get(
