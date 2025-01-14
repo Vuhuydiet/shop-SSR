@@ -10,7 +10,17 @@ module.exports={
         const { totalRevenue, totalCount, revenue } = await orderService.getRevenueReport(startDate, endDate, page, pageSize, sortBy, order, timeRange);
 
         new OKResponse({
-            message: "Products fetched successfully",
+            message: "Revenue fetched successfully",
+            metadata: { totalRevenue, totalCount, revenue },
+        }).send(res);
+    },
+
+    getTopRevenueReportByProduct: async (req, res) => {
+        const {startDate, endDate, page = 1, pageSize = 10, sortBy = 'createdAt', order = 'desc', timeRange='day'} = req.query;
+        const { totalRevenue, totalCount, revenue } = await orderService.getTopRevenueReportByProduct(startDate, endDate, page, pageSize, sortBy, order, timeRange);
+
+        new OKResponse({
+            message: "Revenue fetched successfully",
             metadata: { totalRevenue, totalCount, revenue },
         }).send(res);
     }

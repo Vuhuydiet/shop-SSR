@@ -127,6 +127,89 @@ class OrderService {
     return { totalRevenue, totalCount, revenue };
   }
 
+  static async getTopRevenueReportByProduct(startDate, endDate, page, pageSize, sortBy, order, timeRange) {
+    const skip = (page - 1) * pageSize;
+
+    const groupByTime = (date) => {
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate)) {
+        throw new Error(`Invalid date format: ${date}`);
+      }
+
+      let startPeriod, endPeriod;
+      if (timeRange === 'day') {
+        startPeriod = format(startOfDay(parsedDate), 'yyyy-MM-dd');
+        endPeriod = startPeriod;
+      } else if (timeRange === 'week') {
+        startPeriod = format(startOfWeek(parsedDate), 'yyyy-MM-dd');
+        endPeriod = format(endOfWeek(parsedDate), 'yyyy-MM-dd');
+      } else if (timeRange === 'month') {
+        startPeriod = format(startOfMonth(parsedDate), 'yyyy-MM-dd');
+        endPeriod = format(endOfMonth(parsedDate), 'yyyy-MM-dd');
+      } else {
+        throw new Error('Invalid timeRange');
+      }
+
+      return { startPeriod, endPeriod };
+    };
+
+    const orders = await prisma.orderDetail.findMany({
+      where: {
+        order: {
+          createdAt: {
+            gte: new Date(startDate),
+            lte: new Date(endDate),
+          },
+          orderStatus: {
+            equals: 'PAID'
+          }
+        },
+      },
+      include: {
+        order: true,
+        product: true,
+      },
+    });
+
+    const groupedData = orders.reduce((result, order) => {
+      const { startPeriod, endPeriod } = groupByTime(order.order.createdAt);
+      const timeGroup = `${startPeriod} to ${endPeriod}`;
+      const productKey = `${order.productId}-${timeGroup}`;
+
+      if (!result[productKey]) {
+        result[productKey] = {
+          productId: order.productId,
+          productName: order.product.productName,
+          timeGroup,
+          totalRevenue: 0,
+          totalQuantity: 0,
+          orderCount: 0,
+        };
+      }
+
+      result[productKey].totalRevenue += order.quantity * order.priceAtPurchase;
+      result[productKey].totalQuantity += order.quantity;
+      result[productKey].orderCount += 1;
+
+      return result;
+    }, {});
+
+    const revenueData = Object.values(groupedData)
+        .sort((a, b) => (order === 'desc' ? b[sortBy] - a[sortBy] : a[sortBy] - b[sortBy]))
+        .slice(skip, skip + pageSize);
+
+    const totalRevenue = Object.values(groupedData).reduce((sum, item) => sum + item.totalRevenue, 0);
+    const totalCount = Object.values(groupedData).length;
+
+    return {
+      totalRevenue,
+      totalCount,
+      revenue: revenueData,
+    };
+  }
+
+
+
   static async getOrderById(orderId, userId) {
     const order = await prisma.order.findFirst({
       where: {

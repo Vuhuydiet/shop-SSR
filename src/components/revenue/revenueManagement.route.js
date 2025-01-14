@@ -10,4 +10,11 @@ router.get(
     revenueController.getRevenueReport
 )
 
+router.get(
+    "/api/topRevenueReportByProduct",
+    query("page").optional().isInt().toInt(),
+    query("pageSize").optional().isInt().toInt(),
+    revenueController.getTopRevenueReportByProduct
+)
+
 module.exports = router;
