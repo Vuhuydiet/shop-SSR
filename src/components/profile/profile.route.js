@@ -92,8 +92,6 @@ router.get(
     reviewController.getReviewsByUserId
 )
 
-
-
 router.post(
     "/uploadAvatar",
     isAuthenticated,
