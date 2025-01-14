@@ -4,6 +4,22 @@ const productService = require("./../product.service");
 const CloudService = require("../../clouds/cloud.service");
 
 module.exports = {
+  getBrands: async (req, res) => {
+    const brands = await productService.getAllBrands();
+    new OKResponse({
+      message: "Brands fetched successfully",
+      metadata: { brands },
+    }).send(res);
+  },
+
+  getCategories: async (req, res) => {
+    const categories = await productService.getAllCategories();
+    new OKResponse({
+      message: "Categories fetched successfully",
+      metadata: { categories },
+    }).send(res);
+  },
+
   getProducts: async (req, res) => {
     const query = matchedData(req);
     const { count, products } = await productService.getAllProducts(query);

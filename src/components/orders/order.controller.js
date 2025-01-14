@@ -1,6 +1,5 @@
 const OrderService = require("./order.service");
 const { SuccessResponse } = require("../../core/SuccessResponse");
-const { ErrorResponse } = require("../../core/ErrorResponse");
 
 class OrderController {
   static async getUserOrders(req, res, next) {
