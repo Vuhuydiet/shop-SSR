@@ -30,6 +30,12 @@ function generateSearchParams(config = {}) {
   const formData = new FormData(form);
   const searchParams = new URLSearchParams();
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const existingSearchTerm = urlParams.get("searchTerm");
+  if (existingSearchTerm) {
+    formData.set("searchTerm", existingSearchTerm);
+  }
+
   for (const [field, options] of Object.entries(config)) {
     const { isArray, customHandler } = options;
 
@@ -62,6 +68,7 @@ function generateSearchParams(config = {}) {
 async function fetchProducts(page = 1, query = {}) {
   try {
     const existingParams = new URLSearchParams(window.location.search);
+    console.log("Search Params:", existingParams.toString());
 
     const searchParams = new URLSearchParams({
       ...Object.fromEntries(existingParams.entries()),
@@ -78,7 +85,6 @@ async function fetchProducts(page = 1, query = {}) {
     updateURL(searchParams.toString());
     renderProducts(data.products);
     renderPagination(data.currentPage, data.totalPages, query);
-    //renderFilter(query);
   } catch (error) {
     console.error("Error fetching products:", error);
     alert("Failed to fetch products. Please try again.");
@@ -101,41 +107,6 @@ form.addEventListener("submit", async (e) => {
   await fetchProducts(1, Object.fromEntries(searchParams.entries()));
 });
 
-function renderFilter(query) {
-  const categories = query.categories || [];
-  const brands = query.brands || [];
-  const minPrice = query.minPrice || "";
-  const maxPrice = query.maxPrice || "";
-  const minRating = query.minRating || "";
-  const maxRating = query.maxRating || "";
-  const sortBy = query.sortBy || "";
-  const order = query.order || "";
-
-  document.getElementById("minPrice").value = minPrice;
-  document.getElementById("maxPrice").value = maxPrice;
-  document.getElementById("minRating").value = minRating;
-  document.getElementById("maxRating").value = maxRating;
-
-  const categoryCheckboxes = document.querySelectorAll(
-    'input[name="categories"]'
-  );
-  categoryCheckboxes.forEach((checkbox) => {
-    if (categories.includes(checkbox.value)) {
-      checkbox.checked = true;
-    }
-  });
-
-  const brandCheckboxes = document.querySelectorAll('input[name="brands"]');
-  brandCheckboxes.forEach((checkbox) => {
-    if (brands.includes(checkbox.value)) {
-      checkbox.checked = true;
-    }
-  });
-
-  const sortSelect = document.getElementById("sort");
-  sortSelect.value = sortBy ? `${sortBy}-${order}` : "";
-}
-
 const sortSelect = document.getElementById("sort");
 sortSelect.addEventListener("change", async (e) => {
   const searchParams = generateSearchParams(config);
@@ -150,7 +121,23 @@ sortSelect.addEventListener("change", async (e) => {
 // Function to render products dynamically
 function renderProducts(products) {
   const productGrid = document.querySelector(".product-container");
-  productGrid.innerHTML = ""; // Clear existing products
+  const productsContainer = document.getElementById("products");
+  productGrid.innerHTML = "";
+
+  const existingEmptyMessage =
+    productsContainer.querySelector(".empty-message");
+  if (existingEmptyMessage) {
+    existingEmptyMessage.remove();
+  }
+
+  if (products.length === 0) {
+    const emptyHtml = `
+      <div class="empty-message">There is no matched product. Please try with another filter.</div>
+    `;
+    productsContainer.innerHTML += emptyHtml;
+    return;
+  }
+
   products.forEach((product) => {
     const productHTML = `
 			<div class="bg-white shadow rounded overflow-hidden group">
@@ -184,7 +171,6 @@ function renderProducts(products) {
   });
 }
 
-// Function to render pagination dynamically
 function renderPagination(currentPage, totalPages, query) {
   const paginationContainer = document.querySelector(".pagination-container");
   paginationContainer.innerHTML = ""; // Clear existing pagination

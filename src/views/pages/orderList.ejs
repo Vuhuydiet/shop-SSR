@@ -128,7 +128,7 @@
                 method="POST"
                 class="inline"
               >
-                <button type="submit" class="text-red-600 hover:text-red-900">
+                <button type="submit" id="cancelButton" class="text-red-600 hover:text-red-900">
                   Cancel
                 </button>
               </form>
@@ -270,5 +270,41 @@
         window.location.href = window.location.pathname;
       });
     }
+
+    document.querySelectorAll('form[action*="/cancel"]').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!confirm('Are you sure you want to cancel this order?')) {
+        return;
+      }
+
+      const orderId = form.action.split('/').pop().replace('/cancel', '');
+      
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to cancel order');
+
+        // Update UI
+        const statusCell = form.closest('tr').querySelector('td:nth-child(3) span');
+        statusCell.className = 'px-3 py-1 inline-flex items-center justify-center text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800';
+        statusCell.textContent = 'CANCELLED';
+        
+        form.remove();
+
+        alert('Order cancelled successfully');
+        
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to cancel order. Please try again.');
+      }
+    });
+  });
   });
 </script>
