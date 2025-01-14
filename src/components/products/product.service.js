@@ -191,19 +191,31 @@ class ProductService {
         brand: true,
         category: true,
       },
-      select: productSelect,
+      include: {
+        productImages: true,
+        brand: true,
+        category: true,
+      },
     });
   }
 
-  async updateProduct(productId, data) {
-    const { productImages, ...updateData } = data;
+  static async updateProduct(productId, data) {
+    const { productImages, deletingImages, ...updateData } = data;
 
     // new images provided
-    if (productImages) {
+    console.log(deletingImages)
+    console.log(productImages)
+    if (deletingImages) {
       await prisma.productImage.deleteMany({
-        where: { productId },
+        where: {
+          imageId: {
+            in: deletingImages,
+          },
+        },
       });
+    }
 
+    if (productImages) {
       return prisma.product.update({
         where: { productId },
         data: {

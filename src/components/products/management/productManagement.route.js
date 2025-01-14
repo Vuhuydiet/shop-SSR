@@ -110,9 +110,6 @@ router.post(
   body("currentPrice").isInt().toInt(),
   body("originalPrice").isInt().toInt(),
   body("status").optional().isIn(["PUBLISHED", "UNPUBLISHED"]),
-  body("productImages").isArray(),
-  body("productImages.*.publicId").isString(),
-  body("productImages.*.url").isString(),
   handleValidationErrors,
 
   productManagementController.createProduct
@@ -134,6 +131,7 @@ router.patch(
   body("currentPrice").optional().isInt().toInt(),
   body("originalPrice").optional().isInt().toInt(),
   body("status").optional().isIn(["PUBLISHED", "UNPUBLISHED", "DELETED"]),
+  body("productImages").optional().customSanitizer(JSON.parse),
   body("productImages").optional().isArray(),
   body("productImages.*.publicId").optional().isString(),
   body("productImages.*.url").optional().isString(),
