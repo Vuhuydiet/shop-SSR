@@ -79,6 +79,54 @@ class ReviewService {
     return { count, reviews };
   }
 
+  static async getReviewsByUserId(userId, { limit, offset, rating, sortBy, order }) {
+    const [count, reviews] = await Promise.all([
+      prisma.review.count({
+        where: { userId }
+      }),
+      prisma.review.findMany({
+        where: {
+          userId,
+          rating: rating
+        },
+        take: limit,
+        skip: offset,
+        orderBy: sortBy && {
+          [sortBy]: order,
+        },
+        include: {
+          user: {
+            select: {
+              avatarUrl: true,
+              email: true,
+              fullname: true
+            }
+          },
+          /*
+          product: {
+            select: {
+              productName: true
+            }
+          }
+           */
+        }
+      })
+    ]);
+    return { count, reviews };
+  }
+
+  static async getProductById(productId) {
+    const product = await prisma.product.findUnique({
+      where: { productId },
+    });
+
+    if (!product) {
+      throw new NotFoundError("Product does not exist");
+    }
+
+    return product;
+  }
+
   static async deleteReivew(userId, reviewId) {
     const review = await prisma.review.findUnique({ where: { reviewId } });
 

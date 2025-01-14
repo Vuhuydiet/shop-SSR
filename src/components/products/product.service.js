@@ -55,6 +55,7 @@ function getCondition(queryParams) {
   console.log("Brands:", brands);
 
   return {
+    status: queryParams.status,
     OR: (queryParams.categories || queryParams.brands) && [
       {
         categoryId: queryParams.categories && { in: queryParams.categories },
@@ -126,7 +127,29 @@ class ProductService {
 
   static async getAllProducts(queryParams = {}) {
     const condition = getCondition(queryParams);
-    console.log("Condition:", condition);
+
+    if (queryParams.searchTerm) {
+      condition.AND = [
+        ...(condition.AND || []),
+        {
+          OR: [
+            {
+              productName: {
+                contains: queryParams.searchTerm,
+                mode: "insensitive",
+              },
+            },
+            {
+              productDescription: {
+                contains: queryParams.searchTerm,
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
+      ];
+    }
+    console.log("Condition:", condition); // TODO: Removetodo
     const [count, products] = await Promise.all([
       prisma.product.count({
         where: condition,
@@ -149,6 +172,85 @@ class ProductService {
       }),
     ]);
     return { count, products };
+  }
+
+  // Admin routes
+
+  static async createProduct(productData) {
+    const { productImages, ...data } = productData;
+
+    return prisma.product.create({
+      data: {
+        ...data,
+        productImages: {
+          create: productImages,
+        },
+      },
+      include: {
+        productImages: true,
+        brand: true,
+        category: true,
+      },
+      include: {
+        productImages: true,
+        brand: true,
+        category: true,
+      },
+    });
+  }
+
+  static async updateProduct(productId, data) {
+    const { productImages, deletingImages, ...updateData } = data;
+
+    // new images provided
+    console.log(deletingImages)
+    console.log(productImages)
+    if (deletingImages) {
+      await prisma.productImage.deleteMany({
+        where: {
+          imageId: {
+            in: deletingImages,
+          },
+        },
+      });
+    }
+
+    if (productImages) {
+      return prisma.product.update({
+        where: { productId },
+        data: {
+          ...updateData,
+          productImages: {
+            create: productImages,
+          },
+        },
+        include: {
+          productImages: true,
+          brand: true,
+          category: true,
+        },
+      });
+    }
+
+    return prisma.product.update({
+      where: { productId },
+      data: updateData,
+      include: {
+        productImages: true,
+        brand: true,
+        category: true,
+      },
+    });
+  }
+
+  async deleteProduct(productId) {
+    await prisma.productImage.deleteMany({
+      where: { productId },
+    });
+
+    return prisma.product.delete({
+      where: { productId },
+    });
   }
 }
 

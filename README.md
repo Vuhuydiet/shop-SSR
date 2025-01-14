@@ -28,7 +28,13 @@ npm run seed                 # For seeding data
 psql -U <username> -d <db name> < node_modules/connect-pg-simple/table.sql
 ```
 
-4. Start the server:
+4. Generate JWT key pairs
+
+```zsh
+npm run genkey
+```
+
+5. Start the server:
 
 ```zsh
 npm run dev

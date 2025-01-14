@@ -64,4 +64,8 @@ module.exports = {
     await CartService.deleteCartItem(userId, productId);
     new OKResponse("Cart item deleted").send(res);
   },
+  
+  checkout: async (req, res) => {
+    
+  }
 };

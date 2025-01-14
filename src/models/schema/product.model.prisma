@@ -1,60 +1,51 @@
 model Category {
-  categoryId   Int     @id @default(autoincrement())
-  categoryName String  @unique
+  categoryId   Int       @id @default(autoincrement())
+  categoryName String    @unique
   description  String?
-
-  products Product[]
+  products     Product[]
 }
 
 model Brand {
-  brandId     Int     @id @default(autoincrement())
-  brandName   String  @unique
+  brandId     Int       @id @default(autoincrement())
+  brandName   String    @unique
   description String?
-
   imageUrl    String?
   publicImgId String?
+  products    Product[]
+}
 
-  products Product[]
+model Product {
+  productId          Int            @id @default(autoincrement())
+  productName        String
+  productDescription String?
+  publishedAt        DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  status             ProductStatus  @default(PUBLISHED)
+  brandId            Int
+  categoryId         Int
+  stock              Int            @default(0)
+  currentPrice       Int
+  originalPrice      Int
+  soldQuantity       Int            @default(0)
+  rating             Float          @default(5)
+  numReviews         Int            @default(0)
+  itemInCarts        CartItem[]
+  orderDetails       OrderDetail[]
+  brand              Brand          @relation(fields: [brandId], references: [brandId])
+  category           Category       @relation(fields: [categoryId], references: [categoryId])
+  productImages      ProductImage[]
+}
+
+model ProductImage {
+  imageId   Int     @id @default(autoincrement())
+  productId Int
+  publicId  String
+  url       String
+  product   Product @relation(fields: [productId], references: [productId])
 }
 
 enum ProductStatus {
   PUBLISHED
   UNPUBLISHED
   DELETED
-}
-
-model Product {
-  productId          Int      @id @default(autoincrement())
-  productName        String
-  productDescription String?
-  publishedAt        DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  status             ProductStatus @default(PUBLISHED)
-
-  brandId    Int
-  categoryId Int
-
-  stock         Int @default(0)
-  currentPrice  Int
-  originalPrice Int
-
-  soldQuantity Int   @default(0)
-  rating        Float @default(5)
-  numReviews   Int   @default(0)
-
-  category      Category       @relation(fields: [categoryId], references: [categoryId], onDelete: Restrict)
-  brand         Brand          @relation(fields: [brandId], references: [brandId], onDelete: Restrict)
-  productImages ProductImage[]
-  itemInCarts   CartItem[]
-  orderDetails  OrderDetail[]
-}
-
-model ProductImage {
-  imageId   Int @id @default(autoincrement())
-  productId Int
-
-  publicId String
-  url      String
-
-  product Product @relation(fields: [productId], references: [productId], onDelete: Restrict)
 }

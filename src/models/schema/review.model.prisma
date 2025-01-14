@@ -5,6 +5,5 @@ model Review {
   reviewContent String
   rating        Float    @default(1)
   createdAt     DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }

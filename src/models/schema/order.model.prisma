@@ -1,3 +1,30 @@
+model Order {
+  orderId       Int           @id @default(autoincrement())
+  userId        Int
+  totalAmount   Float
+  orderStatus   OrderStatus   @default(PENDING)
+  createdAt     DateTime      @default(now())
+  phoneNumber   String?
+  country       String
+  city          String
+  district      String
+  ward          String
+  addressDetail String?
+  paymentMethod PaymentMethod
+  user          User          @relation(fields: [userId], references: [userId])
+  details       OrderDetail[]
+}
+
+model OrderDetail {
+  orderId         Int
+  productId       Int
+  quantity        Int
+  priceAtPurchase Float
+  order           Order   @relation(fields: [orderId], references: [orderId])
+  product         Product @relation(fields: [productId], references: [productId])
+
+  @@id([orderId, productId])
+}
 
 enum OrderStatus {
   PENDING
@@ -5,37 +32,10 @@ enum OrderStatus {
   CONFIRMED
   SHIPPING
   DELIVERED
+  PAID
 }
 
-
-model Order {
-  orderId Int @id @default(autoincrement())
-  userId Int
-  totalAmount Float
-  orderStatus OrderStatus @default(PENDING)
-  createdAt DateTime @default(now())
-
-  phoneNumber String?
-  country String
-  city String
-  district String
-  ward String
-  addressDetail String?
-
-  user User @relation(fields: [userId], references: [userId], onDelete: Restrict)
-
-  details OrderDetail[]
+enum PaymentMethod {
+  COD
+  VNPAY
 }
-
-model OrderDetail {
-  orderId Int
-  productId Int
-  quantity Int
-  priceAtPurchase Float
-
-  @@id([orderId, productId])
-  
-  order Order @relation(fields: [orderId], references: [orderId], onDelete: Restrict)
-  product Product @relation(fields: [productId], references: [productId], onDelete: Restrict)
-}
-

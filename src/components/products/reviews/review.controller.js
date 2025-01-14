@@ -38,6 +38,19 @@ module.exports = {
     new OKResponse({ message: "Reviews found", metadata: { count, reviews } }).send(res);
   },
 
+  getReviewsByUserId: async (req, res) => {
+    const { limit, page, rating, sortBy, order } = matchedData(req);
+    const userId = req.user.userId;
+    const { count, reviews } = await ReviewService.getReviewsByUserId(userId, {
+      offset: (page - 1) * limit,
+      limit,
+      rating,
+      sortBy,
+      order,
+    });
+    new OKResponse({ message: "Reviews found", metadata: { count, reviews } }).send(res);
+  },
+
   deleteReview: async (req, res) => {
     const userId = req.user.userId;
     const reviewId = matchedData(req);

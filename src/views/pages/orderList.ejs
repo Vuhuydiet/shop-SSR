@@ -1,0 +1,310 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4 mt-6">
+    <h1 class="text-2xl font-bold">My Orders</h1>
+
+    <!-- Filters -->
+    <div class="flex gap-4">
+      <button
+        id="resetFilters"
+        type="button"
+        class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 flex items-center gap-2"
+      >
+        <i class="fas fa-times"></i>
+        Clear Filters
+      </button>
+      
+      <select id="statusFilter" name="status" class="form-select" value="<%= locals.query?.status || '' %>"
+        >
+        <option value="">All Status</option>
+        <option value="PENDING" <%= locals.query?.status === 'PENDING' ? 'selected' : '' %>>Pending</option>
+        <option value="CONFIRMED" <%= locals.query?.status === 'CONFIRMED' ? 'selected' : '' %>>Confirmed</option>
+        <option value="SHIPPING" <%= locals.query?.status === 'SHIPPING' ? 'selected' : '' %>>Shipping</option>
+        <option value="DELIVERED" <%= locals.query?.status === 'DELIVERED' ? 'selected' : '' %>>Delivered</option>
+        <option value="CANCELLED" <%= locals.query?.status === 'CANCELLED' ? 'selected' : '' %>>Cancelled</option>
+        <option value="PAID" <%= locals.query?.status === 'PAID' ? 'selected' : '' %>>Paid</option>
+      </select>
+
+      <input
+        type="date"
+        name="startDate"
+        id="startDate"
+        class="form-input"
+        placeholder="From Date"
+        value="<%= locals.query?.startDate || '' %>"
+      />
+      <input
+        type="date"
+        name="endDate"
+        id="endDate"
+        class="form-input"
+        placeholder="To Date"
+        value="<%= locals.query?.endDate || '' %>"
+      />
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="bg-white rounded-lg shadow overflow-hidden w-full">
+    <table class="w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Order ID
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Date
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Status
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Total
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Payment
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% orders.forEach(order => { %>
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">
+              #<%= order.orderId %>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <%= new Date(order.createdAt).toLocaleDateString() %>
+            </div>
+            <div class="text-sm text-gray-500">
+              <%= new Date(order.createdAt).toLocaleTimeString() %>
+            </div>
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap">
+            <span
+              class="px-3 py-1 inline-flex items-center justify-center text-xs leading-5 font-semibold rounded-full <%= order.orderStatus === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : '' %> <%= order.orderStatus === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' : '' %> <%= order.orderStatus === 'SHIPPING' ? 'bg-indigo-100 text-indigo-800' : '' %> <%= order.orderStatus === 'DELIVERED' ? 'bg-green-100 text-green-800' : '' %> <%= order.orderStatus === 'CANCELLED' ? 'bg-red-100 text-red-800' : '' %> <%= order.orderStatus === 'PAID' ? 'bg-purple-100 text-purple-800' : '' %>"
+            >
+              <%= order.orderStatus %>
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">
+              $<%= order.totalAmount.toFixed(2) %>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900"><%= order.paymentMethod %></div>
+          </td>
+          <td
+            class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+          >
+            <!-- Actions based on status -->
+            <div class="flex gap-2">
+              <a
+                href="/orders/<%= order.orderId %>"
+                class="text-indigo-600 hover:text-indigo-900"
+                >View</a
+              >
+              <% if (order.orderStatus === 'PENDING') { %>
+              <form
+                action="/orders/<%= order.orderId %>/cancel"
+                method="POST"
+                class="inline"
+              >
+                <button type="submit" id="cancelButton" class="text-red-600 hover:text-red-900">
+                  Cancel
+                </button>
+              </form>
+              <% } %>
+            </div>
+          </td>
+        </tr>
+        <!-- Expandable Details -->
+        <tr class="bg-gray-50">
+          <td colspan="6" class="px-6 py-4">
+            <div class="text-sm text-gray-500">
+              <strong>Shipping Address:</strong>
+              <%= order.addressDetail %>, <%= order.ward %>, <%= order.district
+              %>, <%= order.city %>, <%= order.country %> <% if
+              (order.phoneNumber) { %> | <strong>Phone:</strong> <%=
+              order.phoneNumber %> <% } %>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <% const startPage = Math.max(currentPage - 2, 1); const endPage =
+  Math.min(currentPage + 2, totalPages) %>
+  <div class="mt-4 flex items-center justify-between">
+    <div class="sm:flex-1 sm:flex sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm text-gray-700">
+          Showing page <span class="font-medium"><%= currentPage %></span> of
+          <span class="font-medium"><%= totalPages %></span>
+        </p>
+      </div>
+      <nav
+        class="relative z-0 inline-flex items-center space-x-2"
+        aria-label="Pagination"
+      >
+        <!-- Previous Button -->
+        <% if (currentPage > 1) { %>
+        <a
+          href="?page=<%= currentPage - 1 %>"
+          class="w-10 justify-center relative inline-flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+        >
+          <i class="fas fa-chevron-left"></i>
+        </a>
+        <% } %>
+
+        <!-- First Page -->
+        <% if (startPage > 1) { %>
+        <a
+          href="?page=1"
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+          >1</a
+        >
+
+        <% if (startPage > 2) { %>
+        <span
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700"
+          >...</span
+        >
+        <% } %> <% } %>
+
+        <!-- Page Numbers -->
+        <% for(let i = startPage; i <= endPage; i++) { %>
+        <a
+          href="?page=<%= i %>"
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 rounded-md border text-sm font-medium transition-colors <%= currentPage === i ? 'bg-primary border-primary text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50' %>"
+        >
+          <%= i %>
+        </a>
+        <% } %>
+
+        <!-- Last Pages -->
+        <% if (endPage < totalPages) { %> <% if (endPage < totalPages - 1) { %>
+        <span
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700"
+          >...</span
+        >
+        <% } %>
+        <a
+          href="?page=<%= totalPages %>"
+          class="w-10 justify-center mx-2 relative inline-flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+          ><%= totalPages %></a
+        >
+        <% } %>
+
+        <!-- Next Button -->
+        <% if (currentPage < totalPages) { %>
+        <a
+          href="?page=<%= currentPage + 1 %>"
+          class="w-10 justify-center relative inline-flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+        >
+          <i class="fas fa-chevron-right"></i>
+        </a>
+        <% } %>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const filterForm = document.getElementById("filterForm");
+    const statusFilter = document.getElementById("statusFilter");
+    const startDate = document.getElementById("startDate");
+    const endDate = document.getElementById("endDate");
+    const resetFilters = document.getElementById("resetFilters");
+
+    const params = new URLSearchParams(window.location.search);
+    statusFilter.value = params.get("status") || "";
+    startDate.value = params.get("startDate") || "";
+    endDate.value = params.get("endDate") || "";
+
+    const updateFilters = () => {
+      const params = new URLSearchParams(window.location.search);
+
+      params.set("page", 1);
+
+      if (statusFilter.value) params.set("status", statusFilter.value);
+      else params.delete("status");
+
+      if (startDate.value) params.set("startDate", startDate.value);
+      else params.delete("startDate");
+
+      if (endDate.value) params.set("endDate", endDate.value);
+      else params.delete("endDate");
+
+      window.location.href = `${window.location.pathname}?${params.toString()}`;
+    };
+
+    statusFilter.addEventListener("change", updateFilters);
+    startDate.addEventListener("change", updateFilters);
+    endDate.addEventListener("change", updateFilters);
+    
+    if (resetFilters) {
+      resetFilters.addEventListener("click", () => {
+        window.location.href = window.location.pathname;
+      });
+    }
+
+    document.querySelectorAll('form[action*="/cancel"]').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!confirm('Are you sure you want to cancel this order?')) {
+        return;
+      }
+
+      const orderId = form.action.split('/').pop().replace('/cancel', '');
+      
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to cancel order');
+
+        // Update UI
+        const statusCell = form.closest('tr').querySelector('td:nth-child(3) span');
+        statusCell.className = 'px-3 py-1 inline-flex items-center justify-center text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800';
+        statusCell.textContent = 'CANCELLED';
+        
+        form.remove();
+
+        alert('Order cancelled successfully');
+        
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to cancel order. Please try again.');
+      }
+    });
+  });
+  });
+</script>

@@ -2,9 +2,10 @@ const prisma = require("../../models");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const logger = require("../../libraries/logger");
-const { getHashedPassword } = require("./password");
+const { getHashedPassword, validatePassword} = require("./password");
 const env = require("../../config/env");
 const { InternalServerError } = require("../../core/ErrorResponse");
+const {format, startOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth} = require("date-fns");
 
 const otpMap = new Map();
 
@@ -64,6 +65,19 @@ const accountService = {
     return user;
   },
 
+  createUser: async (user) => {
+    const { email, fullname, oauthId, oauthProvider, hashedPassword } = user;
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        fullname,
+        oauthId,
+        oauthProvider,
+        hashedPassword,
+      },
+    });
+  },
+
   confirmUser: async (email, confirmationCode) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
@@ -83,6 +97,17 @@ const accountService = {
       }
     }
     return false;
+  },
+
+  updateUser: async (email, fullName, numberPhone) => {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (user) {
+      await prisma.user.update({
+        where: { email },
+        data: { fullname: fullName, phoneNumber: numberPhone },
+      });
+      return true;
+    }
   },
 
   resetPassword: async (email) => {
@@ -105,9 +130,36 @@ const accountService = {
     }
   },
 
+  updateAvatar: async (email, publicImgId, avatarUrl) => {
+    const user = await prisma.user.findUnique({where: {email}});
+    if (user) {
+      await prisma.user.update({
+        where: {email},
+        data: {publicImgId: publicImgId, avatarUrl: avatarUrl},
+      });
+      return true
+    }
+    return false;
+  },
+
+  changePassword: async (email, oldPassword, newPassword) => {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (user) {
+      if (validatePassword(oldPassword, user.hashedPassword)) {
+        const hashedPassword = getHashedPassword(newPassword);
+        await prisma.user.update({
+          where: { email },
+          data: { hashedPassword: hashedPassword },
+        });
+        return true;
+      }
+    }
+    return false;
+  },
+
   updatePassword: async (email, resetPasswordToken, newPassword) => {
     const user = await prisma.user.findUnique({ where: { email } });
-
+    console.log(validatePassword("Thuong@123456", user.hashedPassword));
     if (user) {
       const otpData = otpMap.get(user.userId);
       if (
@@ -118,7 +170,7 @@ const accountService = {
         const hashedPassword = getHashedPassword(newPassword);
         await prisma.user.update({
           where: { email },
-          data: { password: hashedPassword },
+          data: { hashedPassword: hashedPassword },
         });
         otpMap.delete(user.userId);
         return true;
@@ -158,6 +210,58 @@ const accountService = {
     }
   },
 
+  /**
+   *
+   * @param {{
+   * key?: string,
+   * fullname?: string,
+   * email?: string,
+   * confirmed?: boolean,
+   * status?: 'ACTIVE' | 'BLOCK'
+   * sortBy?: 'createdAt' | 'fullname' | 'email',
+   * order?: 'asc' | 'desc',
+   * limit?: number,
+   * offset?: number
+   * }} query
+   */
+  getUsers: async (query) => {
+    const condition = {
+      OR: query.key ? [
+        { fullname: { contains: query.key } },
+        { email: { contains: query.key } },
+      ] : undefined,
+      fullname: query.fullname ? { contains: query.fullname } : undefined,
+      email: query.email ? { contains: query.email } : undefined,
+      status: query.status,
+      confirmed: query.confirmed,
+    };
+    console.log({
+      where: condition,
+      orderBy: query.sortBy ? { [query.sortBy]: query.order } : undefined,
+      take: query.limit,
+      skip: query.offset,
+    });
+
+    const [count, users] = await prisma.$transaction([
+      prisma.user.count({ where: condition }),
+      prisma.user.findMany({
+        where: condition,
+        orderBy: query.sortBy ? { [query.sortBy]: query.order } : undefined,
+        take: query.limit,
+        skip: query.offset,
+      }),
+    ]);
+
+    return { count, users };
+  },
+
+  updateAccountStatus: async (userId, status) => {
+    return await prisma.user.update({
+      where: { userId },
+      data: { status },
+    });
+  },
+
   updateLastLogin: async (userId) => {
     try {
       return await prisma.user.update({
@@ -168,6 +272,125 @@ const accountService = {
       logger.error(`Error updating last login: ${error.message}`);
       throw new InternalServerError({ error: error });
     }
+  },
+
+  findAdminByAdminId: async (adminId) => {
+    const admin = await prisma.admin.findUnique({ where: { adminId } });
+    return admin;
+  },
+
+  findAdminByUsername: async (username) => {
+    const admin = await prisma.admin.findUnique({ where: { username } });
+    return admin;
+  },
+
+  getUserStatistic: async (startDate, endDate, page, pageSize, sortBy, order, timeRange) => {
+    const skip = (page - 1) * pageSize;
+    console.log(startDate, endDate, page, pageSize, sortBy, order, timeRange);
+
+    const users = await prisma.user.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        },
+        status: {
+          equals: 'ACTIVE'
+        }
+      },
+      skip: skip,
+      take: pageSize,
+      orderBy: {
+        [sortBy]: order,
+      },
+    });
+
+    const groupByTime = (date) => {
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate)) {
+        throw new Error(`Invalid date format: ${date}`);
+      }
+
+      let startPeriod, endPeriod;
+      if (timeRange === 'day') {
+        startPeriod = format(startOfDay(parsedDate), 'yyyy-MM-dd');
+        endPeriod = startPeriod;
+      } else if (timeRange === 'week') {
+        startPeriod = format(startOfWeek(parsedDate), 'yyyy-MM-dd');
+        endPeriod = format(endOfWeek(parsedDate), 'yyyy-MM-dd');
+      } else if (timeRange === 'month') {
+        startPeriod = format(startOfMonth(parsedDate), 'yyyy-MM-dd');
+        endPeriod = format(endOfMonth(parsedDate), 'yyyy-MM-dd');
+      } else {
+        throw new Error('Invalid timeRange');
+      }
+
+      return { startPeriod, endPeriod };
+    };
+
+    const groupedData = users.reduce((result, user) => {
+      const { startPeriod, endPeriod } = groupByTime(user.createdAt);
+
+      const timeGroup = `${startPeriod} to ${endPeriod}`;
+
+      if (!result[timeGroup]) {
+        result[timeGroup] = { newUserCount: 0 };
+      }
+
+      result[timeGroup].newUserCount += 1;
+
+      return result;
+    }, {});
+
+
+    const userStatistic = Object.keys(groupedData).map((key) => ({
+      timeGroup: key,
+      newUserCount: groupedData[key].newUserCount,
+    }));
+
+
+    const newUserCount = await prisma.user.count({
+      where: {
+        createdAt: {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        },
+      },
+    });
+    return { newUserCount, userStatistic };
+  },
+
+  /**
+   *
+   * @param {{
+   * key?: string,
+   * sortBy?: string,
+   * order?: 'ASC' | 'DESC',
+   * limit?: number,
+   * offset?: number
+   * }} query
+   */
+  getAdmins: async (query) => {
+    const count = await prisma.admin.count({
+      where: query.key ? {
+        OR: [
+          { fullname: { contains: query.key } },
+          { email: { contains: query.key } },
+        ],
+      } : undefined
+    });
+    const admins = await prisma.admin.findMany({
+      where: query.key ? {
+        OR: [
+          { fullname: { contains: query.key } },
+          { email: { contains: query.key } },
+        ],
+      } : undefined,
+      orderBy: query.sortBy ? { [query.sortBy]: query.order ?? 'ASC' } : undefined,
+      take: query.limit,
+      skip: query.offset,
+    });
+    return { count, admins };
   },
 };
 

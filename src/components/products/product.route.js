@@ -7,6 +7,7 @@ const {
 } = require("../../libraries/validator/validator");
 const { query, param } = require("express-validator");
 const reviewController = require("./reviews/review.controller");
+const { product } = require("../../models");
 
 const queryValidator = () => {
   return [
@@ -45,6 +46,10 @@ const queryValidator = () => {
     query("maxRating").optional().isNumeric().toFloat(),
     query("minQuantity").optional().isNumeric().toInt(),
     query("maxQuantity").optional().isNumeric().toInt(),
+    query("status")
+      .optional()
+      .isString()
+      .isIn(["PUBLISHED", "UNPUBLISHED", "DELETED"]),
     query("sortBy")
       .optional()
       .isString()
@@ -52,6 +57,7 @@ const queryValidator = () => {
     query("order").optional().isString().isIn(["asc", "desc"]),
     query("offset").optional().isNumeric().toInt(),
     query("limit").optional().isNumeric().toInt(),
+    query("searchTerm").optional().isString(),
   ];
 };
 
