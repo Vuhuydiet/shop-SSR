@@ -5,6 +5,7 @@ const logger = require("../../libraries/logger");
 const { getHashedPassword, validatePassword} = require("./password");
 const env = require("../../config/env");
 const { InternalServerError } = require("../../core/ErrorResponse");
+const {format, startOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth} = require("date-fns");
 
 const otpMap = new Map();
 
@@ -281,6 +282,82 @@ const accountService = {
   findAdminByUsername: async (username) => {
     const admin = await prisma.admin.findUnique({ where: { username } });
     return admin;
+  },
+
+  getUserStatistic: async (startDate, endDate, page, pageSize, sortBy, order, timeRange) => {
+    const skip = (page - 1) * pageSize;
+    console.log(startDate, endDate, page, pageSize, sortBy, order, timeRange);
+
+    const users = await prisma.user.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        },
+        status: {
+          equals: 'ACTIVE'
+        }
+      },
+      skip: skip,
+      take: pageSize,
+      orderBy: {
+        [sortBy]: order,
+      },
+    });
+
+    const groupByTime = (date) => {
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate)) {
+        throw new Error(`Invalid date format: ${date}`);
+      }
+
+      let startPeriod, endPeriod;
+      if (timeRange === 'day') {
+        startPeriod = format(startOfDay(parsedDate), 'yyyy-MM-dd');
+        endPeriod = startPeriod;
+      } else if (timeRange === 'week') {
+        startPeriod = format(startOfWeek(parsedDate), 'yyyy-MM-dd');
+        endPeriod = format(endOfWeek(parsedDate), 'yyyy-MM-dd');
+      } else if (timeRange === 'month') {
+        startPeriod = format(startOfMonth(parsedDate), 'yyyy-MM-dd');
+        endPeriod = format(endOfMonth(parsedDate), 'yyyy-MM-dd');
+      } else {
+        throw new Error('Invalid timeRange');
+      }
+
+      return { startPeriod, endPeriod };
+    };
+
+    const groupedData = users.reduce((result, user) => {
+      const { startPeriod, endPeriod } = groupByTime(user.createdAt);
+
+      const timeGroup = `${startPeriod} to ${endPeriod}`;
+
+      if (!result[timeGroup]) {
+        result[timeGroup] = { newUserCount: 0 };
+      }
+
+      result[timeGroup].newUserCount += 1;
+
+      return result;
+    }, {});
+
+
+    const userStatistic = Object.keys(groupedData).map((key) => ({
+      timeGroup: key,
+      newUserCount: groupedData[key].newUserCount,
+    }));
+
+
+    const newUserCount = await prisma.user.count({
+      where: {
+        createdAt: {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        },
+      },
+    });
+    return { newUserCount, userStatistic };
   },
 
   /**

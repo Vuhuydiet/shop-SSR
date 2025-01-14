@@ -1,6 +1,7 @@
 const { matchedData } = require("express-validator");
 const { OKResponse } = require("../../../core/SuccessResponse");
 const accountService = require("../account.service");
+const orderService = require("../../orders/order.service");
 
 module.exports = {
   getUsers: async (req, res) => {
@@ -43,4 +44,15 @@ module.exports = {
       message: "User status updated successfully",
     }).send(res);
   },
+
+  getUserStatistic: async (req, res) => {
+    const {startDate, endDate, page = 1, pageSize = 10, sortBy = 'createdAt', order = 'desc', timeRange='day'} = req.query;
+    const { newUserCount, userStatistic } = await accountService.getUserStatistic(startDate, endDate, page, pageSize, sortBy, order, timeRange);
+
+    new OKResponse({
+      message: "User fetched successfully",
+      metadata: { newUserCount, userStatistic },
+    }).send(res);
+  },
+
 };
