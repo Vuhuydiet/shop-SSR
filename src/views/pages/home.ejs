@@ -239,16 +239,11 @@
 
 <%- include('../components/popup') %>
 
-<div id="isAuthenticated" style="display: none">
-  <%= (user ? 'true' : 'false') %>
-</div>
-
 <script src="/scripts/requests.js"></script>
 <script src="/scripts/handleAddToCart.js"></script>
 
 <script>
-  const isAuthenticated =
-    document.getElementById("isAuthenticated").textContent.includes("true");
+  const isAuthenticated = "<%= (user ? 'true' : 'false') %>" === 'true';
 
   const popup = document.getElementById("popup");
   const popupHeader = document.querySelector("#popup .popup-header");

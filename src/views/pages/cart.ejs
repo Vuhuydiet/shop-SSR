@@ -142,17 +142,11 @@
 </div>
 <!-- ./cart wrapper -->
 
-<div class="isAuthenticated" style="display: none">
-  <%= (user ? 'true' : 'false') %>
-</div>
-
 <script src="/scripts/requests.js"></script>
 <script src="/scripts/handleAddToCart.js"></script>
 
 <script>
-  const isAuthenticated = document
-    .querySelector(".isAuthenticated")
-    .innerText.includes("true");
+  const isAuthenticated = "<%= user ? 'true' : 'false' %>" === 'true';
   const subtotal = document.querySelector(".subtotal");
   const total = document.querySelector(".total");
 
