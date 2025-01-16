@@ -217,10 +217,6 @@
 
     </script>
 
-    <div class="isAuthenticated" style="display: none">
-        <%= (user ? 'true' : 'false') %>
-    </div>
-
     <script src="/scripts/requests.js"></script>
     <script src="/scripts/handleAddToCart.js"></script>
     <script>
@@ -232,7 +228,7 @@
         const popupHeader = document.querySelector("#popup .popup-header");
         const popupContent = document.querySelector("#popup .popup-content");
 
-        const isAuthenticated = !!"<%= (user ? 'true' : 'false') %>";
+        const isAuthenticated = "<%= (user ? 'true' : 'false') %>" === 'true';
         const productId = +"<%= product.productId %>";
 
         subQuantity.addEventListener("click", () => {
@@ -247,7 +243,7 @@
 
         addToCart.addEventListener("click", async () => {
             const quantityNumber = parseInt(quantity.textContent);
-
+            console.log('bjhkk jhkjh g787')
             try {
                 await handleAddToCart(productId, quantityNumber, isAuthenticated);
                 popupHeader.textContent = "Success";
