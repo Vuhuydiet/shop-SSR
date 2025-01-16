@@ -192,9 +192,14 @@ const accountService = {
     }
   },
 
-  findUserByEmail: async (email) => {
+  findUserByEmail: async (email, checkActive = false) => {
     try {
-      return await prisma.user.findUnique({ where: { email } });
+      return await prisma.user.findUnique({ 
+        where: { 
+          email,
+          status: checkActive ? 'ACTIVE' : undefined, 
+        } 
+      });
     } catch (error) {
       logger.error(`Error getting user by email: ${error.message}`);
       throw new InternalServerError({ error: error });

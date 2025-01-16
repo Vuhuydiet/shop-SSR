@@ -73,6 +73,7 @@ async function fetchProducts(page = 1, query = {}) {
     const searchParams = new URLSearchParams({
       ...Object.fromEntries(existingParams.entries()),
       ...query,
+      status: "PUBLISHED",
       page,
       limit: PAGE_SIZE,
     });
