@@ -20,16 +20,13 @@
     <div>
         <img src="<%= product.productImages[0]?.url %>" alt="product" class="w-full" />
         <div class="grid grid-cols-5 gap-4 mt-4">
-            <img
-                    src="<%= product.productImages[0]?.url %>"
-                    alt="<%= product.productName %>"
-                    class="w-full cursor-pointer border border-primary"
-            />
-            <img
-                    src="<%= product.productImages[0]?.url %>"
-                    alt="<%= product.productName %>"
-                    class="w-full cursor-pointer border"
-            />
+            <% product.productImages.forEach(img => { %>
+                <img
+                        src="<%= img.url %>"
+                        alt="<%= product.productName %>"
+                        class="w-full cursor-pointer border"
+                />
+            <% }) %>
         </div>
     </div>
 
