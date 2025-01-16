@@ -12,10 +12,10 @@ passport.use(
     { usernameField: "email", passwordField: "password" },
     async (email, password, done) => {
       try {
-        const user = await accountService.findUserByEmail(email);
+        const user = await accountService.findUserByEmail(email, true);
         if (!user) {
           return done(null, false, {
-            message: "Email or password is invalid.",
+            message: "Email or password is invalid or user is not active",
           });
         }
         const isMatch = validatePassword(password, user.hashedPassword);
