@@ -243,7 +243,7 @@
 <script src="/scripts/handleAddToCart.js"></script>
 
 <script>
-  const isAuthenticated = "<%= (user ? 'true' : 'false') %>" === 'true';
+  const isAuthenticated = "<%= (user ? 'true' : 'false') %>" === "true";
 
   const popup = document.getElementById("popup");
   const popupHeader = document.querySelector("#popup .popup-header");
@@ -262,5 +262,12 @@
       }
       popup.classList.remove("hidden");
     });
+  });
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    if (localStorage.getItem("cart")) {
+      await flushItemToCart();
+      localStorage.removeItem("cart");
+    }
   });
 </script>
